@@ -1,0 +1,87 @@
+---
+import { MarkdownInstance } from 'astro'
+import { format } from 'date-fns'
+
+import { Post } from '$layouts/BlogPost.astro'
+import Icon from './Icon.astro'
+import { inlineFlex } from './inlineFlex.module.css'
+import Tags from './Tags.astro'
+
+export interface Props {
+	post: MarkdownInstance<Post>
+}
+
+const { post } = Astro.props
+
+const url = (post.url || '').replace(/\/index$/, '')
+const date = new Date(post.frontmatter.publishDate)
+const published = format(date, 'PPP')
+const ymd = format(date, 'yyyy-MM-dd')
+---
+
+<article class="post-preview">
+	<nav>
+		<Tags tags={post.frontmatter.tags ?? []} />
+	</nav>
+	<header>
+		<time datetime={ymd} class="publish-date">{published}</time>
+		<a href={url}><h2 class="title">{post.frontmatter.title}</h2></a>
+	</header>
+	<section
+		set:html={post.compiledContent
+			? post.compiledContent().split('<hr>')[0]
+			: `<p>${post.frontmatter.description}</p>`}
+	/>
+	<p>
+		<a href={url} class={inlineFlex}>
+			<strong>Continue reading</strong>
+			<Icon href="/icons/arrow-right.svg" />
+		</a>
+	</p>
+</article>
+
+<style>
+	nav:not(:empty) {
+		font-size: 1rem;
+		margin-bottom: 0.75rem;
+		text-align: right;
+		width: 100%;
+	}
+
+	.post-preview :global(img) {
+		max-width: 100%;
+		height: auto;
+	}
+
+	.content :global(section > * + *) {
+		margin-top: 1rem;
+	}
+
+	.post-preview {
+		background: var(--shadow-bg);
+		border-radius: 1rem;
+		margin-block: 1rem;
+		padding: 1rem 2rem;
+	}
+
+	header {
+		display: flex;
+		flex-direction: column;
+		text-align: left;
+		align-items: flex-start;
+		justify-content: center;
+		padding-bottom: 1rem;
+	}
+
+	.title,
+	.author,
+	.publish-date {
+		margin: 0;
+	}
+
+	.publish-date,
+	.author {
+		font-size: 1.25rem;
+		color: var(--fg);
+	}
+</style>

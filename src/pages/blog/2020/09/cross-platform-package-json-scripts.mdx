@@ -1,0 +1,81 @@
+---
+title: Cross-platform package.json scripts
+description: Making your project work in all the environments, including Windows, is often desirable for maximum reach of a project.
+publishDate: 2020-09-11
+layout: $layouts/BlogPost.astro
+tags:
+    - node
+    - npm
+    - javascript
+---
+
+import Link from '$/components/Link.astro'
+
+So you have a `package.json` and you want to make it work for Linux, Mac, and Windows?
+
+## Clearing files and folders
+
+You may have `rm -rf` or have used `find` with `delete` argument. These won't work on Windows. Instead install `rimraf`. It works for both directories and files.
+
+```
+"clean": "rimraf .cache coverage public",
+"remove-source-maps": "rimraf public/**/*.js.map"
+```
+
+## No single quotes thank you!
+
+You cannot use single quotes as these do not work with Windows. Always use double quotes instead!
+
+`"echo \"this is fine\""`
+
+## Registering dotenv or using `--max-old-space-size`
+
+You may have ended up having a script like this:
+
+```
+"task": "node -r dotenv/register --max-old-space-size=2048 ./node_modules/.bin/script"
+```
+
+The problem here is that this won't work on Windows as you'd end up executing `script` instead of `script.cmd` (which would be used on Windows).
+
+Instead of that you can install `cross-env` and `dotenv-cli`, and then write:
+
+```
+"task": "dotenv cross-env NODE_OPTIONS=\"--max-old-space-size=2048\" script"
+```
+
+`NODE_OPTIONS` is also a nice way to avoid having to have `node` explicitly in your scripts.
+
+## Use `cross-var`
+
+Additionally you may want to actually use an environment variable from a `.env` file in your commands (or any env variable). You can achieve this by installing `cross-var`:
+
+```
+"dotenv cross-var \"script task %TASK_ENV%\""
+```
+
+Note that we use Windows env syntax. We could use unix syntax, but apparently <Link href="https://medium.com/@arrayknight/how-to-use-env-variables-in-package-json-509b9b663867">Macs transform `$TASK_ENV` **before** `dotenv` executes</Link>. To me this suggests it is the safest to always use Windows style variables with `cross-var`.
+
+## Working around lack of semicolon support
+
+You can execute multiple commands and disregard their end result by using `;`. There is no equivalent that would work on Windows. So instead of:
+
+```
+"task": "yarn task-one; yarn task-two",
+```
+
+You have to resort to a bit uglier solution:
+
+```
+"task": "(yarn task-one || true) && yarn task-two",
+```
+
+## Be wary of tool platform differences!
+
+It would be great if tools worked similarly across platforms, but this is not always the case. One unfortunate case is `svgo` to which you can pass `path/*.svg` on Linux and Mac, but not on Windows. Windows version only accepts a path and does not support wildcards.
+
+The tool also appears to output with CRLF line changes on Windows which might not be what you want on a LF only codebase. Personally I tend to like to have all my sources in LF even on Windows.
+
+## Conclusion
+
+Being a Windows developer you can often be the odd one in the crowd of devs, but most things are very manageable once you are aware of the differences and quirks. Luckily if all else fails you do have WSL available these days :)

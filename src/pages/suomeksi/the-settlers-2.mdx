@@ -1,0 +1,75 @@
+---
+title: The Settlers 2 suomeksi!
+description: Haaksirikkoisia uudisasuttajia voi nyt seurata puuhailemassa omiaan myös suomeksi! (The Settlers 2 Finnish translation language pack / mod)
+layout: $layouts/Finnish.astro
+---
+
+import Float from '$/components/Float.astro'
+import Icon from '$/components/Icon.astro'
+import { inlineFlex } from '$/components/inlineFlex.module.css'
+import Link from '$/components/Link.astro'
+
+<Float>
+	<img slot="image" loading="lazy" alt="Outo kaarenmuotoinen rakennelma" src="/assets/settlers2/2009-09-14_08.png" width="640" height="480" />
+
+# The Settlers II suomeksi!
+
+## [Lataa uusin versio: `1.0.0`](/files/s2fin100.zip)
+
+Suomentaa pelin alkuperäisen DOS-version. Yhteensopiva Gold Editionin kanssa. [Hyppää asennusohjeisiin!](#asennus)
+
+</Float>
+
+Tämä suomennos on valmis!
+
+## Pelistä
+
+The Settlers II (suomeksi _uudisasuttajat_; alkuperäisnimi saksaksi _Die Siedler II_) on reaaliaikastrategia, jossa hallitaan oman kansan taloutta. Pelissä ei kerätä rahaa, vaan tarkoitus on työstää luonnon raaka-aineet käyttökelpoisiksi tavaroiksi, joiden avulla voi kasvattaa armeijaa ja eri ammattien osaajia.
+
+<div style="text-align: center;">
+	<img
+		loading="lazy"
+		alt="Rakennuksia rakenteilla päämajan ympärille"
+		src="/assets/settlers2/2009-09-14_04.png"
+		width="640"
+		height="480"
+	/>
+</div>
+
+Lisäksi esimerkiksi viljasta voidaan valmistaa leipää, joka kulkeutuu kaivosmiesten suuhun. Pelin haaste syntyy toimivan tieverkoston rakentamisesta ja rakennusten sijoittelusta. Viehätystä tarjoaa myös mm. omien työläisten seuraaminen heidän puuhastellessaan arkisia toimiaan.
+
+## Asennus
+
+1. Mikäli sinulla ei ole peliä, niin tarvitset joko alkuperäisen pelin asennettuna esim. DOSBoxiin tai voit ostaa pelin itsellesi <Link href="https://www.gog.com/game/the_settlers_2_gold_edition">GOG.comista</Link>.<br /><br />
+2. Lataa [suomennoksen zip-paketti](/files/s2fin100.zip).<br /><br />
+3. Pura zip-paketti pelin `DATA`-hakemistoon, esim. `C:\SETTLER2\DATA` tai `C:\Program Files\GOG.com\Settlers 2 GOLD\DATA`. Harkitse ennen purkua varmuuskopion ottamista koko pelistä tai `DATA`-hakemistosta sähläyksen varalta.<br /><br />
+4. Mikäli sinulla on ongelmia saada tiedostot purettua suoraan `DATA`-hakemistoon, niin pura paketti ensin väliaikaisesti muualle ja yritä sitten kopioida puretut hakemistot `DATA`-hakemistoon.
+
+Tämän jälkeen pelin pitäisi käynnistyä suomeksi.
+
+<div style="text-align: center;">
+	<img loading="lazy" alt="Pelin päävalikko" src="/assets/settlers2/2009-09-14_01.png" width="640" height="480" />
+</div>
+
+## Asennuksen poisto
+
+Suomennoksen poistaminen onnistuu ainoastaan palauttamalla varmuuskopioitu `DATA`-hakemisto. Muussa tapauksessa peli on asennettava uudelleen, jotta pelin asennusohjelma ylikirjoittaa suomennoksen muuttamat tiedostot.
+
+Kätevänä vinkkinä pelistä on mahdollista säilyttää yhtä muokkaamatonta ja pelaamatonta versiota, josta sitten kopioida uusia klooneja niin pelattavaksi kuin muokattavaksi.
+
+> Voit seurata minua Mastodonissa `@merri@olifant.fi`!<br />Käytä aihetunnistetta `#settlers2suomeksi`.
+
+## Suomennoksen muokkaaminen
+
+Mikäli haluat kokeilla parannella tai muuttaa suomennosta, niin se onnistuu netissä <Link href="https://codesandbox-astro-solidjs-playground.vercel.app/settlers2Text">Settlers II Text</Link> -työkalulla.
+
+Voit myös löytää paljon materiaalia peliin liittyen ylläpitämästäni <Link href="https://settlers2.net">The Settlers II.netistä</Link>!
+
+Pelin fanit kehittävät myös <Link href="https://siedler25.org">The Return to the Roots</Link> -projektia, joka mahdollistaa muun muassa moninpelin internetissä. Sillä on oma suomennoksensa, joka kaipaa rakkautta!
+
+<p>
+	<a href="/suomeksi" class={inlineFlex}>
+		<Icon href="/icons/arrow-left.svg" />
+		<strong>Kiinnostaisivatko muutkin suomennokset?</strong>
+	</a>
+</p>

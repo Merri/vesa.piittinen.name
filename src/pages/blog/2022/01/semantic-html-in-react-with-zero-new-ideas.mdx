@@ -1,0 +1,248 @@
+---
+title: Semantic HTML in React with zero new ideas
+description: When writing websites it is important to know the underlying HTML elements. This article considers the means to keep them visible in your React JSX.
+publishDate: 2022-01-01
+layout: $layouts/BlogPost.astro
+tags:
+    - react
+    - javascript
+    - html
+    - css
+---
+
+Hello New Year! And welcome to yet another edition of my articles that have had zero planning and are simply written in one go! Enjoy the effort since long term planning and me don't often go hand in hand.
+
+I'm about to take on a couple of known ideas and patterns and try to accomplish something that is seemingly unique. Or at least it is just something that I have not encountered as-is on the web.
+
+## What is wrong with how we do React
+
+Over the years working with React I've grown frustrated on one particular thing: the written JSX code rarely expresses the actual underlying HTML semantics. What do I mean by this? Let's have a look at a typical Styled Components solution.
+
+```tsx
+// SomeComponent.style.tsx
+export const StyledList = styled.dl``
+export const StyledListItem = styled.div``
+export const StyledListTitle = styled.dt``
+export const StyledListContent = styled.dd``
+
+// SomeComponent.tsx
+function SomeComponent() {
+	return (
+		<StyledList>
+			<StyledListItem>
+				<StyledListTitle>Title</StyledListTitle>
+				<StyledListContent>Content</StyledListContent>
+			</StyledListItem>
+		</StyledList>
+	)
+}
+```
+
+Hey, it is perfect DL semantics! However when examining `SomeComponent` itself you see no trace of `<dl />` and the bunch! Sure, you can hover over the components and get type description which exposes that hey, it is a `styled.dl` element. Or if you build a component library you can add documentation to a Storybook that tells how to use the components.
+
+But this doesn't answer the core issue. Young guys who have entered the industry in the past five or so years have a **very** hard time seeing the semantics. How do you learn a thing that you never see in the code? It is not really visible in the front of their eyes unless somebody is doing the shoveling actively.
+
+With HTML this wouldn't be an issue. But JSX is full of components that have nothing to do with HTML.
+
+We need to get that actual HTML back to the game! How do we do that?
+
+## Polymorfism vs. Composition
+
+I'm not an expert with these terms and I'm not going to do the research on what the actual meaning of these two are. With code I admit I often care more about the solution than what people call it.
+
+Anyway, Styled Components describes their `as` property as a polymorphic feature. It allows you to tell which component does the rendering. Basically it is just this:
+
+```tsx
+function Polymorphic({ as: Component = 'div', ...props }) {
+    return <Component {...props />
+}
+
+// render as div
+<Polymorphic>Hello</Polymorphic>
+
+// render as button
+<Polymorphic as="button">Hello</Polymorphic>
+
+// render as some framework Link component
+<Polymorphic as={Link}>Hello</Polymorphic>
+```
+
+The biggest issue here is that the supported properties should depend on the passed component. **TypeScript does not support this**. This means that if you make a component that supposedly just provides styles and some usability or a11y features on top whatever is given in, well, it adds a ton of complexity. You are forced to limit the list of supported things, making the feature **less useful**.
+
+Most likely you only have styles and leave any other logic to some other layer, and make a multitude of components to deal with the issues you have. So you end up with things like `<Button />`, `<LinkButton />`, `<TextLink />`, `<TextLinkButton />` and whatever else. Although the issue in this particular example is that designers love to make visual links that have to act like buttons and visual buttons that have to act like links. But that is a completely another issue and has more to do with process.
+
+So what composition solutions can provide us?
+
+```tsx
+<FormControl element={<fieldset />}>
+	<FormTitle element={<legend />} />
+</FormControl>
+```
+
+The major gripe with this solution is that we are rendering double: first the `element` passed to element prop, and then the same thing again with the composing component.
+
+But then there is a reason to this madness! Consider what this means when we're using another component:
+
+```tsx
+<Button element={<Link to="/" />}>
+	<HomeIcon />
+	Home
+</Button>
+```
+
+The biggest advantage here is that **we don't need to support `Link` properties** in the Button component! That is a very troublesome case in many frameworks that we currently have. Users of Next, Gatsby, or React Router are likely very familiar with the issue: the need of making your own additional special component wrapping an already specialized component.
+
+More code to support more code.
+
+## Generic abstraction
+
+The minimal internal implementation for a Button component with the help of Styled Components would look like this:
+
+```tsx
+// here would be CSS actually
+const StyledButton = styled.button``
+
+interface ButtonProps {
+	element: JSX.Element
+}
+
+export function Button({ element }: ButtonProps) {
+	return <StyledButton as={element.type} {...element.props} />
+}
+```
+
+We still make use of polymorfism in this case, but we don't have the type issues of a pure Styled Component. In this case we're really handling all the `element` props outside of our component entirely and we simply wrap a styled component to provide styles for the button. In this way the component itself becomes very focused and can do just what it needs to do, such as handle the styling concerns and additional functionality.
+
+This means we can have just **one single button component to handle all the button needs**. So you can now pass in a `button`, a link, or maybe even some hot garbage like a `div`, and make it look like a button. But there is more! You can also fix the usability of any given component so you can apply ARIA attributes such as `role="button"` and make sure all the accessibility guidelines are met (the ones we can safely do under-the-hood).
+
+The only requirement for a given `element` is that it needs to support and pass through DOM attributes. If it doesn't, well, then we are doing work that never becomes effective. However our main goal here is to make HTML semantics visible so in that sense this is a non-issue.
+
+## Completing the Button component
+
+So why not go all the way in? Let's make a Button component that makes (almost) anything work and look like a button!
+
+```tsx
+import styled from 'styled-components'
+
+// CSS that assumes any element and making it look like a button
+const StyledButton = styled.button``
+
+const buttonTypes = new Set(['button', 'reset', 'submit'])
+
+interface ButtonProps {
+	children?: React.ReactNode
+	element?: JSX.Element
+}
+
+function Button({ children, element }: ButtonProps) {
+	const { props } = element ?? <button />
+	// support `<button />` and `<input type={'button' | 'reset' | 'submit'} />` (or a custom button that uses `type` prop)
+	const isButton = element.type === 'button' || buttonTypes.has(props.type)
+	// it is really a link if it has `href` or `to` prop that has some content
+	const isLink = props.href != null || props.to != null
+	const { draggable = false, onDragStart, onKeyDown, role = 'button', tabIndex = 0, type } = props
+
+	const nextProps: React.HTMLProps<any> = React.useMemo(() => {
+		// make `<button />` default to `type="button"
+		if (isButton && type == null) {
+			return { type: 'button' }
+		}
+
+		if (!isButton && !isLink) {
+			return {
+				// default to not allowing dragging
+				draggable,
+				// prevent dragging the element in Firefox (match native `<button />` behavior)
+				onDragStart: onDragStart ?? ((event: React.DragEvent) => event.preventDefault()),
+				// Enter and Space must cause a click
+				onKeyDown: (event: React.KeyboardEvent<any>) => {
+					// consumer side handler is more important than we are
+					if (onKeyDown) onKeyDown(event)
+					// check that we are still allowed to do what we want to do
+					if (event.isDefaultPrevented() || !(event.target instanceof HTMLElement)) return
+					if ([' ', 'Enter'].includes(event.key)) {
+						event.target.click()
+						// let a possible third-party DOM listener know that somebody is already handling this event
+						event.preventDefault()
+					}
+				},
+				role,
+				tabIndex,
+			}
+		}
+
+		return null
+	}, [draggable, isButton, isLink, onDragStart, onKeyDown, role, tabIndex, type])
+
+	// ref may exist here but is not signaled in types, so hack it
+	const { ref } = element as unknown as { ref: any }
+
+	return (
+		<StyledButton as={element.type} ref={ref} {...props} {...nextProps}>
+			{children ?? props.children}
+		</StyledButton>
+	)
+}
+```
+
+Sure, we didn't go for **everything** that a button could do. We ignored the styles and we ignored all possible modifiers. Instead we just focused on the core of what expectation of a button has to be:
+
+1. Keyboard accessible with focus indicator
+2. Announced as a button (but keep real links as links!)
+3. Fix default form submit behavior as `<button />` is `type="submit"` if you don't let it know what it is. In my experience it is better to be explicit about `type="submit"`.
+4. Explicitly disable default dragging behavior, buttons are not dragged. Links however can still be dragged.
+5. And do all this while letting user of the component still add extra features as needed.
+
+## The Developer Experience
+
+So what was our goal again? Oh yes! Make that semantic HTML goodness visible. So what have we got now?
+
+```tsx
+<Button>Button</Button>
+// HTML:
+<button class="..." type="button">Button</button>
+
+<Button element={<button type="submit" />}>Submit button</Button>
+// HTML:
+<button class="..." type="submit">Submit button</button>
+
+<Button element={<a href="#" />}>Link</Button>
+// HTML:
+<a class="..." href="#">Link</a>
+
+<Button element={<a />}>Anchor</Button>
+// HTML:
+<a class="..." draggable="false" role="button" tabindex="0">Anchor</a>
+
+<Button element={<div />}>Div</Button>
+// HTML:
+<div class="..." draggable="false" role="button" tabindex="0">Div</a>
+
+<Button element={<Link to="#" />}>Link component</Button>
+// HTML:
+<a class="..." href="#">Link component</a>
+```
+
+Looks good to me! Most of the time you can see what the semantic element is. Also you get the separation of concerns with the props: `onClick` is not a possibly mysterious click handler but you can be sure it is going to be a native click method. And the door is open for providing `onClick` from the Button component that doesn't provide `event` but instead something else!
+
+Now the hard part is actually making all the components that would make use of this kind of composition and separation of concerns. This way might not work for every single possible case, like with select dropdown it is likely better keep the special unicorn implementation separate from a solution that makes use of native select element and all the handy usability features you get for free with it.
+
+## Without Styled Components
+
+You can also achieve this without Styled Components by using `React.cloneElement`!
+
+```tsx
+return React.cloneElement(element, nextProps, children ?? props.children)
+```
+
+However you need to deal with the styling, most likely `className` handling on your own.
+
+A small advantage we have here is that if consumer wants to have a `ref` we don't need to implement `React.forwardRef` wrapper to our component. We also don't need to hack with the `ref` variable like in the Styled Components implementation, because `element` is passed to `cloneElement` and does know about it. So that is one hackier side of code less in the implementation.
+
+## Closing words
+
+As far as buttons go there are still a lot of little things on the CSS side that I think every button component should do. However that is getting out of the topic and I guess this is becoming verbose enough as it is.
+
+I hope you find this valuable! I've never liked living with Styled Components, and preferring being a web browser side of guy not really with TypeScript either, so I've been looking into ways to make my life more tolerable. Now that I am responsible for a company's component library I have finally the time to spend into thinking about the issues.
+
+I feel rather good about where I've now arrived: I've found something that lets me keep code minimal and as boilerplate free as possible while providing **less components** that give more. However I'm yet to implement the changes so for now we still live with some extra components that only exist to patch (type) issues.

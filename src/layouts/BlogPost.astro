@@ -1,0 +1,87 @@
+---
+import { MarkdownContent } from 'astro'
+import { format } from 'date-fns'
+
+import Layout from '$layouts/Layout.astro'
+import Icon from '$/components/Icon.astro'
+import { inlineFlex } from '$/components/inlineFlex.module.css'
+import Tags from '$/components/Tags.astro'
+
+export interface Post {
+	title: string
+	documentTitle?: string
+	author?: string
+	publishDate: string
+	modifiedDate?: string
+	heroImage?: string
+	description: string
+	permalink?: string
+	alt?: string
+	lang?: string
+	/** social image 2:1 ratio (2024x2012 px) should be low quality @ 100 kB */
+	socialImage?: string
+	tags?: string[]
+}
+
+export interface Props {
+	content: MarkdownContent<Post>
+}
+
+const {
+	permalink = new URL(Astro.url.pathname, Astro.site).toString(),
+	lang = 'en',
+	title,
+	documentTitle,
+	description,
+	publishDate,
+	modifiedDate,
+	author,
+	heroImage,
+	alt,
+	socialImage,
+	tags = [],
+} = Astro.props.content
+
+const published = new Date(publishDate)
+const modified = new Date(modifiedDate ?? publishDate)
+const datePublished = format(published, 'PPP')
+const dateModified = format(modified, 'PPP')
+---
+
+<Layout
+	lang={lang as 'en' | 'fi'}
+	title={documentTitle ?? title}
+	description={description}
+	permalink={permalink}
+	social={socialImage}
+>
+	<header>
+		{heroImage && <img width="720" height="420" class="hero-image" loading="lazy" src={heroImage} alt={alt} />}
+		<hgroup>
+			{documentTitle && <strong class="maintitle">{title}</strong>}
+			<h1 class="title">
+				{documentTitle ? documentTitle : title}
+			</h1>
+			<p class="publish-date">
+				Page published on <time datetime={published.toISOString().slice(0, 10)}>{datePublished}</time>
+				{
+					modifiedDate && (
+						<small>
+							<br />
+							Last modified on <time datetime={modified.toISOString().slice(0, 10)}>{dateModified}</time>
+						</small>
+					)
+				}
+			</p>
+		</hgroup>
+		<Tags tags={tags} />
+	</header>
+	<slot />
+	<hr />
+	<p>
+		<a href="/blog/" class={inlineFlex}>
+			<Icon href="/icons/arrow-left.svg" />
+			<strong>Return to the blog</strong>
+		</a>
+	</p>
+</Layout>

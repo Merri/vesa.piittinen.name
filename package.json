@@ -1,0 +1,48 @@
+{
+	"name": "@merri/vesa.piittinen.name",
+	"description": "Vesa Piittinen",
+	"version": "2023.0.0",
+	"author": "Vesa Piittinen <vesa.piittinen@gmail.com>",
+	"bugs": {
+		"url": "https://github.com/merri/vesa.piittinen.name/issues"
+	},
+	"license": "MIT",
+	"private": true,
+	"type": "module",
+	"scripts": {
+		"preinstall": "npx only-allow pnpm",
+		"start": "astro dev",
+		"start-node": "yarn build --node && node server/index.js",
+		"build": "astro build",
+		"dev": "astro dev --local-development",
+		"tsc": "npx tsc --noEmit"
+	},
+	"devDependencies": {
+		"@astro-community/astro-embed-youtube": "0.2.2",
+		"@astrojs/deno": "4.2.0",
+		"@astrojs/node": "5.3.0",
+		"@astrojs/mdx": "0.19.7",
+		"@astrojs/preact": "2.2.1",
+		"@astrojs/vercel": "3.5.1",
+		"@babel/core": "7.22.5",
+		"@babel/plugin-transform-react-jsx-source": "7.22.5",
+		"@types/cookie": "0.5.1",
+		"@types/marked": "5.0.0",
+		"@types/memoizee": "0.4.8",
+		"@types/node": "20.3.3",
+		"astro": "2.7.2",
+		"cookie": "0.5.0",
+		"date-fns": "2.30.0",
+		"date-fns-tz": "2.0.0",
+		"dompurify": "3.0.4",
+		"marked": "5.1.0",
+		"memoizee": "0.4.15",
+		"pako": "2.1.0",
+		"postgres": "3.3.5",
+		"preact": "10.15.1",
+		"prettier-plugin-astro": "0.10.0",
+		"random-seedable": "1.0.8",
+		"typescript": "5.1.6",
+		"typescript-plugin-css-modules": "5.0.1"
+	}
+}

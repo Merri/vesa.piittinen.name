@@ -1,0 +1,36 @@
+---
+import BlogPostPreview from '$/components/BlogPostPreview.astro'
+import Tags from '$/components/Tags.astro'
+import { Post } from '$layouts/BlogPost.astro'
+import Layout from '$layouts/Layout.astro'
+import { MarkdownInstance } from 'astro'
+
+const tags = new Set(
+	(new URL(Astro.request.url).searchParams.get('tags') ?? '')
+		.split(',')
+		.map((tag) => tag.trim())
+		.filter((tag) => tag)
+)
+
+const allPosts = await Astro.glob<MarkdownInstance<Post>>('./blog/[0-9][0-9][0-9][0-9]/[0-9][0-9]/*.(md|mdx)')
+const posts = allPosts.filter((post) => tags.size === 0 || post.frontmatter.tags?.some((tag) => tags.has(tag)))
+posts.sort((a, b) => +new Date(b.frontmatter.publishDate) - +new Date(a.frontmatter.publishDate))
+---
+
+<Layout lang="en" title="Blog by Vesa Piittinen" description="A blog mostly focused on web development.">
+	<h1>Blog</h1>
+	<p>On this blog I'm mostly focusing on topics about web development.</p>
+	{
+		tags.size > 0 && (
+			<nav aria-labelledby="tagged-posts">
+				<span id="tagged-posts">Displaying posts tagged</span> <Tags tags={[...tags]} />
+				<small>
+					<a href="/blog/">
+						<strong>Clear tags</strong>
+					</a>
+				</small>
+			</nav>
+		)
+	}
+	{posts.map((post) => <BlogPostPreview post={post} />)}
+</Layout>

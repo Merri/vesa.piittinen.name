@@ -1,0 +1,229 @@
+---
+title: Can we at least modernize visually-hidden?
+description: We have used a variety of visually-hidden or sr-only classes over the years. There is no standardization happening, but can we update the syntax?
+publishDate: 2023-03-11
+modifiedDate: 2023-04-17
+layout: $layouts/BlogPost.astro
+tags:
+    - a11y
+    - webdev
+    - css
+    - tutorial
+---
+
+import Codepen from '$/components/Codepen.astro'
+import Link from '$/components/Link.astro'
+
+Recently <Link href="https://benmyers.dev/blog/native-visually-hidden/">Ben Myers wrote about the need for native visually hidden</Link>. On this I agree: we would really **love** to have `display: visually-hidden;` because visually hidden is a very useful
+utility.
+
+While the standardization has not really happened, and personally I lack the influence over people to be the change, I can be my usual self and question the status quo of copy pasting existing solutions and instead see if the utility can be improved.
+
+---
+
+## How it works?
+
+The shortest way to describe the core of visually hidden utility is that it hacks around the rules of screen readers. So what the styles really do is to convince a screen reader that this text is visible on the screen, please read it!
+
+So we lie. We really desire the text **not** to be visible on the screen! This is useful because we want to provide information to screen readers about what is visually there. And this mechanism is better and more reliable than `aria-label` which has issues like <Link href="https://adrianroselli.com/2019/11/aria-label-does-not-translate.html">not being translated by machine translators</Link>. And it should only be used on interactive elements, things that you can click. We rather would like to have a solution that works for anything.
+
+---
+
+## What we have now?
+
+Here is the variation of visually hidden as posted by Ben Myers:
+
+```css
+.visually-hidden {
+	border: 0;
+	clip: rect(0 0 0 0);
+	clip-path: inset(50%);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+```
+
+This is just one of **many** variations you can find in the wild. But why does it have these particular rules it has now? Well, I guess I could answer that question. Let's go through all the rules!
+
+### `position: absolute;`
+
+This is the easiest one to explain: at any cost we do not want to have any change to the visual layout. And this is exactly what we can achieve with `position: absolute;`.
+
+### `height: 1px;` and `width: 1px;`
+
+Screen reader heuristics require that the element must be visible. So by having the element at the minimum size of one pixel we pass the heuristics test for "yeah, the element can be seen".
+
+So very clever workaround by us.
+
+### `white-space: nowrap;`
+
+This is required to guarantee that a screen reader reads all the text and depicts it as we desire. If this rule didn't exist the text would be wrapped based on the 1px container size and this can lead to very interesting results on how a screen reader would read the text.
+
+Also other rules like `word-break: break-all;` can mess up things even further causing screen reader to listing each character one by one. That's not really... desirable!
+
+### `border`, `margin` and `padding`
+
+An issue with these properties is that they will enlarge the element. And we really want to avoid any side-effects!
+
+If these rules were to be removed you could end up with unintended scrolling here and there. It would depend on whether the element had these values.
+
+However margin has been set negative. And there is a reason this has been done! It is hard to figure out what is the origin of each of these, but it seems that <Link href="https://github.com/Orange-OpenSource/Orange-Boosted-Bootstrap/issues/84">not having negative margin has caused overflow in browsers of the past</Link>.
+
+However looking at the samples with modern browsers I was unable to see the overflow issue. So it might now be entirely possible that setting negative margin is not required anymore. And it happens to actually be harmful: <Link href="https://github.com/alphagov/govuk-frontend/pull/1109">negative margin can change the reading order in VoiceOver</Link>!
+
+So here is the first thing that we could actually improve upon: don't use negative margin, make it zero instead.
+
+### `clip-path: inset(50%);`
+
+The purpose of this rule is to clip away all the visuals. Screen readers ignore this rule because it is quite hard to figure out how much will be visible based on the values of this property.
+
+While this is fairly short could we improve upon this? Well yes, yes we could! `clip-path: path('');` is shorter by two characters and gives the same end result!
+
+Oh and since `path` repeats it will also compress better when delivered over the network. Much awesome.
+
+### `clip: rect(0 0 0 0);` and `overflow: hidden;`
+
+Why do we still support Internet Explorer? `clip` is a CSS property that wasn't a standard but became a de-facto standard since all browsers implemented this IE only feature.
+
+Today we really don't need these rules: `clip-path` does both of these.
+
+---
+
+## Improving upon it
+
+So while going through each of the styles we did find a few changes to be done. This is where we are at the moment:
+
+```css
+.visually-hidden {
+	border: 0;
+	clip-path: path('');
+	contain: content;
+	height: 1px;
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+```
+
+1. Removed `clip`
+2. Shorter `clip-path`
+3. Margin to `0`
+4. Removed `overflow` to favor `contain`
+
+However now that we removed `clip` is there a possibility that there would be a browser that does not yet support `clip-path`?
+
+<s>
+	As unfortunate as it is, yes, there is a browser that does not support `clip-path`:{' '}
+	<Link href="https://caniuse.com/css-clip-path">Samsung Internet 20 still requires `-webkit` prefix</Link>! This
+	means that we have to repeat the rule.
+</s>
+
+Another annoying thing is the need to have `border: 0; margin: 0; padding: 0;`. These are basically default values on CSS. And this reminded me of initial values in CSS: they happen to be zero. Which then reminded me that hey, we actually have a property now to make everything be in their initial values!
+
+```css
+.visually-hidden {
+	all: initial;
+	clip-path: path('');
+	contain: content;
+	height: 1px;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+```
+
+**Wonderful!** We are down to only 7 style properties! Also as a benefit `all: initial;` is likely to fix some edge cases and side-effects caused by the cascade.
+
+However! We are still not protected against styles that are defined later on. For example what if there was another style rule targetting the same element which said `padding: 100rem;`? That would mess us up as it would cause unexpectedly large element and breaking layout.
+
+So we need overrides and there are some ways that we can go about it:
+
+1. Use `!important`
+2. Increase specificity
+
+Personally I really dislike `!important` regardless of any context. So specificity it is.
+
+---
+
+## The final modernization?
+
+The shortest way I know of to add more specificity is to use `:root`:
+
+```css
+:root .visually-hidden {
+	all: initial;
+	clip-path: path('');
+	contain: content;
+	height: 1px;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+```
+
+This is enough to make `all: initial` win over any properties set by regular classes, attribute selectors, or element selectors. You could still add `!important` if you are afraid that there is still somebody who uses it. I'm such an optimist that I believe we've finally grown over that phase and nobody uses it, ever.
+
+### Skip links
+
+The sample Ben Myers posted actually had more into the selector: it was `.visually-hidden:not(:focus):not(:active)`. This is clever in that if the element is focusable then you can navigate to the element using keyboard and boom! it becomes visible. However I think this might be an undesired feature for a generic utility class.
+
+So my own opinion on this is to steal an idea from <Link href="https://github.com/csstools/sanitize.css/blob/092d0d85922bfa72d28e9e8d25d80a5437c8df44/sanitize.css#L349">sanitize.css</Link> and use attributes instead:
+
+```css
+:where([aria-hidden='false' i][hidden]) {
+	display: initial;
+}
+
+:is([aria-hidden='false' i][hidden]:not(:focus):not(:active), .visually-hidden) {
+	all: initial;
+	clip-path: path('');
+	contain: content;
+	height: 1px;
+	position: absolute;
+	white-space: nowrap;
+	width: 1px;
+}
+```
+
+And now a skip link can be done like this:
+
+```html
+<a class="skip-link" hidden aria-hidden="false" href="#main"> Skip to content </a>
+```
+
+Here you can put the desired visual styles to `.skip-link`.
+
+Oh, and you maybe also noticed that I used `:is()` instead of having `:root`. Why? Well, those nice attribute selectors happen to give a specificity of `0, 4, 0` which is bigger than `0, 2, 0` with `:root .visually-hidden` so we use the `:is()` to increase specificity of `.visually-hidden` to the same level as the attributes. This is a nice additional benefit that we get "for free" with no awkward looking code by introducing `hidden aria-hidden="false"` utility.
+
+## Is that all?
+
+No. While I have done some testing to guarantee _my own confidence_ that this new set of rules do work as intended there is something that remains: this has not been battle tested by the larger community! And as a single person there is no way I would have the resources to test everything comprehensively <Link href="https://gist.github.com/nickcolley/19b80ed24d0364cfd3afd3b1b49c4014">like companies can</Link>.
+
+There is also the fact that what I have here is an opinioned improvement. For example not everyone likes the idea of `hidden aria-hidden="false"`. Some people really prefer that the issue should be handled by CSS only. Which gets us back into the main issue: `display: visually-hidden;` has not been standardized and it really should be.
+
+<Codepen id="LYJermx" title="Minimum viable visually hidden?" />
+
+I hope you like this autistic deep dive!
+
+---
+
+**Updates!**
+
+[2023-03-11] After writing this it came to my attention that Safari apparently should not support `clip-path: path('');`. And it is possible that while testing on my iPhone I simply didn't notice that it doesn't actually work. This still needs to be checked again.
+
+[2023-03-12] Bootstrap had issues with `clip-path` and dropped it in favor of `clip`. The problem was related to severe performance issues on Chrome regardless of device: Android, MacOS and Windows were all confirmed. However this was in 2018 and I did a re-run of the tests on Windows and Android (Sony Xperia 10 / 2019, latest updates) and could not see the issue anymore. So there should be no reason to use the deprecated `clip`!
+
+[2023-03-12] Similar article by James Edwards: <Link href="https://www.tpgi.com/the-anatomy-of-visually-hidden/">The anatomy of visually-hidden</Link>.
+
+[2023-03-13] Opposite opinion on requiring native visually hidden by WebAxe: <Link href="https://www.webaxe.org/we-dont-need-visually-hidden/">We Don’t Need .visually-hidden</Link>
+
+[2023-03-13] Samsung Internet does support `clip-path` without prefix! I had been looking at the wrong support table, <Link href="https://caniuse.com/mdn-css_properties_clip-path_path">here is the correct clip-path: path one</Link>. However the support table is incomplete and claims Opera does not support, but it does support. So it might be possible to have all of it working nicely on all current browsers without the prefix!
+
+[2023-04-17] `contain: content` is required (or `overflow: hidden`) as scroll containers calculate layout based on the text within.

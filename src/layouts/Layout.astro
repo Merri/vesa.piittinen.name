@@ -1,0 +1,471 @@
+---
+import './alku.css'
+
+export interface Props {
+	lang: 'en' | 'fi'
+	description?: string
+	permalink?: string
+	social?: string
+	title: string
+}
+
+const { lang, title, description = '', permalink = '', social = '/social.jpg?v=1' } = Astro.props
+
+const LANG_TABLE = {
+	en: {
+		changeTheme: `Change theme`,
+		goToLinksAtTop: `Go to links at top`,
+		jumpToContent: `Jump to content`,
+		linkToExternalSite: `Link to external site, opens a new window`,
+		moveToContent: `Move to beginning of content`,
+		theme: 'Theme',
+		themeDark: 'Dark',
+		themeDefault: 'Default',
+		themeLight: 'Light',
+	},
+	fi: {
+		changeTheme: `Vaihda teema`,
+		goToLinksAtTop: `Näytä linkit sivun alussa`,
+		jumpToContent: `Hyppää sisältöön`,
+		linkToExternalSite: `Siirryt toiselle sivustolle uuteen ikkunaan`,
+		moveToContent: `Siirry sisällön alkuun`,
+		theme: 'Teema',
+		themeDark: 'Tumma',
+		themeDefault: 'Oletus',
+		themeLight: 'Vaalea',
+	},
+} as const
+
+const {
+	changeTheme,
+	goToLinksAtTop,
+	jumpToContent,
+	linkToExternalSite,
+	moveToContent,
+	theme,
+	themeDark,
+	themeDefault,
+	themeLight,
+} = LANG_TABLE[lang]
+---
+
+<!DOCTYPE html>
+<html lang={lang}>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{title}</title>
+		<meta name="title" content={title} />
+		{description !== '' && <meta name="description" content={description} />}
+
+		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+		<link rel="manifest" href="/site.webmanifest" />
+		<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#193929" />
+		<meta name="msapplication-TileColor" content="#193929" />
+		<meta name="theme-color" content="#ffffff" />
+
+		{permalink !== '' && (
+			<meta property="og:type" content="website" />
+			<meta property="og:url" content={permalink} />
+			<meta property="og:title" content={title} />
+			<meta property="og:description" content={description} />
+			<meta property="og:image" content={social} />
+			<meta property="twitter:card" content="summary_large_image" />
+			<meta property="twitter:url" content={permalink} />
+			<meta property="twitter:title" content={title} />
+			<meta property="twitter:description" content={description} />
+			<meta property="twitter:image" content={social} />
+		)}
+
+		<style>
+			:root {
+				--page-default-font: var(--humanist-sans-stack);
+				--icon-color: unset;
+				--icon-dark-color: unset;
+				--icon-light-color: unset;
+				--icon-stroke-color: currentColor;
+				--icon-shade-color: transparent;
+
+				--light-focus: #8a004e;
+				--light-bg: #cceec9;
+				--light-fg: #243;
+				--light-theme: #00853c;
+				--light-image-shadow: rgba(0, 0, 0, 0.375);
+				--light-shadow-bg: rgba(30, 120, 60, 0.1);
+				--light-link: #593715;
+				--light-reduced-opacity: 0.333;
+				--light-header: #37270b;
+				--light-line: #BBAE9C;
+
+				--dark-focus: #ffbde2;
+				--dark-bg: #193929;
+				--dark-fg: #fffcf9;
+				--dark-theme: #00cc5c;
+				--dark-image-shadow: black;
+				--dark-shadow-bg: rgba(0, 20, 10, 0.375);
+				--dark-link: #e7cc7c;
+				--dark-reduced-opacity: 0.5;
+				--dark-header: #fff3d3;
+				--dark-line: #797959;
+
+				--default-theme: 'vaalea';
+				color-scheme: light;
+				--bg: var(--light-bg);
+				--fg: var(--light-fg);
+				--theme: var(--light-theme);
+				--image-shadow: var(--light-image-shadow);
+				--shadow-bg: var(--light-shadow-bg);
+				--focus-color: var(--light-focus);
+				--link-color: var(--light-link);
+				--reduced-opacity: var(--light-reduced-opacity);
+				--header-color: var(--light-header);
+				--line-color: var(--light-line);
+			}
+
+			:root[lang='en'] {
+				--default-theme: 'light';
+			}
+
+			:global(figure) {
+				font-size: 1rem;
+				text-align: center;
+			}
+
+			:global(a:not(:where(:hover, :focus, :active)))::after {
+				opacity: var(--reduced-opacity);
+			}
+
+			:global(a)::after {
+				transition: opacity 125ms ease-in-out;
+			}
+
+			@media (prefers-color-scheme: dark) {
+				:root {
+					--default-theme: 'tumma';
+					color-scheme: dark;
+					--bg: var(--dark-bg);
+					--fg: var(--dark-fg);
+					--theme: var(--dark-theme);
+					--image-shadow: var(--dark-image-shadow);
+					--shadow-bg: var(--dark-shadow-bg);
+					--focus-color: var(--dark-focus);
+					--link-color: var(--dark-link);
+					--reduced-opacity: var(--dark-reduced-opacity);
+					--header-color: var(--dark-header);
+					--line-color: var(--dark-line);
+				}
+				:root[lang='en'] {
+					--default-theme: 'dark';
+				}
+			}
+
+			:root[data-color-scheme='light'] {
+				color-scheme: light;
+				--bg: var(--light-bg);
+				--fg: var(--light-fg);
+				--theme: var(--light-theme);
+				--image-shadow: var(--light-image-shadow);
+				--shadow-bg: var(--light-shadow-bg);
+				--focus-color: var(--light-focus);
+				--link-color: var(--light-link);
+				--reduced-opacity: var(--light-reduced-opacity);
+				--header-color: var(--light-header);
+				--line-color: var(--light-line);
+			}
+
+			:root[data-color-scheme='dark'] {
+				color-scheme: dark;
+				--bg: var(--dark-bg);
+				--fg: var(--dark-fg);
+				--theme: var(--dark-theme);
+				--image-shadow: var(--dark-image-shadow);
+				--shadow-bg: var(--dark-shadow-bg);
+				--focus-color: var(--dark-focus);
+				--link-color: var(--dark-link);
+				--reduced-opacity: var(--dark-reduced-opacity);
+				--header-color: var(--dark-header);
+				--line-color: var(--dark-line);
+			}
+
+			:global(html) {
+				background: var(--bg);
+				color: var(--fg);
+			}
+
+			:global(blockquote) {
+				background-color: var(--shadow-bg);
+				border-inline-start: 0.375rem solid var(--theme);
+				contain: content;
+				font-family: var(--handwritten-stack);
+				margin: 3rem 1rem;
+				padding: 1rem 2rem;
+			}
+
+			:global(table) {
+				border: 0.75rem solid transparent;
+				border-inline-width: 1.5rem;
+				min-width: 100%;
+			}
+
+			:global(:is(td, th)) {
+				padding: 0.25rem;
+			}
+
+			:global(thead tr:nth-child(odd), tbody tr:nth-child(even)) {
+				background: var(--shadow-bg);
+			}
+
+			:global([src*='youtube-nocookie']) {
+				aspect-ratio: 560 / 315;
+			}
+
+			:global(:where(code)) {
+				background: var(--shadow-bg);
+				box-shadow: 0 0 0 3px var(--shadow-bg);
+			}
+
+			:global(:where(pre > code)) {
+				background: unset;
+				box-shadow: unset;
+			}
+
+			:global(hr) {
+				--dashed-border-angle: 90deg;
+				border: 0 dashed var(--line-color, currentColor);
+				border-block-width: 0.125rem 0;
+				border-image: repeating-linear-gradient(
+						var(--dashed-border-angle),
+						var(--line-color, currentColor),
+						var(--line-color, currentColor) 0.625rem,
+						transparent 0.625rem,
+						transparent 1rem
+					)
+					1 /1 /0 round;
+				margin-block: 4rem;
+			}
+
+			:global(h1, h2, h3, h4, h5, h6) {
+				color: var(--header-color, currentColor);
+			}
+
+			:global(h3::before) {
+				content: '';
+				--dashed-border-angle: 90deg;
+				border: 0 dashed var(--line-color, currentColor);
+				border-block-width: 0.0625rem 0;
+				border-image: repeating-linear-gradient(
+						var(--dashed-border-angle),
+						var(--line-color, currentColor),
+						var(--line-color, currentColor) 0.625rem,
+						transparent 0.625rem,
+						transparent 1rem
+					)
+					1 /1 /0 round;
+				display: block;
+				margin: 3rem auto;
+				max-width: min(80%, 30rem);
+			}
+
+			:global(details) {
+				background: var(--shadow-bg);
+			}
+
+			main {
+				font-size: 1.25rem;
+				letter-spacing: 0.0325em;
+			}
+
+			.skip-link {
+				background: var(--bg);
+				box-shadow: 0 0 0 7px var(--shadow-bg);
+				left: 50%;
+				padding: 1rem;
+				position: absolute;
+				top: 2rem;
+				transform: translateX(-50%);
+				z-index: 10;
+			}
+
+			#theme::after {
+				content: '(oletus: ' var(--default-theme) ')';
+				font-size: smaller;
+				margin-left: 1ex;
+			}
+
+			[lang='en'] #theme::after {
+				content: '(default: ' var(--default-theme) ')';
+			}
+
+			body > nav {
+				background: var(--shadow-bg);
+				border-radius: 0.5rem;
+				display: flex;
+				flex-wrap: wrap;
+				height: min-content;
+				gap: 1rem;
+				margin: 1rem -1rem;
+				padding: 1rem;
+				position: relative;
+			}
+
+			ul {
+				display: flex;
+				flex-grow: 1;
+				gap: 1rem;
+			}
+
+			footer {
+				background: var(--shadow-bg);
+				display: grid;
+				line-height: 1.75;
+				margin-top: 2rem;
+				padding: 3rem;
+				place-content: flex-end center;
+				text-align: center;
+			}
+		</style>
+	</head>
+	<body>
+		<div id="link-to-external-site" hidden>{linkToExternalSite}</div>
+		<a class="skip-link" data-hidden="visually" href="#main">{jumpToContent}</a>
+		<nav>
+			<ul role="list">
+				<li><a href="/" lang="fi">Vesa Piittinen</a></li>
+				<li><a href="/blog" hreflang="en" lang="en">Blog</a></li>
+				<li><a href="/links" hreflang="en" lang="en">Links</a></li>
+				<li><a href="/suomeksi" lang="fi">Suomennoksia</a></li>
+			</ul>
+			<div id="theme">
+				<label>
+					{theme}: <select id="set-theme">
+						<option value="">{themeDefault}</option>
+						<option value="light">{themeLight}</option>
+						<option value="dark">{themeDark}</option>
+					</select>
+				</label>
+			</div>
+		</nav>
+		<main id="main">
+			<slot />
+		</main>
+		<footer>
+			<strong lang="fi">Vesa Piittinen</strong>
+			<br />
+			<nav>
+				<small style="display: inline-block; text-align: left;">
+					<a href="#main" style="white-space: nowrap;">{moveToContent}</a>
+					|&nbsp;<a href="#" style="white-space: nowrap;">{goToLinksAtTop}</a>
+					|&nbsp;<a href="#set-theme" style="white-space: nowrap;">{changeTheme}</a>
+				</small>
+			</nav>
+		</footer>
+		<script type="module" is:inline>
+			const hasLS = !(() => {
+				try {
+					localStorage.removeItem((localStorage._ = '_'))
+				} catch (e) {
+					return 1
+				}
+			})()
+			const cssVar = 'CSS' in window && CSS.supports('--css:var')
+			const theme = document.getElementById('theme')
+			if (hasLS && cssVar && theme) {
+				const setTheme = document.getElementById('set-theme')
+				if (setTheme) {
+					setTheme.value =
+						(localStorage.theme === 'light' && 'light') || (localStorage.theme === 'dark' && 'dark') || ''
+					setTheme.onchange = function (event) {
+						if (event.target instanceof HTMLSelectElement && event.target.value) {
+							document.documentElement.dataset.colorScheme = localStorage.theme = event.target.value
+						} else {
+							localStorage.removeItem('theme')
+							delete document.documentElement.dataset.colorScheme
+						}
+					}
+				}
+				if (localStorage.theme != null) {
+					document.documentElement.dataset.colorScheme = localStorage.theme === 'dark' ? 'dark' : 'light'
+				}
+			}
+
+			// https://codepen.io/Merri/pen/qBMyrKX
+			document.body.addEventListener('mousedown', summaryListener, false)
+			document.body.addEventListener('touchstart', summaryListener, false)
+
+			const contentSet = new WeakSet()
+			const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion)')
+
+			function summaryListener(event) {
+				if (event.defaultPrevented) return
+				const summary = event.target.closest('summary')
+				const content =
+					summary &&
+					summary.parentElement.querySelector('details > summary + div:last-child > div:only-child')
+				if (!content || contentSet.has(content)) return
+				contentSet.add(content)
+				smoothDetails(content)
+			}
+
+			function smoothDetails(content) {
+				const container = content.parentElement
+				const summary = container.previousElementSibling
+				const details = summary.parentElement
+
+				let timeout
+				const transitionMs = ~~details.dataset.ms || 250
+
+				function setOpen(open) {
+					details.dataset.open = open
+					if (!open) content.setAttribute('inert', '')
+					else content.removeAttribute('inert')
+				}
+
+				function beforeToggle(event) {
+					if (event.defaultPrevented || prefersReducedMotion.matches) return
+					if (timeout) {
+						event.preventDefault()
+						setOpen(true)
+						clearTimeout(timeout)
+						timeout = undefined
+					} else if (details.open) {
+						event.preventDefault()
+						setOpen(false)
+						timeout = setTimeout(() => {
+							details.open = false
+							timeout = undefined
+						}, transitionMs)
+					}
+				}
+
+				function afterToggle(event) {
+					if (event.defaultPrevented) return
+					setOpen(details.open)
+				}
+
+				summary.addEventListener('click', beforeToggle)
+				summary.addEventListener('keydown', (event) => {
+					if (event.defaultPrevented) return
+					if (event.key === 'Enter' || event.key === 'Space') {
+						beforeToggle(event)
+					}
+				})
+				details.addEventListener('toggle', afterToggle)
+
+				const transitionStyle = transitionMs > 0 ? `--ms:${transitionMs}ms;` : ''
+
+				const observer = new ResizeObserver((entries) => {
+					const entry = entries[0]
+					const height = Math.ceil(
+						entry.contentBoxSize ? [].concat(entry.contentBoxSize)[0].blockSize : entry.contentRect.height
+					)
+					details.style = `${transitionStyle}--height:${height}px;`
+				})
+
+				observer.observe(content)
+				setOpen(details.open)
+			}
+		</script>
+	</body>
+</html>

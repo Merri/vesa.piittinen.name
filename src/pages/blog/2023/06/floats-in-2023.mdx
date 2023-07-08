@@ -1,0 +1,233 @@
+---
+title: Floats in 2023
+description: Floats used to be the way to do the entire layout. Since moving to responsive mobile first design and flexbox people have avoided them. Could they still be actually useful in the current age?
+publishDate: 2023-06-30
+modifiedDate: 2023-07-06
+layout: $layouts/BlogPost.astro
+tags:
+    - webdev
+    - css
+    - html
+    - tutorial
+---
+
+import Codepen from '$/components/Codepen.astro'
+import Link from '$/components/Link.astro'
+
+Roughly from 2002 to around 2016 we used to make our layouts with the help of the float. In that era it was the most cross-browser compatible tool we had in our disposal. Thankfully these days we have grid and flex which work much better for generic layouts. But does this mean that we no longer need floats?
+
+In this article we will skip all the <Link href="https://css-tricks.com/all-about-floats/">outdated information regarding floats</Link> while looking into real life use cases where floats are the only solution. We also look into ideas that could help make floats more popular.
+
+---
+
+## The basics and the shortcomings
+
+Floats exist to have a control over text wrapping. The clearest case is an image alongside a flowing text where the text avoids entering the space of the floated image. This is typical in print media.
+
+```
+------- Happy text for happy people who
+|     | have happy pets. This text nicely
+|     | places itself here instead of
+|     | going over the image on   -------
+------- either side of text so    |     |
+        you can see how text just |     |
+keeps on wrapping where it can    |     |
+and images have their own place   |     |
+to be.                            -------
+```
+
+You can float anything! Videos, tables, forms, only imagination is a limit.
+
+However you might have noticed that the above type of layout is **no longer common on the web**. Why is that? The short answer is: the mobile web. These days web layouts are designed first for the phone which in turn has caused the side effect of floats becoming a rather rare thing to use. There often isn't enough screen estate on the phone to have both an image and text on the same row.
+
+From a technical perspective there is also another reason: the lack of good gap control between the text and the floated element. You can use margin to create an illusion of a gap, but this does not account the need to guarantee minimum acceptable space for the text!
+
+So in a mobile phone the above could look like this:
+
+```
+------- Happy
+|     | text
+|     | for
+|     | happy
+------- people
+        who
+have happy pets.
+```
+
+In this case we would rather see the image fill the whole width of the viewport. And that makes floats less simple to use for both developers and designers as now they need to consider when the floats should be enabled and when not. Things get very hard here because a floated element or image can be of any size, which means the simplest way to tackle the issue would be to design limitations on the sizes of floated content: only have two or three sizes, for example.
+
+Also, there is a consideration of content tools. How do you signal whether an image is floated or not? Even to this day there really isn't a single unified solution or markup to do this. In many ways floats have become ignored despite their unique ability to effect wrapping of text.
+
+---
+
+## Collapsing issues
+
+One of the characteristics of floats is that they do not effect the height of their container element. So, if you have a div element which only contains floated elements you will end up with a div element of zero height! Or maybe a bit more if you have padding.
+
+```html
+<div style="background: red;">
+	<span style="float: left;">You</span>
+	<span style="float: left;">can't</span>
+	<span style="float: left;">see</span>
+	<span style="float: left;">any</span>
+	<span style="float: left;">red!</span>
+</div>
+```
+
+In the past there were multiple ways to deal with this, but here I'm giving the cleanest solutions with the least CSS syntax.
+
+1. `contain: layout;` needs the least code. Available in all major evergreen browsers since March 2022.
+2. `display: grid;` (or `display: flex;`) also works as long as it isn't the direct parent of the floated element. Available in all major evergreen browsers since October 2017.
+3. `display: inline-block;` is the most backwards compatible way to include floats in the size calculation of the element. Available in all major browsers since Internet Explorer 8 (March 2009).
+
+<Codepen id="GRwmjzd" title="How to make parent contain floats in 2023" />
+
+The reason you can't have `display: grid;` on a parent of floated element is due to grid's nature of taking over the layout of it's children. In other words: float will no longer be float! The same rule applies with flex. Both grid and flex will eliminate block layout model on their immediate children.
+
+---
+
+## Making floats viable
+
+As there are technical requirements on floats there needs to be communication with a designer, especially if developer and designer don't happen to be the same person. You can't simply go and `style="float: left;"` your to-be-floated HTML elements.
+
+The following things need design consideration:
+
+-   What kind of content can appear floated? Images only? Videos? Polls?
+-   What is the allowed sizes of floated content? Is there a single fixed width or multiple sizes?
+-   How each of the allowed sizes behave on narrower spaces?
+-   Can the float width be dynamic when more space is available?
+-   What is the shortest allowed text row length?
+
+On technical side you have two mechanisms to control when float exists: media queries or container queries. The latter is the superior choice, however it has only been supported by all evergreen browsers since February 2023. This means there still are a lot of users who have browsers with no container query support.
+
+However the appearance of container queries **make floats great again**! In the past you could only use media queries which meant you were limited on where you can use floats in the first place. Basically: mostly only in main body text.
+
+Controlling the desired minimum width for a line of text is much easier to base on the available space of a container element than it is to try and attempt to derive it via entire viewport width and the expected size of the container in each of the breakpoint slices. The latter is possible, but it can be a real brain pain and hard to document, and even harder to later avoid breaking it accidentally.
+
+Here is a simple sample on using container queries:
+
+<Codepen id="ZEmKBoe" title="Managed floats" />
+
+A more advanced example could have more systematic syntax. For example having something like an HTML attribute `data-float="s100Start"` could mean that this element is a size 100px element that floats to inline-start (= floats left when `direction: ltr;`). Having this kind of global style attribute would make it easier to use floats.
+
+---
+
+## Clearing floats
+
+Usually if you have multiple consecutive floats in the same direction the will align themselves as a row, unless there isn't enough space in which case the floats wrap.
+
+If it is instead desirable to have these floated elements to stack vertically you can use `clear` property to do it. You can pass the same value as to `float` to clear on the equivalent side.
+
+Additionally you can use `clear: both;` to make any other element to always position itself after all the floats. This can be desirable on elements that should never share the same space with floats.
+
+---
+
+## The pain with lists
+
+One issue that has long been a pain with floats is that they do not work well together with lists:
+
+<Codepen id="mdQmRXV" title="Sample of how floats do not play well with lists" />
+
+The bullets are positioned within the float's margin, or even above the float. The list becomes incorrectly aligned compared to the paragraph, thus you would like to avoid using floats near a list. This happens because floats do not have effect on margins (which is another reason why I'd love to see gap based control on floats).
+
+However there exists a cure to this issue! It is possible to make lists align in a desired way by using `translateX` to indent. Margin can instead be used on the opposite edge to reduce list width to desired maximum width.
+
+Here is a very complete solution that normalizes list style:
+
+<Codepen id="JjeNELq" title="How to make lists play well with floats" />
+
+In a minimal implementation your CSS would look something like:
+
+```css
+/* dir="ltr" */
+ol,
+ul {
+	margin-left: 0;
+	margin-right: 2rem;
+	transform: translateX(2rem);
+}
+
+/* dir="rtl" */
+ol,
+ul {
+	margin-left: 2rem;
+	margin-right: 0;
+	transform: translateX(-2rem);
+}
+```
+
+This same trick can be used to any element that needs to be indented and which can live on same horizontal space with a float. Any other element can be cleared.
+
+---
+
+## Vertically centering, except if enough text
+
+This is a recent discovery after <Link href="https://mastodon.social/@tylersticka/110617365025241870">a question asked by Tyler Sticka on Mastodon</Link>: how can you align text vertically next to an image, but make it behave as if the image is floated when there is more text available?
+
+<Codepen id="mdQWOxZ" title="Align text vertically next to a float, but only if float is taller" />
+
+The solution ended up being surprisingly simple!
+
+```html
+<div class="grid">
+	<div class="must-not-be-flex-or-grid">
+		<img class="floated-image" alt="" src="" />
+		<div class="content">
+			<p>Content</p>
+		</div>
+	</div>
+</div>
+```
+
+```css
+.grid {
+	display: grid;
+}
+/* this style is not really needed thanks to being a grid child */
+.must-not-be-flex-or-grid: {
+	contain: layout;
+}
+.floated-image {
+	float: right;
+}
+.content {
+	position: relative;
+	top: 50%;
+	transform: translateY(-50%);
+}
+```
+
+If you wish to read why this works please check <Link href="https://cloudfour.com/thinks/solved-tricky-floating-image-alignment/">Tyler's Tricky Floated Image Alignment</Link>.
+
+---
+
+## Avoiding the box
+
+Finally, you can use `shape-outside` property to control the shape of the floated element. Text will wrap according to the given shape instead of being just a box.
+
+For example if you have a circular image:
+
+```css
+.floated-image {
+	aspect-ratio: 1;
+	border-radius: 50%;
+	float: right;
+	shape-outside: circle(50%);
+}
+```
+
+Note that the above vertical centering trick will not work well together with `shape-outside` as it will see the shape from incorrect position (except when the text side is taller).
+
+---
+
+## Closing it up
+
+So there you have it, a rather comprehensive look to real life use cases for floats and how to make them work in practise!
+
+Floats would become a bit easier on modern web if they had their own gap control and if we could tell in CSS the minimum acceptable inline width for text. That would help avoid the issues where you end up with single words on a line, and we also wouldn't need to have margin which messes up when desiring to have image to take all available width.
+
+Having gap control would also fix issues with indented elements such as lists that rely on having margin which gets happily ignored by floats as they are implemented on the web today.
+
+It would also be great to have some form of standardized float syntax for CMS and markdown usage! However it might always require a more specialized design since images are rather complex especially with all the modern responsiveness. But I think it is a bit odd how floats appear to have been mostly ignored in the evolving CSS world. I think they are not that niche of an use case.
+
+Regardless, I hope you found ideas on how to implement great float behavior on your site!

@@ -1,0 +1,13 @@
+---
+export interface Props {
+	href: string
+}
+
+const { href } = Astro.props
+
+const props = /^http/.test(href)
+	? { 'aria-describedby': 'link-to-external-site', rel: 'noopener noreferrer', target: '_blank' }
+	: null
+---
+
+<a href={href} {...props}><slot /></a>

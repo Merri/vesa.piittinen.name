@@ -1,0 +1,206 @@
+---
+title: Server Side Includes, the hottest of the web in 1995
+description: Maybe using old tech solutions is not that bad even as late as 2020?
+publishDate: 2020-10-02
+layout: $layouts/BlogPost.astro
+tags:
+    - html
+    - css
+    - tutorial
+    - webdev
+---
+
+import Link from '$/components/Link.astro'
+
+So recently I've been going back to the future. I've been abandoning things like WordPress and attempts to have a Node app running for some of my sites. Instead I've done the unthinkable and jumped back to the features available on almost every possible web hotel service you can find: SSI, the Server Side Includes, introduced sometime around the mid-90's. So we're talking 25+ years old web technology here!
+
+## The Road Back
+
+I like the new stuff that is out there, but some of it has become way too complex, heavy to manage, and brittle for simple stuff. Sure, you can go ahead and have your homepage or portfolio running on Gatsby, but I would argue it is very much an overkill. Although it is good experience if you've never done anything with the tool before.
+
+I'm not at a point where I'd like to learn new tech. Instead I have a bunch of old sites that I haven't been eager to maintain a great deal. Roughly ten years ago I transitioned my sites to WordPress in hopes I could focus on content better. Well, that didn't work out as well I would have hoped. The constant changes to WP meant my custom designs always broke on next update so I had to use the default themes, and those were never to my liking. This killed my inspiration for the sites, and eventually I no longer made new content.
+
+Of new "simpler" tech I'm interested of Deno, but even that means some setting up and writing much more than just HTML to get started. So this really pushed me and then I remembered what I used to use: SHTML.
+
+## The Basics
+
+Almost any web host you can find will have support for Server Side Includes, because about any service that supports PHP is likely to also have SSI up and running. This means it is very easy to get started, because you can upload a `index.shtml` file and start putting things together. On some hosts you may need to use `.htaccess` to enable the feature:
+
+```
+Options +Includes
+AddType text/html .shtml
+AddOutputFilter INCLUDES .html
+```
+
+Here I have enabled SSI even for regular `.html` files.
+
+The most common SSI feature to use is `<!--#include virtual="/head.html"-->`. This will inject `head.html` file from the root of the site (`https://example.com/head.html`).
+
+The downside of doing this is that viewing the local copy of a HTML file will look broken, because it lacks the parts that are included. If you want to develop on your machine you need to have a HTTP server like Apache running with SSI configured. I've lived without one and have simply used SFTP to upload files as I have changed them, so I'm missing even version control and all kinds of automation!
+
+For the most part this is enough: you can create a site that has shared components.
+
+### Structure
+
+This is how I have ended up splitting my own HTML:
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title></title>
+		<meta name="description" content="" />
+		<!--#include virtual="/head.html"-->
+		<!--#include virtual="/js-utility.html"-->
+	</head>
+	<body>
+		<!--#include virtual="/site-nav.html"-->
+
+		<!-- PAGE CONTENT HERE -->
+
+		<!--#include virtual="/topic-nav.html"-->
+		<!--#include virtual="/foot.html"-->
+	</body>
+</html>
+```
+
+I have more than one `js-utility.html` sort of file. One example of these is <Link href="https://flickity.metafizzy.co/">Flickity</Link> which provides an image carousel for my screenshots of games. The included HTML file is very simple:
+
+```html
+<link rel="stylesheet" href="https://unpkg.com/flickity@2/dist/flickity.min.css" />
+<script async defer src="https://unpkg.com/flickity@2/dist/flickity.pkgd.min.js"></script>
+```
+
+I've also written fallback CSS for my image gallery so that it renders the images in a scrollable horizontal row until Flickity JS kicks in. I'm also using `loading="lazy"` for all images except the first one, so I have lazy loading. Modern web standards sure are powerful! One attribute manages something that used to require lots of trickery and considerations.
+
+If interested [here is a page with the carousel](/suomeksi/civilization-5/). You can even turn JavaScript off and you can still scroll the images using a scrollbar, or you can click them to go through each, or you can tab through them using keyboard. That is three usability/accessibility features even for when JavaScript is not functioning, and the code for them is not complex. But now I'm getting a bit side tracked :)
+
+### Caching
+
+One of the things you may want to do is to set long cache times to most of your file types. For example, preserving images and CSS for a year does make a sense. However the downside is that you need to remember to change a cache buster each time you modify your CSS file! So you'd have something like `<link rel="stylesheet" href="/index.css?version-X" />` where you keep changing the `X` manually. This is not nice.
+
+SSI can help you automate this! First to `head.html` you can add the following:
+
+```html
+<!--#config timefmt="%Y-%m-%d_%H%M%S" -->
+```
+
+This is the date format to use. This will result into a string like `2020-10-02_215735`. The next part is to use a date as cache buster:
+
+```html
+<link rel="stylesheet" href="/index.css?<!--#flastmod virtual="/index.css" -->" />
+```
+
+And now each time you upload a new version of your CSS **all of you pages** will use the new CSS immediately! Of course you need to have a short cache time for your HTML files, or make the browser always ask the server whether the file has changed. I won't delve into the details of caching in this post - for now it is more than enough for you to know that you can control this caching behavior with cache headers.
+
+### Colors, layout measurements, theming
+
+This has been one of the most annoying parts when making a site without any kind of CSS tools such as Sass, Less, CSS Modules, or CSS-in-JS solutions. Each time you get an idea to change a color of something you need to track down each usage and make sure you don't change a wrong color that is meant for different context.
+
+These days there is a CSS-only solution to this problem and that is **CSS Variables**! It is truly a magnificent feature that is very under-appreciated by many, especially those who are currently sold on theming features and capabilities of CSS-in-JS tools.
+
+But say you want to define basics like colors for background, text, links, focus, and a shadow for slightly darker parts.
+
+This is how you do it:
+
+```css
+:root {
+	--bg: white;
+	--fg: #333;
+	--link: #00a;
+	--focus: #059;
+	--shadow: rgba(0, 0, 0, 0.05);
+}
+```
+
+Now you can then define these in their appropriate places:
+
+```css
+html {
+	background-color: var(--bg);
+	color: var(--fg);
+}
+
+a {
+	color: var(--link);
+	text-decoration: none;
+}
+
+a:hover {
+	text-decoration: underline;
+}
+
+/* fallback for browsers with no :focus-visible support */
+a:focus {
+	outline: thin dotted var(--focus);
+	outline-offset: 1px;
+}
+/* ignored by non-Firefox */
+a:not(:-moz-focusring) {
+	outline: none;
+}
+/* ignored by browsers that do not support :focus-visible */
+a:not(:focus-visible) {
+	outline: none;
+}
+/* Firefox :focus-visible */
+a:-moz-focusring {
+	outline: thin solid var(--focus);
+	outline-offset: 2px;
+	-moz-outline-radius: 6px;
+}
+/* standard :focus-visible (Chrome 86 and later) */
+a:focus-visible {
+	outline: thin solid var(--focus);
+	outline-offset: 2px;
+}
+
+a:active {
+	background-color: var(--shadow);
+}
+```
+
+What is even cooler is that you can define blocks:
+
+```css
+.block {
+	background-color: var(--bg);
+	color: var(--fg);
+}
+```
+
+And then you can apply color themes for the block!
+
+```css
+.blue {
+	--bg: navy;
+	--fg: white;
+	--link: #33f;
+	--focus: white;
+	--shadow: rgba(0, 0, 0, 0.5);
+}
+```
+
+The amazing thing here is that now all links inside the blue block are automatically of lighter blue color than elsewhere, the focus ring is made white to keep it visually distinctive, the shadow is much darker because `navy` is a dark blue, and all text is white.
+
+And all this can be achieved in HTML by simply writing:
+
+```html
+<div class="block blue">
+	<!-- CONTENT HERE -->
+</div>
+```
+
+You can also fine tune the variables via HTML `style` attribute. You can even have more blocks with different style rules inside the main block and things just keep on working, there are no nesting issues! This is something that has been very hard to achieve even with all the tooling. And you can use this for more than just colors, and you can even use variables for variables: `--bg: var(--shadow);`.
+
+## Summary
+
+It might be a bit suprising to say this, but I think Server Side Includes is a very potential option for anyone who wants to craft their site in HTML, CSS, and vanilla JavaScript. Unlike the typical modern webdev route you don't need a lot of tooling to accomplish a lot of powerful things, to follow best practises, and to have a performant **maintainable** site.
+
+Most browsers support `type="module"` these days which also gives the ability to make complex multiple file JS apps with ease **without a bundler**! Doing things like minification on smaller sites is not really providing a lot of value, compression can really manage a lot for you. Just make sure your files are compressed on transfer (in `.htaccess`) and you're good to go.
+
+It is also possible to create a site where you encourage people to read your source code! You can have your HTML formatted neatly for the reader, same for your CSS. And with `type="module"` you can create a complex JS app anyone can understand by just looking at the files one at a time in their browser. This opens opportunities for both learning and teaching.
+
+This is actually something that used to be the norm. You could figure out how skilled people were by looking at the source of their sites. These days way too many sites serve mangled garbage, and people follow this practise to their own hobby sites as well. Does it really make sense?
+
+I challenge you to try out Server Side Includes today, and make your human friendly coded site! It is easy: you probably have your first HTML file up and visible to the world in less than 15 minutes once you google yourself a host!

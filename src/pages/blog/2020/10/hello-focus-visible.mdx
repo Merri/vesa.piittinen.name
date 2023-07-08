@@ -1,0 +1,73 @@
+---
+title: Hello, :focus-visible!
+description: Good focus indication has often been neglected. But now we got :focus-visible which you should always implement on your site.
+publishDate: 2020-10-12
+layout: $layouts/BlogPost.astro
+tags:
+    - webdev
+    - css
+    - a11y
+---
+
+import Link from '$/components/Link.astro'
+
+Focus indication is one of those things that have easily gone neglected in design. Many designers also use Macs where focus indicator has been disabled in system settings by default, so you wouldn't even see the styles of `:focus` selector.
+
+In the past years accessibility has been slowly but surely gaining a breakthrough in the community and styling for focus state properly has been growing.
+
+During the past weekend a new release of Chromium went out, meaning Chrome, Edge, and all other Chromium based browsers in version 86 now support `:focus-visible`. This is a great thing, because for the first time since Firefox introduced `-moz-focusring` in 2011 there has been a practical advancement on styling accessible focus!
+
+## The difference
+
+`:focus` style is rather straightforward: display focus indication on an element if it is the current active target of keyboard access. The problem is that it is often undesired to display focus indication on elements when clicking on them with a mouse or finger. However if you remove focus indication entirely you make your app very hard to use with a keyboard, because you don't know which element is the active one.
+
+`:focus-visible` is like `:focus`, but the style is only active if browser heuristics detect the user is using a keyboard, and thus the focus indicator should be displayed. This is great because now we can have the focus indicator have a very visible style while not having to see it when clicking on elements!
+
+## Weak and strong
+
+My suggestion is that from now on by default you should have focus indication even with `:focus` style, however it can be less strong than the one to be used with `:focus-visible`. With proper fallback the rule for `:focus` will only be used for browsers that don't support `:focus-visible`, so as people move to newer browsers they won't be seeing any focus indication when simply tapping or clicking on elements.
+
+## Implementation
+
+We can't use `@supports` so we have to go with the traditional overrides where CSS is ignored if the browser doesn't understand it.
+
+```css
+/* you don't need to use CSS variables if you don't like */
+:root {
+	--focus-color: Highlight;
+	--focus-color: -webkit-focus-ring-color;
+}
+
+/* apply weak focus indication */
+a:focus {
+	outline: thin dotted var(--focus-color);
+	outline-offset: 1px;
+}
+
+/* disable weak focus in browsers which support focus-visible */
+a:not(:-moz-focusring) {
+	outline: none;
+}
+a:not(:focus-visible) {
+	outline: none;
+}
+
+/* apply strong focus indication */
+a:-moz-focusring {
+	outline: medium solid var(--focus-color);
+	outline-offset: 2px;
+	-moz-outline-radius: 6px;
+}
+a:focus-visible {
+	outline: medium solid var(--focus-color);
+	outline-offset: 2px;
+}
+```
+
+On browsers that do not support `:focus-visible` you will see dotted one pixel outline each time element has focus, while on supporting browsers you will see a very noticeable focus indication, but only through keyboard access.
+
+## Conclusion
+
+The time to start migrating to `:focus-visible` is now! You can begin planning on removing JavaScript based implementations on a schedule that fits your project the best.
+
+Now if just Chromium would also <Link href="https://bugs.chromium.org/p/chromium/issues/detail?id=81556">support rounded corners on outline</Link>... Because Firefox does, and has done for a very long time, even if through a non-standard vendor prefix. But it does support it. Doing rounded focus rings using box-shadow is a hack.

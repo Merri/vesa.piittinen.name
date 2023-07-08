@@ -1,0 +1,91 @@
+---
+title: Heroes of Might and Magic III suomeksi!
+description: Fantasiastrategioiden helmi, Heroes of Might and Magic III, on nyt myös osittain suomennettu! (HoMM 3 Finnish translation language pack / mod)
+layout: $layouts/Finnish.astro
+---
+
+import Float from '$/components/Float.astro'
+import Icon from '$/components/Icon.astro'
+import { inlineFlex } from '$/components/inlineFlex.module.css'
+import Link from '$/components/Link.astro'
+
+<Float>
+	<img
+		slot="image"
+		loading="lazy"
+		alt="Ruudunkaappaus: pelin päävalikko suomennettuna"
+		src="/assets/homm3/2020-04-13-heroes3suomeksi.png"
+		width="800"
+		height="600"
+	/>
+
+# Heroes III suomeksi!
+
+## [Lataa uusin versio: `2020-04-13`](/files/heroes3suomeksi_2020-04-13.zip)
+
+Toimii **alkuperäisen** pelin kanssa, ei tue Steamin HD-versiota. Lue tarkemmat ohjeet ja tiedot alta!
+
+</Float>
+
+Huomaa että suomennos on edelleen keskeneräinen.
+
+## Vaatimukset
+
+-   Windows<br /><br />
+-   Heroes of Might and Magic III Complete: <Link href="https://www.gog.com/game/heroes_of_might_and_magic_3_complete_edition">osta ja lataa</Link><br />Completen lisäksi myös Shadow of Death käy.<br />Pelin tulee olla englanninkielinen.<br /><br />
+-   HoMM3 HD Mod: <Link href="https://sites.google.com/site/heroes3hd/eng/description">lataa</Link><br />tai HD Mod compatible with Horn of the Abyss: <Link href="https://www.hota.acidcave.net/download.html">lataa</Link>
+
+**Ei toimi** Steamissa saatavilla olevan uudelleentehdyn <Link href="https://store.steampowered.com/app/297000/Heroes_of_Might__Magic_III__HD_Edition/">Heroes III HD Editionin</Link> kanssa, jota puolestaan ei tule sekoittaa HD Modiin, joka toimii yhteistyössä alkuperäisen pelin kanssa.
+
+## Asennus
+
+Asenna ensin Heroes III ja HD mod. Tämän jälkeen lataa suomennoksen ZIP-paketti ja pura sen sisältö Heroes III:n `_HD3_Data`-hakemistoon. Jos et tiedä missä se on, niin peli voi löytyä mm. seuraavista sijainneista:
+
+-   `C:\GOG Games\HoMM 3 Complete\_HD3_Data`
+-   `C:\Program Files (x86)\3DO\Heroes3\_HD3_Data`
+
+ZIP-tiedostossa on kaksi hakemistoa, joiden sisältöjen tulisi purkautua siten, että `Lang`-hakemistosta löytyy purkamisen jälkeen `#fi.ini` ja vastaavasti `Packs`-hakemistosta `Heroes III suomeksi`.
+
+Purkamisen jälkeen käynnistä HD mod ja vaihda kieleksi suomi:
+
+<img
+	alt="Ruudunkaappaus HD Modin käynnistäjästä, jossa pakettilistaukseen on lisätty Heroes III suomeksi"
+	src="/assets/homm3/2020-04-13-HD-mod.png"
+	width="641"
+	height="573"
+	loading="lazy"
+/>
+
+Tämän lisäksi käy HD modin asetuksissa lisäämässä paketteihin Heroes III suomeksi. Tämä onnistuu painamalla Lisää ja sitten valitsemalla aukeavasta listasta haluttu vaihtoehto. Yllä oleva kuva näyttää miltä lopputuloksen tulisi näyttää.
+
+Näiden toimien jälkeen iso osa pelikokemuksesta pitäisi olla suomeksi. Hauskaa pelailua!
+
+> Voit seurata minua Mastodonissa `@merri@olifant.fi`!<br />Käytä aihetunnistetta `#heroes3suomeksi`.
+
+<div style="text-align: center;">
+	<img
+		loading="lazy"
+		alt="Ruudunkaappaus: rakennusvirasto"
+		src="/assets/homm3/2020-03-27-heroes3suomeksi2.png"
+		width="800"
+		height="600"
+	/>
+</div>
+
+## Versioarkisto
+
+-   [`2020-04-13`](https://merri.net/localization/heroes3suomeksi_2020-04-13.zip)
+-   [`2020-03-27`](https://merri.net/localization/heroes3suomeksi_2020-03-27.zip)
+
+Ensimmäinen versio julkaistiin maaliskuussa 2020.
+
+## Suomennoksen muokkaaminen
+
+Mikäli haluat kokeilla parannella tai muuttaa suomennosta, niin se onnistuu käyttämällä <Link href="https://fi.libreoffice.org/lataa/luotettavin-libreoffice/">LibreOffice Calc</Link> -ohjelmaa. Pelin käyttämät tekstitiedostot ovat CSV:tä ja ne avautuvat suoraan Calcissa. Tallenna samassa muodossa takaisin. On suositeltavaa pitää muokkaamattomia varmuuskopioita kämmien varalta, tai käyttää versionhallintaa.
+
+<p>
+	<a href="/suomeksi" class={inlineFlex}>
+		<Icon href="/icons/arrow-left.svg" />
+		<strong>Kiinnostaisivatko muutkin suomennokset?</strong>
+	</a>
+</p>

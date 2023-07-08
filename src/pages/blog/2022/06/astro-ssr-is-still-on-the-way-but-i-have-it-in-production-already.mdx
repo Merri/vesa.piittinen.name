@@ -1,0 +1,161 @@
+---
+title: Astro SSR is still on the way but I have it in production already
+description: An early adoption of Astro's Server Side Rendering capabilities that actually succeeded very well. Here you can find out what I used!
+publishDate: 2022-06-13
+layout: $layouts/BlogPost.astro
+tags:
+    - astro
+    - webdev
+    - html
+    - css
+---
+
+import Link from '$/components/Link.astro'
+
+About 10 days ago around June 3rd or so, I started a new project. It was to become a new version of an existing service that was used for real life meetup registrations. For this project I chose a cutting edge tool: Astro SSR. What could possibly go wrong when using a beta grade software?
+
+## Backgrounds
+
+For this particular project I wanted to focus a great deal into **ease of use** and **usability**. It helps a lot that I've been taking part in the meetups for some 20 years and I've seen the evolution of the practises. And there have been apps to handle the registrations for some 15 years or so. First a PHP app written by someone else, and later a React app I wrote in 2017.
+
+But what does **ease of use** and **usability** really mean? Well... for a programmer it means writing more code than just doing the minimal that provides the features. I guess we've all seen and felt the experience of apps that have been designed by a "programmer mentality" where yes, the features are there, but the experience of using the app is like deciphering the mystic runes of... hey wait, is this direct database manipulation? Oh yes it is, how convenient! ... **for the programmer**.
+
+So I had to put on the designer hat and place that programmer one in the hat tree, and make choices that made my programming life harder.
+
+## Tech of the past
+
+The older React site was pretty much a SPA. It had separate client and server bundles and a lot of REST API. For storing data it used SQLite3 on the server. To speed up development I had ended up using an UI component library which also provided a custom icon font.
+
+Most of my time whilst developing the React app was spent fighting wars I didn't want: solving deployments, creation of REST API endpoints, creating a client-side routing because SPA, noticing the issue of having to do a lot of browser-like behaviours that didn't yet properly exist as ready made solutions around 2017 - or at least lacked the popularity to be widely known.
+
+So overall the old project quickly hit a point that I didn't really want to develop it further, and it was too big of a mental burden to get back into it as the deployment wasn't "push a commit to repo and it deploys" sort of thing. And back around 2017 the idea of SPA increasingly felt like the wrong way to solve front-end. Questions like "URL changed, where the focus should be now?" was something that constantly bothered me.
+
+Back in 2017 there really weren't viable React-like ways to create an app. Not even NextJS was really a great solution: it created, and still creates, massive client-side bundles unless you really, really spend the time to fight against it!
+
+## Tech of the day
+
+Fast forward to today. We now do have the "React-like" experience: for a while now I've been using Astro as a static site builder. It adopted a JSX-like syntax. But it also brings an option to not use React at all: you can use any front-end solution you like!
+
+I have more or less liked the experience, even if there is still that continuous fluctuation of change involved when using a tool that is still on it's way to reach maturity. The pros are strong though: you can easily make 0% JavaScript pages if you don't need the functionality.
+
+Most of the time we don't need client-side JS. And I'm saying this as a very much front-end guy. Core of the front-end is making use of HTML and CSS to create great UX. SPA is great and needed for highly interactive sites, but for a majority of sites either SSG or SSR is the way to go.
+
+And now that we mentioned it, SSR is a new feature in Astro that is not yet ready for the primetime for everyone. Still, I wanted to go ahead and make use of it since having access to cookies is yummy. And Astro SSR still retains the most important feature: no client-side JS unless you want JS!
+
+## Removing the issues
+
+This time around I wanted to guarantee that getting back into the project is as easy as possible. To make this sure I made the following moves:
+
+-   Code is publicly available on GitHub.
+-   Use Vercel to deploy: it takes a lot of pain away and is free of charge for small hobbyist usage.
+-   No third party component libraries: I enjoy HTML and CSS so they should be around and visible as much as possible.
+-   Quality control: track errors with a third party service. At work I've used TrackJS and Sentry. But I found out Bugsnag offers a free plan for hobbyist usage, and it was the first one I noticed to have this option so I went with their service.
+-   "Real" database with PostgreSQL
+
+By having the code publicly visible I've forced myself to do a lot of things correctly. Such as use environment variables for all the secrets. I even bothered to write a README, and I might end up writing a CONTRIBUTING documentation as well.
+
+So far Vercel has been a great experience to me. I do have Opalstack for my development needs, but making and setting up deploys from GitHub hasn't been an enjoyable experience. So in future I'm moving many site front-ends to Vercel, but retain Opalstack for things like databases, domain management, crontabs, few old PHP based sites, and so on.
+
+Astro makes it easily possible to keep HTML and CSS right in front of your eyes. Even in React development I've been moving towards a philosophy that keeping the semantic HTML elements is crucial for understanding and clarity of development. So while components are nice I don't want to see just component trees everywhere. I rather want to see the semantic structure.
+
+Finally, I wasn't sure about the need of a quality control, but once I started to get emails on errors on things that just failed it was worth the trouble of searching and setting up! Having error tracking gives confidence of things working, especially when there is one other aspect of quality control missing: no tests.
+
+Tests are great and give confidence when refactoring (much better than TypeScript alone ever can), but writing them takes time, and I didn't have the luxury of time for this hobbyist level project.
+
+Finally, I wanted to upgrade from SQLite3 to PostgreSQL. Picking Vercel as deploy target actually forced me into this, because otherwide I'd have had to solve the problem of access to the database file. This ended up being a great thing to happen, but I'll cover that a bit later.
+
+## The 50%
+
+So, great, I had chosen a lot of solutions and could get to work! It was very was to get the first pages going on and putting some design work in for how the UX should work. But after the initial quick phase I felt more like walking in the mud. Why? Because I had to implement user authentication.
+
+The trouble with user auth, when done "properly", is that you need a lot of stuff going on! You need to send emails, you need to consider security, especially in case when not going for Two-Factor Authentication.
+
+I also didn't want to use OAuth as that would've meant third-party dependency = likely a legal requirement to add in a cookie notification. I wanted to avoid having such a thing in a project of this scale.
+
+I ended up with two login forms:
+
+1. Send email link to login
+2. Login by password
+
+The first one is "clever" in that you actually get to use it as a registration form as well. This means minimal user friction to get started with the service, and in case you forget password? Well you just ask for the login link! The only thing you need to remember is the email address you use in the service.
+
+Login by password instead is faster: you don't need to wait for an email, and these days there are a lot of services that can make the password option less painful. But some people still prefer not to use them so this is why also having the login link option is important.
+
+The nice thing about this design choice is that I didn't have to put "forgotten password" feature into the login forms! Since the person can always login using email they can find the forgotten password option from their profile page instead, when logged in.
+
+Finally, in the profile page I separated features into four distinct options:
+
+1. Update main profile information
+2. Change email
+3. Change password
+4. Forgot password
+
+The first three require password: you should rarely if ever need to use these features so it makes sense to protect them in this way. Each of the actions also submits email with a confirmation link, and email texts include a info on what to do in case there is a danger of profile takeover.
+
+A reason to split the three first options was also to slow down any possible takeover. Though it is pretty bad if either your password or email account is compromised, so these measures aren't really enough for a "more serious" service. At a minimum there would have to be logging of changes plus 2FA.
+
+In the end handling all the authentication stuff, from design to implementation, ate 50% of my work effort.
+
+## Great libraries and utilities
+
+While working on this project I've found or used tons of great small solutions so I want to throw some credits out there!
+
+-   <Link href="https://www.npmjs.com/package/postgres">postgres</Link> on NPM is great to use! SQL has never been as enjoyable
+    to me.
+-   <Link href="https://date-fns.org/">date-fns</Link> and <Link href="https://www.npmjs.com/package/date-fns-tz">
+    	date-fns-tz
+    </Link> have been my choice for date handling for a while now, and are still great.
+-   <Link href="https://www.npmjs.com/package/nodemailer">nodemailer</Link> handles emails and has worked well.
+-   <Link href="https://www.npmjs.com/package/phone">phone</Link> saved me all the trouble of figuring out phone number validation,
+    so thanks!
+-   <Link href="https://www.npmjs.com/package/sanitize.css">sanitize.css</Link> is a foundation I like to build my basics
+    upon. It provides opinions which I find better than the browser defaults.
+-   <Link href="https://dribbble.com/shots/17302420-Freebie-SWM-Icon-Pack-version-2-0">Software Mansion Icon Pack</Link> is
+    freely available and provides duotone SVG icons. I've customized these icons to be easy to re-color them. I don't actually
+    like look of all the icons, but they're very much good enough to cover the needs of a hobby project.
+
+I had to put `postgres` first in an otherwise alphabetical list, because it has simply been so great a find! It takes away a lot of the nasty part of building queries while maintaining the feeling that "it is just SQL". One pattern that I now like to use is this:
+
+```ts
+const user = (await sql<User>`SELECT * FROM users WHERE id = ${id}`).pop()
+```
+
+This pattern works great together with TypeScript! One user found? You got it! Did not found? `undefined`. And this is short'n'sweet to write.
+
+I prefer this over `users[0]` because TypeScript doesn't really know the concept of this being possibly `undefined`.
+
+This also works great in Astro because in Astro files you can already use top-level awaits without issues. In some ways this now feels like the good old days of PHP development over ten years ago but **without** the messy parts!
+
+Astro SSR also provided another big benefit: I haven't had a need to write a single actual REST API endpoint. Why? Because everything is mostly just HTML forms.
+
+## Completion of crucial parts
+
+So a couple of days ago I completed the authentication parts. Up until that point things had been tooling wise rather smooth sailing. The only major issues I had noticed up until that point were:
+
+1. CommonJS imports broke on Vercel so I needed to figure out how to fix them.
+2. 404 page didn't serve correctly on Vercel, instead getting the default empty Vercel page.
+3. Code formatting on Astro files is odd, and seems to have a non-Prettier rules kind of life of it's own. Yes, it gets formatted. No, it does not look like anything you would see on a TS or TSX file.
+
+However I was hitting a point where I needed to introduce more dynamic UI parts, so making use of front-end library became necessary. I want to use SolidJS because, well, I'm biased towards how it works. It has similarity to a React-like idea I built back in 2015, but didn't have the time and thus knowledge to develop it further.
+
+Unfortunate as it is, SolidJS in Astro SSR is still broken when writing this (beta 43). A fix has been done to Vite and Astro, but it is still on it's way. However it is only broken in development: once built the SolidJS parts work just as it should. This forced me to look into running a local copy of production build. This was something I didn't want to put my time into!
+
+First I tried to run on Deno, but noticed that I could not get neither `crypto` or `node:crypto` to work with it. Then I put together a NodeJS server. It worked but lacked static files. I eventually figured out that I had to manually serve them. So did I get a fully locally working production server?
+
+No, I didn't! For whatever reason POST / FormData does not work correctly. So while I now have a working env to test SolidJS client-side without a deploy to Vercel, I do not have an env where everything works.
+
+This is what you get when working on the edge! Not everything works like you'd expect and you waste time to stuff you wouldn't like to.
+
+However! Regardless of these challenges I have proceeded to having all my MVP features done far enough that I could release the site itself!
+
+## See it in action
+
+There is one problem with this project from the viewpoint of international audience. What would that be? Well... the site is in Finnish language! And it is a niche project in that it, at least for now, only serves the Finnish Tolkien Society.
+
+Regardless, for the interested here is a link to the test environment site: <Link href="https://mellon-test.kontu.me">mellon-test.kontu.me</Link>
+
+The code is also available at GitHub for anyone to see: <Link href="https://github.com/Merri/mellon.kontu.me">github.com/Merri/mellon.kontu.me</Link>
+
+Overall this has been an enjoyable experience and there has been **so far less friction** compared to how things were five years ago. Getting Astro site up and running now is much more comparable to how easy has been to get PHP sites up and running on webhotels. And at the same time you can get much more things "done right" out of the box.
+
+The past ten years have been quite the rollercoaster for the JavaScript developer. However I think I'm ready to declare that the "dark times" have ended and it is easier than ever to get performant, efficient sites up and running. This by default, not as an afterthought you need to spend countless work hours into to achieve.
