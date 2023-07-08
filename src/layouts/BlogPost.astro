@@ -55,6 +55,13 @@ const dateModified = format(modified, 'PPP')
 	permalink={permalink}
 	social={socialImage}
 >
+	<link
+		slot="head"
+		rel="alternate"
+		type="application/rss+xml"
+		title="RSS Feed for Blog by Vesa Piittinen"
+		href="/blog/rss.xml"
+	/>
 	<header>
 		{heroImage && <img width="720" height="420" class="hero-image" loading="lazy" src={heroImage} alt={alt} />}
 		<hgroup>
