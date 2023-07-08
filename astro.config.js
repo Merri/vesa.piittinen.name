@@ -6,7 +6,7 @@ import node from '@astrojs/node'
 import preact from '@astrojs/preact'
 import fs from 'node:fs'
 import { deflate } from 'pako'
-//import vercel from '@astrojs/vercel/static'
+import vercel from '@astrojs/vercel/serverless'
 
 const isDeno = process.argv.includes('--deno')
 const isNode = !isDeno && process.argv.includes('--node')
@@ -36,7 +36,7 @@ export default inflate(array);`
 }
 
 export default defineConfig({
-	adapter: (isDeno && deno()) || (isNode && node({ mode: 'standalone' })) || undefined /*vercel()*/,
+	adapter: (isDeno && deno()) || (isNode && node({ mode: 'standalone' })) || vercel(),
 	integrations: [preact(), mdx()],
 	//output: 'static',
 	output: 'server',
