@@ -14,7 +14,7 @@ const tags = new Set(
 
 const allPosts = await Astro.glob<MarkdownInstance<Post>>('./blog/[0-9][0-9][0-9][0-9]/[0-9][0-9]/*.(md|mdx)')
 const posts = allPosts.filter((post) => tags.size === 0 || post.frontmatter.tags?.some((tag) => tags.has(tag)))
-posts.sort((a, b) => +new Date(b.frontmatter.publishDate) - +new Date(a.frontmatter.publishDate))
+posts.sort((a, b) => +new Date(b.frontmatter.pubDate) - +new Date(a.frontmatter.pubDate))
 ---
 
 <Layout
@@ -23,6 +23,13 @@ posts.sort((a, b) => +new Date(b.frontmatter.publishDate) - +new Date(a.frontmat
 	description="A blog mostly focused on web development."
 	permalink="https://vesa.piittinen.name/blog"
 >
+	<link
+		slot="head"
+		rel="alternate"
+		type="application/rss+xml"
+		title="RSS Feed for Blog by Vesa Piittinen"
+		href="/blog/rss.xml"
+	/>
 	<h1>Blog</h1>
 	<p>On this blog I'm mostly focusing on topics about web development.</p>
 	{

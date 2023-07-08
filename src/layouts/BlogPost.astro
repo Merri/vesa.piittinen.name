@@ -11,8 +11,8 @@ export interface Post {
 	title: string
 	documentTitle?: string
 	author?: string
-	publishDate: string
-	modifiedDate?: string
+	pubDate: string
+	modDate?: string
 	heroImage?: string
 	description: string
 	permalink?: string
@@ -33,8 +33,8 @@ const {
 	title,
 	documentTitle,
 	description,
-	publishDate,
-	modifiedDate,
+	pubDate,
+	modDate,
 	author,
 	heroImage,
 	alt,
@@ -42,8 +42,8 @@ const {
 	tags = [],
 } = Astro.props.content
 
-const published = new Date(publishDate)
-const modified = new Date(modifiedDate ?? publishDate)
+const published = new Date(pubDate)
+const modified = new Date(modDate ?? pubDate)
 const datePublished = format(published, 'PPP')
 const dateModified = format(modified, 'PPP')
 ---
@@ -65,7 +65,7 @@ const dateModified = format(modified, 'PPP')
 			<p class="publish-date">
 				Page published on <time datetime={published.toISOString().slice(0, 10)}>{datePublished}</time>
 				{
-					modifiedDate && (
+					modDate && (
 						<small>
 							<br />
 							Last modified on <time datetime={modified.toISOString().slice(0, 10)}>{dateModified}</time>
