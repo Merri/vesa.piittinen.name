@@ -1,6 +1,7 @@
 ---
 title: Vesa Piittinen
 description: Homepage of Vesa Piittinen, an autistic senior front-end of the front-end developer.
+permalink: https://vesa.piittinen.name
 layout: '$layouts/English.astro'
 ---
 

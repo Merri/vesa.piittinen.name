@@ -1,6 +1,7 @@
 ---
 title: Links collected by Vesa Piittinen
 description: Lots of links to help you dig deeper to the wonderful web that is the Internet.
+permalink: https://vesa.piittinen.name/links
 layout: '$layouts/English.astro'
 ---
 

@@ -17,7 +17,12 @@ const posts = allPosts.filter((post) => tags.size === 0 || post.frontmatter.tags
 posts.sort((a, b) => +new Date(b.frontmatter.publishDate) - +new Date(a.frontmatter.publishDate))
 ---
 
-<Layout lang="en" title="Blog by Vesa Piittinen" description="A blog mostly focused on web development.">
+<Layout
+	lang="en"
+	title="Blog by Vesa Piittinen"
+	description="A blog mostly focused on web development."
+	permalink="https://vesa.piittinen.name/blog"
+>
 	<h1>Blog</h1>
 	<p>On this blog I'm mostly focusing on topics about web development.</p>
 	{

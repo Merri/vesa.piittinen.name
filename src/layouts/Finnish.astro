@@ -1,15 +1,14 @@
 ---
 import { MarkdownContent } from 'astro'
 import Layout from './Layout.astro'
-import './alku.css'
 
 export interface Props {
-	content: MarkdownContent<{ title: string }>
+	content: MarkdownContent<{ description?: string; permalink?: string; title: string }>
 }
 
-const { title } = Astro.props.content
+const { description, permalink = new URL(Astro.url.pathname, Astro.site).toString(), title } = Astro.props.content
 ---
 
-<Layout lang="fi" title={title}>
+<Layout lang="fi" description={description} permalink={permalink} title={title}>
 	<slot />
 </Layout>
