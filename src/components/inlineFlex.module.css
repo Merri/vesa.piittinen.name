@@ -1,6 +1,7 @@
 .inlineFlex {
 	align-items: center;
 	display: inline-flex;
+	flex-wrap: wrap;
 	gap: 0.5rem;
 	vertical-align: middle;
 }
