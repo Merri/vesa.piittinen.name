@@ -1,0 +1,295 @@
+---
+title: External links with the least HTML
+description: These days we have the need to display links to external sites with an accompanying icon. Typical implementations involve adding lots of extra elements under the hood. Is there a way to get it done with less?
+pubDate: 2023-07-09
+layout: $layouts/BlogPost.astro
+tags:
+    - html
+    - css
+    - a11y
+    - tutorial
+---
+
+import Icon from '$/components/Icon.astro'
+import Link from '$/components/Link.astro'
+
+import styles from './external-links-with-least-html.module.css'
+
+Accessible external links is a recommended pattern in the modern web. These do not only benefit users with screen
+readers by providing expectations, but have become a general good usability pattern to also let all users know that the
+link will take them elsewhere.
+
+## The requirements
+
+For an external link you need the following:
+
+-   The link itself
+-   `rel="noopener noreferrer"`
+-   `target="_blank"`
+-   A way for user to know the link is an external link
+
+This can seem simple enough at first. However there are some implementation details that are challenging to account for:
+
+1. Typically external link is signaled with a dedicated icon. However this icon should never wrap to a new line alone.
+2. For a screen reader user an icon is not enough. You need to have text somewhere that a screen reader can find it.
+
+Additionally it would be desirable that the text content announcing the external link remains the same. On many
+component based libraries and frameworks this might not be that much of a problem, you could just make the same text
+repeat on each occasion. But even then it can be beneficial to not repeat the same text contents each time in the output
+HTML / DOM. We'll return to this later on.
+
+## Typical implementation
+
+As far as I can tell a typical React-based implementation usually ends up being something like this after several
+rounds of trial and error + life on actual production environment:
+
+```jsx
+import type { ComponentPropsWithoutRef } from 'react'
+
+interface Props extends Omit<ComponentPropsWithoutRef<'a'>, 'target'> {
+	href: string;
+}
+
+export function ExternalLink({ children, rel, ...props }: Props) {
+	// retain only lower case unique values
+	const rel = [...new Set(`noopener noreferrer ${rel || ''}`.toLowerCase().trim().split(/\s+/))].join(' ')
+
+	return (
+		<a {...props} rel={rel} target="_blank">
+			{children}
+			<span style={{ whiteSpace: 'nowrap' }}>
+				&#xfeff;
+				<some-svg-based-icon style={{ marginLeft: '0.25rem' }} />
+			</span>
+			<span className={visuallyHidden}>Link to external site, opens a new browser window</span>
+		</a>
+	)
+}
+```
+
+The sample above has been simplified slightly to use inline styles to make things slightly quicker to follow, in a real
+component you'd use CSS Modules or other flavor of styling.
+
+So, why do people eventually end up with that? Lets break it up!
+
+### Visually hidden text
+
+At the end we have the text to let screen readers know what the whole thing is about. We want the text to be read after
+everything else so that is where we place it. Also, as `aria-label` does not translate on all tools the text is placed
+in a visually hidden element.
+
+Also, the element often ends up being the last element after someone notices they get a double gap when rendering the
+external link as a button which happens to use `inline-flex` to align icons. You probably should have an entirely
+different component for that render case but we won't delve too deep into that issue here.
+
+### External link icon
+
+One of the other first things people notice when using an icon at the end of a link is when they encountered a link at
+the end of line: the icon ends up being treated as a separate character/word, and does a very ugly thing: it is
+renderered alone into a new line! It would be much better if it was counted as a part of the last word, thus getting the
+last word alongside the icon to a new line.
+
+<figure>
+	<div
+		style="background: var(--shadow-bg); display: inline-block; font-size: 1.25rem; padding: 1rem; white-space: nowrap;"
+		title="Simulated example of the problem"
+	>
+		<span>This is some inline text</span>
+		<br />
+		<a>and a link to nowhere</a>
+		<br />
+		<a>
+			<Icon href="/icons/newscreen.svg" style="margin-left: 0.5rem" />
+		</a>
+		<span> and text goes on...</span>
+	</div>
+	<figcaption>Example of the problem</figcaption>
+</figure>
+
+So at this point people start to try it out and they usually find that a combination of `white-space: nowrap;` and a
+`&nbsp;` character within a wrapping `<span />` does the magic to keep the icon and last word as a single unit. However
+at some point a designer points out they don't want to see the underline get so close to the icon so `&nbsp;` gets
+replaced by a margin on the icon and Unicode `0xFEFF` zero width no-break space. Or as HTML entity: `&#xfeff;`.
+
+### Rel
+
+The `rel` usually doesn't get all that much attention to it, but if there is a person with attention to code details you
+end up getting some form of a solution that makes sure there are no duplicate attribute values on the list. And
+enforcing `noopener` and `noreferrer` is better than trusting that the person giving a `rel` remembers to include
+`noopener noreferrer` (relevant "naive" implementation being like: `rel={rel ?? 'noopener noreferrer'}`).
+
+---
+
+## The Good, The Bad
+
+So, by now you hopefully understand why the typical React implementation is the way it is. What is good about it?
+
+I guess one of the major good parts is how everything is in one place as a single component. This makes it easier to
+follow stuff. Also the implementation works relatively well even when some unexpected stylings are applied, like making
+the link element itself a flex container. Usually the icon and the text gets aligned in a desirable way.
+
+However now we get to the bad parts. There is a lot of repetition happening: both the screen reader text and the icon
+image itself are repeated over and over. This eats into HTML element budget and when it comes to client-side React it
+also means there is more to do during renders. It just would be nicer to not have any extra HTML.
+
+Finally there is also the part of "why?" in the code. You need good comments and/or tests in place to make sure the
+solution is not being refactored by anyone too eagerly! "This could be simpler and cleaner", "that is unnecessary"...
+those thoughts are so easy to get when seeing something which isn't immediately obvious.
+
+## If you only had HTML and CSS
+
+The React component above is a good example of what happens when you think about a problem purely as a JavaScript
+developer, as a consumer of a library, not as a web developer. So what would a web developer do? Well, they'd
+investigate all the possibilities to avoid having those extra HTML elements. And they might even consider what it would
+be like to write the same external link syntax over an over in cases where you don't have components, just HTML.
+
+### Go HTML, go!
+
+The first thing we can eliminate is the repeated visually hidden text. What we can do instead is to have a single
+instance of this text in the DOM, say, at the beginning of body, and then use `aria-describedby` to get it read after
+the link contents. While this is still repetition on every link it is easier to remember and easier to write!
+
+```html
+<body>
+	<div id="link-to-external-site" hidden>Link to external site, opens in a new browser tab</div>
+
+	<div>
+		<a
+			href="https://example.com"
+			aria-describedby="link-to-external-site"
+			rel="noopener noreferrer"
+			target="_blank"
+		>
+			This is an example link
+		</a>
+	</div>
+</body>
+```
+
+Wow, we didn't even need a visually hidden style here!
+
+It is very common especially in the world of React mindset to avoid using fragmented solutions like the above. There is
+just something that people dislike when a part of a solution is in a different place than the other. They want to
+contain everything in the component. However the code above is very effective and simple!
+
+**Disclaimer**: I do not have the resources to test this on an extensive list of screen readers and operating systems.
+I have tested NVDA on Windows and VoiceOver on iOS. Both announce the external link.
+
+> It doesn't work? Let me know on Mastodon: `@MerriNet@mastodon.social`
+
+At this point we have zero added HTML elements. Can we also handle the icon without adding HTML?
+
+### The enemy is weak, go CSS!
+
+We know our requirements: inline element and no extra HTML to add. That doesn't leave a lot of options! And we should
+still meet the criteria that the icon does not go to a new line alone. Is it even possible?
+
+Turns out, yes it is! One little detail that I found out while doodling around this challenge is that padding of an
+inline element never ends up to a new line alone! The only browser where it can do that, to my knowledge, is Samsung
+Internet. And that I think is rare enough to not bother me.
+
+However there is the challenge of having the icon only appear above the padding. There are a few ways to try to do that,
+but sometimes a simple `position: absolute;` is the way to go:
+
+```css
+/* debug phase: try to have a bog on all links */
+a::after {
+	background: currentColor;
+	content: '';
+	height: 1.25em;
+	position: absolute;
+	transform: translateX(0.1875rem);
+	width: 1.25rem;
+}
+```
+
+<figure>
+	<div
+		style="background: var(--shadow-bg); display: inline-block; font-size: 1.25rem; padding: 1rem; position: relative; overflow: hidden; resize: both;"
+		title="Preview of the solution"
+	>
+		<span>This is some inline text </span>
+		<span class={styles.exampleOne}>and a link to nowhere</span>
+		<span> and text goes on...</span>
+	</div>
+	<figcaption>Resize: box should never be alone at start of new line</figcaption>
+</figure>
+
+That is a success! You should see the box always being attached to the last word of the link.
+
+If you want a challenge there are still possibilities and open questions:
+
+-   Is there any other way to achieve this same behavior? Borders?
+-   What about `direction: rtl;`? Is it possible to make this actually work regardless of text direction?
+
+### Polish it up with an icon
+
+Finally we need to place an icon into the box. For that I've found mask images to be a decent way to get it done in a
+reliable way:
+
+```css
+/* global SVG masks for CSS use */
+:where(:root) {
+	--mask-new-screen: url("data:image/svg+xml,<svg viewBox='0 0 24 24' xmlns='http://www.w3.org/2000/svg'><path d='M20 4L9.99997 14M20 4L20 9.99999M20 4L14 3.99998M10 4H4V20H20V14' fill='none' stroke='black' stroke-width='2.5' stroke-linecap='round'/></svg>");
+}
+
+/* External links */
+:where(a[target='_blank' i][rel~='noopener' i][rel~='noreferrer' i][aria-describedby]) {
+	padding-right: 1.5rem;
+}
+
+/* External links */
+:where(a[target='_blank' i][rel~='noopener' i][rel~='noreferrer' i][aria-describedby])::after {
+	background: currentColor;
+	content: '';
+	height: 1.25em;
+	position: absolute;
+	width: 1.25rem;
+	transform: translateX(0.1875rem);
+	-webkit-mask-image: var(--mask-new-screen);
+	mask-image: var(--mask-new-screen);
+	-webkit-mask-position: bottom;
+	mask-position: bottom;
+	-webkit-mask-repeat: no-repeat;
+	mask-repeat: no-repeat;
+}
+```
+
+**What do my eyes see here?!?** Global styles?! That is against the law!
+
+You do you, but since external links do have this very specific syntax requirement I find it reliable enough to do it
+through a global style. This is yet another hit to the heart of many "but that isn't a neatly contained component!"
+folks. The truth is: this works, and it works mighty well. This is the implementation on <Link href="https://vesa.piittinen.name">my homepage</Link>.
+
+> The icon is sourced from an old version of a Software Mansion Icon Pack, <Link href="https://swmansion.com" rel="nofollow">swmansion.com</Link>.
+
+This styling is not entirely perfect for all desires: I chose to make it align well for regular size text, but on larger
+sizes the icon might seem to be aligned too low related to the text. For now I'm happy enough with the result that I'm
+keeping it as it is.
+
+---
+
+## The downsides and conclusion
+
+Life ain't perfect. This solution is just one clever way I got a desired result: minimal HTML implementation of an
+external link with an icon with it being tied to the last word.
+
+This is the full list of issues I'm aware of:
+
+1. This is not extensively tested in the wild. I've tested this on a limited number of screen readers.
+2. Samsung Internet does it's own interpretation of padding behavior on inline elements.
+3. Text not written left-to-right is hard to support with this approach.
+4. The solution is fragmented to "loose" dependencies: global CSS, global element with a specific `id` attribute.
+5. The style breaks if you force the link element to be a flex or grid container.
+
+However the benefits are quite huge!
+
+1. HTML is as minimal as it can get. No extra elements for every link.
+2. CSS has some mild complexity, but it isn't too bad.
+
+All in all, if you were a madman who would write stuff in pure HTML, this solution would be manageable! The way the
+global CSS selectors are written do ensure that you get it right. You would notice if the external link icon didn't
+appear.
+
+I hope you like this take where I've &ndash; yet again &ndash; solved a modern issue using solutions that are mostly
+from the past ages of the web!

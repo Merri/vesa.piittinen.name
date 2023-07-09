@@ -7,12 +7,13 @@ export interface Props {
 	size?: number
 	shadeColor?: string
 	strokeColor?: string
+	style?: string
 	title?: string
 }
 
 const { color, darkColor, href, lightColor, shadeColor, size = 1.5, strokeColor, title } = Astro.props
 
-let style = ''
+let style = Astro.props.style || ''
 if (color) style += `--icon-color:${color};`
 if (darkColor) style += `--icon-dark-color:${darkColor};`
 if (lightColor) style += `--icon-light-color:${lightColor};`
@@ -27,6 +28,6 @@ if (strokeColor) style += `--icon-stroke-color:${strokeColor};`
 		</span>
 	) : null
 }
-<svg aria-hidden class="icon" width={size * 16} height={size * 16} style={style || undefined}>
+<svg aria-hidden="true" class="icon" width={size * 16} height={size * 16} style={style || undefined}>
 	<use href={`${href}#icon`}></use>
 </svg>
