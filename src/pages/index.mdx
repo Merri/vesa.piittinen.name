@@ -1,0 +1,117 @@
+---
+title: Vesa Piittinen
+description: Homepage of Vesa Piittinen, an autistic senior front-end of the front-end developer.
+permalink: https://vesa.piittinen.name
+layout: '$layouts/English.astro'
+---
+
+import Icon from '$/components/Icon.astro'
+import { inlineFlex } from '$/components/inlineFlex.module.css'
+import Link from '$/components/Link.astro'
+
+<p lang="fi">
+	<span aria-hidden="true" style="vertical-align: middle; text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);">
+		<span>🇫🇮&ensp;</span>
+	</span>
+	<span>[Esittely suomeksi alempana](#tervehdys)</span>
+</p>
+
+<div lang="en" style="contain: layout;">
+
+# Hello there!
+
+<figure style="float: right; margin: 1rem; max-width: 35%; transform: translateX(1rem);">
+	<img
+		alt="Vesa Piittinen"
+		src="/assets/naama.jpg"
+		loading="lazy"
+		width="400"
+		height="400"
+		style="height: auto; vertical-align: middle;"
+	/>
+	<figcaption>Most typical mode of my existence</figcaption>
+</figure>
+
+I'm a Finnish front-end of the front-end developer who creates this web stuff. Or programmer if that makes more sense to
+you. I'm also very much an autistic person which in short means that I prefer giving attention to actual stuff than
+putting effort on social networking. You can be sure I really know my stuff!
+
+Quick specs: born 1983, on the web since 1996, websites since 1998, professional since 2013.
+
+On this site you can find my [English speaking blog](/blog) which focuses on the web stuff, and maybe occasionally
+delves into other topics. We shall see.
+
+<div>Should you wish to follow me:</div>
+<div class={inlineFlex}>
+	<Link hreflang="en" href="https://codepen.io/Merri">
+		<span>Codepen</span>
+	</Link>
+	<Link hreflang="en" href="https://github.me/Merri">
+		<span>GitHub</span>
+	</Link>
+	<Link hreflang="en" href="https://www.linkedin.com/in/merri">
+		<span>LinkedIn</span>
+	</Link>
+	<span> or </span>
+	<span class={inlineFlex}>
+		<Icon href="/icons/social/mastodon.svg" />
+		<Link href="https://mastodon.social/@MerriNet" rel="me">
+			<span>Mastodon</span>
+		</Link>
+	</span>
+</div>
+
+I also have a predictable firstname.lastname Gmail account.
+
+And in case you dig my phone number: let me know you are about to call. I rarely answer to unknown numbers.
+
+</div>
+
+---
+
+<div lang="fi">
+
+# Tervehdys!
+
+Työkseni olen VR:n nettisivujen parissa väkertelevä frontti-frontti, eli ohjelmoija. Näin koto-Suomen puolella minut
+tunnetaan Konnun ylläpitäjänä ja olen myös suomentanut pelejä harrastusmielessä. Olen autisti, suhteellisen terävä mitä
+ajatteluun tulee ja toivottavasti viisauttakin on kertynyt, sitä kun ei aina tässä maailmassa riittämiin esiinny.
+
+Muutoin kiinnostaa milloin mikäkin, mutta kestäviä teemoja ovat ainakin tiede, historia, kaupunkisuunnittelu, pyöräily,
+autottomuus, luonto, maailmanmeno, eli oikeastaan olen tämmöinen jonkinmoinen kaikesta kiinnostunut ja avoin oppija,
+jolta taatusti löytyy monta epämieluista mielipidettä. Tämä siitä huolimatta, että kouluputkeni päättyi toisen asteen
+kauppikseen, enkä todellakaan ole maailmalla matkannut. En siis ole yhteensopiva useimpien ihmisten käyttämien
+lokerointijärjestelmien kanssa. Jos tarvitset apua luokitteluun, niin silloin "outo / vältä" on kai kyllin hyvä.
+
+<div class={inlineFlex}>
+	<span>Seurata voi vaikka näissä paikoissa: </span>
+	<Link hreflang="en" href="https://github.me/Merri">
+		<span>GitHub</span>
+	</Link>
+	<Link hreflang="fi" href="https://fi.linkedin.com/in/merri">
+		<span>LinkedIn</span>
+	</Link>
+	<span> ja </span>
+	<span class={inlineFlex}>
+		<Icon href="/icons/social/mastodon.svg" title="Mastodon" />
+		<Link hreflang="fi" href="https://olifant.fi/@merri" rel="me">
+			<span>Olifantti</span>
+		</Link>
+	</span>
+</div>
+
+<div class={inlineFlex} style="margin-top: 1rem;">
+	<span>Tolkien-fanina sinua varmasti kiinnostaa </span>
+	<Link hreflang="fi" href="https://kontu.wiki">
+		<span>Kontuwiki</span>
+	</Link>
+	<span> tai legendaarinen keskustelualue </span>
+	<Link hreflang="fi" href="https://kontu.me">
+		<span>Vihreä Lohikäärme</span>
+	</Link>
+</div>
+
+Sähköpostikin löytyy Gmailissa muotoa etunimi.sukunimi. Ja jos puhelinnumeron menet kaivamaan, niin viesti ennen kuin
+soitat. Vastaan harvoin numeroihin joita en tunne.
+
+</div>

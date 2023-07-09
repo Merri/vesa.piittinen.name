@@ -1,5 +1,4 @@
 ---
-
 export interface Props {
 	color?: string
 	darkColor?: string
@@ -19,10 +18,15 @@ if (darkColor) style += `--icon-dark-color:${darkColor};`
 if (lightColor) style += `--icon-light-color:${lightColor};`
 if (shadeColor) style += `--icon-shade-color:${shadeColor};`
 if (strokeColor) style += `--icon-stroke-color:${strokeColor};`
-
 ---
 
-<svg aria-hidden={!title || undefined} class="icon" width={size * 16} height={size * 16} style={style || undefined}>
-	{title && <title>{title}</title>}
-	<use href={`${href}#icon`} />
+{
+	title ? (
+		<span aria-hidden="false" hidden>
+			{title}
+		</span>
+	) : null
+}
+<svg aria-hidden class="icon" width={size * 16} height={size * 16} style={style || undefined}>
+	<use href={`${href}#icon`}></use>
 </svg>
