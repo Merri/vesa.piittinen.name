@@ -2,12 +2,13 @@
 title: External links with the least HTML
 description: These days we have the need to display links to external sites with an accompanying icon. Typical implementations involve adding lots of extra elements under the hood. Is there a way to get it done with less?
 pubDate: 2023-07-09
+modDate: 2023-07-10
 layout: $layouts/BlogPost.astro
 tags:
     - html
     - css
     - a11y
-    - tutorial
+    - react
 ---
 
 import Icon from '$/components/Icon.astro'
@@ -50,9 +51,9 @@ interface Props extends Omit<ComponentPropsWithoutRef<'a'>, 'target'> {
 	href: string;
 }
 
-export function ExternalLink({ children, rel, ...props }: Props) {
+export function ExternalLink({ children, ...props }: Props) {
 	// retain only lower case unique values
-	const rel = [...new Set(`noopener noreferrer ${rel || ''}`.toLowerCase().trim().split(/\s+/))].join(' ')
+	const rel = [...new Set(`noopener noreferrer ${props.rel || ''}`.toLowerCase().trim().split(/\s+/))].join(' ')
 
 	return (
 		<a {...props} rel={rel} target="_blank">
@@ -132,9 +133,9 @@ However now we get to the bad parts. There is a lot of repetition happening: bot
 image itself are repeated over and over. This eats into HTML element budget and when it comes to client-side React it
 also means there is more to do during renders. It just would be nicer to not have any extra HTML.
 
-Finally there is also the part of "why?" in the code. You need good comments and/or tests in place to make sure the
-solution is not being refactored by anyone too eagerly! "This could be simpler and cleaner", "that is unnecessary"...
-those thoughts are so easy to get when seeing something which isn't immediately obvious.
+Finally there is also the part of "why?" when reading the code the first time. You need good comments and/or tests in
+place to make sure the solution is not being refactored too eagerly by anyone! "This could be simpler and cleaner",
+"that is unnecessary"... those thoughts are so easy to get when seeing something which isn't immediately obvious.
 
 ## If you only had HTML and CSS
 
@@ -192,7 +193,7 @@ However there is the challenge of having the icon only appear above the padding.
 but sometimes a simple `position: absolute;` is the way to go:
 
 ```css
-/* debug phase: try to have a bog on all links */
+/* debug phase: try to show a box after all links */
 a::after {
 	background: currentColor;
 	content: '';
@@ -269,7 +270,7 @@ keeping it as it is.
 
 ---
 
-## The downsides and conclusion
+## The downsides and upsides
 
 Life ain't perfect. This solution is just one clever way I got a desired result: minimal HTML implementation of an
 external link with an icon with it being tied to the last word.
@@ -286,10 +287,76 @@ However the benefits are quite huge!
 
 1. HTML is as minimal as it can get. No extra elements for every link.
 2. CSS has some mild complexity, but it isn't too bad.
+3. Also less JS as a component. The complex stuff has moved entirely to CSS.
 
 All in all, if you were a madman who would write stuff in pure HTML, this solution would be manageable! The way the
 global CSS selectors are written do ensure that you get it right. You would notice if the external link icon didn't
 appear.
 
-I hope you like this take where I've &ndash; yet again &ndash; solved a modern issue using solutions that are mostly
-from the past ages of the web!
+### JavaScript implementation
+
+Just in case it isn't obvious, the React component with a bit of documentation would look like this:
+
+```tsx
+import type { ComponentPropsWithoutRef } from 'react'
+
+interface Props extends Omit<ComponentPropsWithoutRef<'a'>, 'target'> {
+	href: string
+}
+
+/**
+ * Renders a link with external link icon. CSS is in global styles. Icon is part of the last word in the link text and
+ * wraps alongside it.
+ *
+ * Caveats:
+ *
+ * - You should only pass inline text as contents.
+ * - Not compatible with flexbox or grid: the icon placement depends on block mode rendering. You have to change ::after
+ *   pseudo element if you need the link as a flex or grid container.
+ */
+export function ExternalLink({ children, ...props }: Props) {
+	// retain only lower case unique values
+	const rel = [...new Set(`noopener noreferrer ${props.rel || ''}`.toLowerCase().trim().split(/\s+/))].join(' ')
+
+	// external link description at top of body `<div id="link-to-external-site" hidden />`
+	return (
+		<a {...props} aria-describedby="link-to-external-site" rel={rel} target="_blank">
+			{children}
+		</a>
+	)
+}
+```
+
+With most components you also need to manage `className`, but when external link is implemented as global styles you
+don't need to worry about it. Also, the implementation is now rather short and free of some complexity that existed in
+the first React example above. You might even survive without writing tests against the component, the comments might be
+enough.
+
+Since we're now only dealing with HTML attributes you could even implement the logic entirely outside of a component:
+
+```tsx
+/**
+ * Marks the link as an external link. CSS is in global styles. Icon is part of the last word in the link text and
+ * wraps alongside it.
+ *
+ * Usage: put as last thing in props, for example `<a {...props} {...getExternalLinkProps(props.rel)}>`
+ */
+export const getExternalLinkProps = (rel?: string) => ({
+	// localization at top of body: `<div id="link-to-external-site" hidden />`
+	'aria-describedby': 'link-to-external-site',
+	// retain only lower case unique values
+	rel: [...new Set(`noopener noreferrer ${rel || ''}`.toLowerCase().trim().split(/\s+/))].join(' '),
+	target: '_blank',
+})
+```
+
+This can be a beneficial approach, and the code remains the same regardless of framework.
+
+## Conclusion
+
+External link icon is one of those cases that seems initially deceivingly simple, but often end up consuming far more
+time than expected during implementation. I hope you like this take even if you're not implementing things exactly the
+same way as shown in this article! I love to solve modern issues with tricks that are mostly from "the past ages of the
+web", but... is it the past if it is practical and useful today?
+
+> You can follow me on <Icon href="/icons/social/mastodon.svg" /> Mastodon:<br />`@MerriNet@mastodon.social`
