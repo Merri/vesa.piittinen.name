@@ -10,13 +10,15 @@ Visit [swmansion.com](https://swmansion.com) to download icon code library
 by Daniel Wodziczka<br />
 UI/UX Designer at Software Mansion
 
+---
+
 ## Usage
 
 These icons are duotone icons. HTML to render a typical size icon (equivalent of `1.5rem`):
 
 ```html
 <svg width="24" height="24" aria-hidden="true">
-	<use href="/icons/social/rss.svg#icon"></use>
+	<use href="/icons/newscreen.svg#icon"></use>
 </svg>
 ```
 

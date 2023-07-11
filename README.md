@@ -10,3 +10,10 @@ running on Astro eventually, and all of the source code will be available on Git
 ---
 
 You can find me on [Mastodon](https://mastodon.social/@MerriNet): `@MerriNet@mastodon.social`
+
+---
+
+## Learn about...
+
+- [Icons](./public/icons/README.md)
+- [Social icons](./public/icons/README.md)
