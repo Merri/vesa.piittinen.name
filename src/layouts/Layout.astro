@@ -89,7 +89,7 @@ const {
 				--icon-shade-color: transparent;
 
 				--light-focus: #8a004e;
-				--light-bg: #cceec9;
+				--light-bg: #eeefc9;
 				--light-fg: #243;
 				--light-theme: #00853c;
 				--light-image-shadow: rgba(0, 0, 0, 0.375);
@@ -100,7 +100,7 @@ const {
 				--light-line: #BBAE9C;
 
 				--dark-focus: #ffbde2;
-				--dark-bg: #193929;
+				--dark-bg: #132b1f;
 				--dark-fg: #fffcf9;
 				--dark-theme: #00cc5c;
 				--dark-image-shadow: black;
@@ -194,8 +194,29 @@ const {
 			}
 
 			:global(html) {
-				background: var(--bg);
+				background: var(--bg) linear-gradient(to left, var(--shadow-bg), transparent 5%, transparent 95%, var(--shadow-bg) 100%);
 				color: var(--fg);
+				contain: layout;
+				min-height: 100%;
+			}
+
+			:global(html)::before,
+			:global(html)::after {
+				background: url('/assets/noise.png');
+				content: '';
+				inset: 0;
+				opacity: 0.3;
+				position: absolute;
+				z-index: -1;
+			}
+
+			:global(html)::before {
+				background-size: 237px 369px;
+				filter: blur(1.5px) contrast(0.5);
+			}
+
+			:global(html)::after {
+				filter: invert(1) contrast(0.5);
 			}
 
 			:global(blockquote) {
