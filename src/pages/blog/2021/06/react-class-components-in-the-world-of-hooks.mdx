@@ -1,0 +1,113 @@
+---
+title: React class components in the World of Hooks
+description: Hooks have taken over the React community by storm, so have class components really become useless?
+pubDate: 2021-06-01
+modDate: 2023-07-12
+layout: $layouts/BlogPost.astro
+tags:
+    - react
+    - javascript
+    - webdev
+    - typescript
+---
+
+Hooks have landed the React world pretty hard. It isn't a full-on victory everywhere, I know places where people have more of a "they're kids toys" mentality and stay in 100% class + hookless function components, but in general I guess we can agree hooks have been a success.
+
+There are a lot of posts on why hooks are great already, but I want to focus a bit more on nuances that might help you decide when to use classes, and when hooks are the better fit.
+
+## Context
+
+You can add context to class components, but the syntax can be a bit awkward especially if you're also using TypeScript and want to get the goodies:
+
+```tsx
+class YourComponent extends React.PureComponent {
+	static contextType = YourContext
+	context: React.ContextType<typeof YourContext>
+
+	render() {
+		const stuffFromContext = this.context!
+
+		return <Component {...stuffFromContext} />
+	}
+}
+```
+
+Setting your environment to support above syntax may require a bit of work, but it is still a nicer way than using a `Consumer` component:
+
+```jsx
+class YourComponent extends React.PureComponent {
+	render() {
+		return <YourContext.Consumer>{(stuffFromContext) => <Component {...stuffFromContext} />}</YourContext.Consumer>
+	}
+}
+```
+
+Mostly due to the indentation level becoming so deep with the `Consumer`. Also with Consumer you don't get access to context outside `render` in your component.
+
+The hooks version is a lot cleaner:
+
+```tsx
+function YourComponent() {
+	const stuffFromContext = React.useContext(YourContext)
+	return <Component {...stuffFromContext} />
+}
+```
+
+## Event callbacks
+
+Once your hook component grows in complexity, maybe having lots of event handlers such as `onMouseDown`, `onMouseMove`, `onMouseUp`, `onClick` and so on, you might notice you need to do lots of `React.useCallback` to maintain object references between renders to avoid changing the DOM on every render.
+
+At this point you might start considering using a class component instead! The advantage with class component is that the callback references remain the same with no additional memoize tricks (`useCallback` is just a slightly fancier memoize). Class code is of course not easy for reuse, however I've found it quite rare an occasion where group of event handlers would make sense as a reusable hook.
+
+## `React.memo` vs. `React.PureComponent`
+
+Typically when passing props to React components you want to be careful with the object references, keeping them the same when the actual data does not change. Why? Because it allows for lightweight optimization to take place.
+
+The nice thing about class components is that you can simply avoid rendering on changes by using `React.PureComponent` instead of `React.Component`. Everything else about the component remains the same, the only difference is that a simple default `shouldComponentUpdate` is added to the class methods.
+
+`React.memo` instead can be a bit difficult. For example this blocks an element from getting a proper name:
+
+```tsx
+export const MyComponent = React.memo(() => <Component />)
+// "MyComponent" will NOT become the name of the component :(
+```
+
+There are of course ways to work around the problem!
+
+```tsx
+export const MyComponent = React.memo(function MyComponent() {
+	return <Component />
+})
+// You get `Memo(MyComponent)` and `MyComponent`
+```
+
+The above is good because the component gets a name thanks to using a named function, and the export gets the name from the `const`.
+
+```tsx
+const MyComponent = () => <Component />
+export default React.memo(MyComponent)
+// You get `Memo(MyComponent)` and `MyComponent`
+```
+
+This example also works and looks like a clean code, but has the downside of exporting as `default`. I don't like the `default` export a lot as I often prefer one name policy, meaning I don't want a thing to have multiple names. It can be confusing and makes refactoring harder!
+
+Using named exports makes it easier to enforce same name everywhere. With `default` the user of the component can use whichever name they want. But, if you or your team don't consider that a problem, then that is okay too.
+
+There is still a third way to give the component a recognizable name:
+
+```tsx
+export const MyComponent = React.memo(() => <Component />)
+MyComponent.displayName = 'MyComponent'
+```
+
+The weakness here is that the memoize wrapper component becomes `MyComponent` while the inner component will appear as unnamed component.
+
+Overall this is just a minor gotcha when it comes to `React.memo`: it doesn't really break anything to have this "incorrect", you just have a better debugging experience while developing as every component has a proper name. Also if you're using snapshots in your tests you will see the components with their correct name.
+
+## Final random points
+
+I've found hook components a nice place to get data from Redux store and process it to nicer format for a consuming class or (hook-free) function component. Why? Well, connecting a class component to Redux is... awful.
+
+If you need to diff props in `componentDidMount` and `componentDidUpdate` you may wish to consider using hooks instead, unless the benefits otherwise are clearly in class component's favour. Typically the advantages include a mix of `PureComponent`, consistent function references, and for some use-cases the state management model of a class component works better than that of hooks. And there are also cases where lifecycles work (or feel) better for what you are doing.
+
+Basically what I'm saying is that it is always advantageous to go ahead and learn all the patterns over putting all your eggs in one basket, and only learn hooks, or only learn classes. The same advice works in general, for example it is good to know when it is perfectly safe and valid to do mutations, or use classic for loops, and when functional style might serve you better. Keeping the door open for all the tools will make for better, easy to read and/or performant code.
