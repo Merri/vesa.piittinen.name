@@ -56,6 +56,13 @@ posts.sort((a, b) => +new Date(b.frontmatter.pubDate) - +new Date(a.frontmatter.
 	{posts.map((post) => <BlogPostPreview post={post} />)}
 	<blockquote>
 		<p>
+			This site is made with <Link href="https://astro.build">Astro</Link>, <Link
+				href="https://github.com/Merri/vesa.piittinen.name"
+			>
+				source code available on GitHub
+			</Link>
+		</p>
+		<p>
 			You can follow me on <Icon href="/icons/social/mastodon.svg" /> Mastodon:<br />
 			<code>@MerriNet@mastodon.social</code>
 		</p>
