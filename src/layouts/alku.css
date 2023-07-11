@@ -92,6 +92,8 @@
 	/* Remove all styling from cascade (most importantly to reset border, margin, padding) */
 	all: initial;
 	clip-path: path('');
+	/* Parent layouts will account for the size of the text unless this exists. */
+	contain: content;
 	/* Remove from flow, have minimal size to convince screen readers the element is visible */
 	position: absolute;
 	height: 1px;
@@ -157,6 +159,13 @@
 /* Indicate element is disabled */
 :where([aria-disabled='true' i], [disabled], :disabled) {
 	cursor: not-allowed;
+}
+
+/* Utility: invisible pseudo element to cover container area */
+:where([data-before='cover' i])::before {
+	content: '';
+	inset: 0;
+	position: absolute;
 }
 
 :where(html) {

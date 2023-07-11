@@ -31,3 +31,10 @@ if (strokeColor) style += `--icon-stroke-color:${strokeColor};`
 <svg aria-hidden="true" class="icon" width={size * 16} height={size * 16} style={style || undefined}>
 	<use href={`${href}#icon`}></use>
 </svg>
+<style>
+	.icon {
+		filter: drop-shadow(-2px 0 0 var(--shadow-bg)) drop-shadow(2px 0 0 var(--shadow-bg))
+			drop-shadow(0 -2px 0 var(--shadow-bg)) drop-shadow(0 2px 0 var(--shadow-bg))
+			drop-shadow(0 0 2px var(--shadow-bg));
+	}
+</style>

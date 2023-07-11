@@ -1,5 +1,8 @@
 ---
 import BlogPostPreview from '$/components/BlogPostPreview.astro'
+import Icon from '$/components/Icon.astro'
+import { inlineFlexIcon } from '$/components/inlineFlex.module.css'
+import Link from '$/components/Link.astro'
 import Tags from '$/components/Tags.astro'
 import { Post } from '$layouts/BlogPost.astro'
 import Layout from '$layouts/Layout.astro'
@@ -30,8 +33,14 @@ posts.sort((a, b) => +new Date(b.frontmatter.pubDate) - +new Date(a.frontmatter.
 		title="RSS Feed for Blog by Vesa Piittinen"
 		href="/blog/rss.xml"
 	/>
-	<h1>Blog</h1>
-	<p>On this blog I'm mostly focusing on topics about web development.</p>
+	<div style="contain: layout;">
+		<div class={inlineFlexIcon} style="float: right; margin-top: 2.5rem;">
+			<Icon href="/icons/social/rss.svg" title="RSS feed" size={3} />
+			<Link href="/blog/rss.xml" data-before="cover">RSS Feed</Link>
+		</div>
+		<h1>Blog</h1>
+		<p>On this blog I'm mostly focusing on topics about web development.</p>
+	</div>
 	{
 		tags.size > 0 && (
 			<nav aria-labelledby="tagged-posts">
@@ -45,4 +54,10 @@ posts.sort((a, b) => +new Date(b.frontmatter.pubDate) - +new Date(a.frontmatter.
 		)
 	}
 	{posts.map((post) => <BlogPostPreview post={post} />)}
+	<blockquote>
+		<p>
+			You can follow me on <Icon href="/icons/social/mastodon.svg" /> Mastodon:<br />
+			<code>@MerriNet@mastodon.social</code>
+		</p>
+	</blockquote>
 </Layout>

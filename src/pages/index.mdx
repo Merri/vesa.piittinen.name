@@ -5,15 +5,16 @@ permalink: https://vesa.piittinen.name
 layout: '$layouts/English.astro'
 ---
 
+import Emoji from '$/components/Emoji.astro'
 import Icon from '$/components/Icon.astro'
-import { inlineFlex } from '$/components/inlineFlex.module.css'
+import { inlineFlex, inlineFlexIcon } from '$/components/inlineFlex.module.css'
 import Link from '$/components/Link.astro'
 
 <p lang="fi">
-	<span aria-hidden="true" style="vertical-align: middle; text-shadow: 0 0 3px rgba(0, 0, 0, 0.5);">
-		<span>🇫🇮&ensp;</span>
+	<span class={inlineFlex}>
+		<Emoji as="🇫🇮" />
+		<span>[Esittely suomeksi alempana](#tervehdys)</span>
 	</span>
-	<span>[Esittely suomeksi alempana](#tervehdys)</span>
 </p>
 
 <div lang="en" style="contain: layout;">
@@ -41,25 +42,36 @@ Quick specs: born 1983, on the web since 1996, websites since 1998, professional
 On this site you can find my [English speaking blog](/blog) which focuses on the web stuff, and maybe occasionally
 delves into other topics. We shall see.
 
-<div>Should you wish to follow me:</div>
-<div class={inlineFlex}>
-	<Link hreflang="en" href="https://codepen.io/Merri">
-		<span>Codepen</span>
-	</Link>
-	<Link hreflang="en" href="https://github.me/Merri">
-		<span>GitHub</span>
-	</Link>
-	<Link hreflang="en" href="https://www.linkedin.com/in/merri">
-		<span>LinkedIn</span>
-	</Link>
-	<span> or </span>
-	<span class={inlineFlex}>
-		<Icon href="/icons/social/mastodon.svg" />
-		<Link href="https://mastodon.social/@MerriNet" rel="me">
-			<span>Mastodon</span>
-		</Link>
-	</span>
-</div>
+<p id="follow">Should you wish to follow me:</p>
+
+<nav aria-labelledby="follow" style="text-align: center;">
+	<ul class={inlineFlex} role="list" style="gap: 2rem;">
+		<li class={inlineFlexIcon}>
+			<Icon href="/icons/social/codepen.svg" title="Codepen" size={3} />
+			<Link hreflang="en" href="https://codepen.io/Merri" data-before="cover">
+				<span>Codepen</span>
+			</Link>
+		</li>
+		<li class={inlineFlexIcon}>
+			<Icon href="/icons/social/github.svg" title="GitHub" size={3} />
+			<Link hreflang="en" href="https://github.me/Merri" data-before="cover">
+				<span>GitHub</span>
+			</Link>
+		</li>
+		<li class={inlineFlexIcon}>
+			<Icon href="/icons/social/linkedin.svg" title="LinkedIn" size={3} />
+			<Link hreflang="en" href="https://www.linkedin.com/in/merri" data-before="cover">
+				<span>LinkedIn</span>
+			</Link>
+		</li>
+		<li class={inlineFlexIcon}>
+			<Icon href="/icons/social/mastodon.svg" title="Mastodon" size={3} />
+			<Link href="https://mastodon.social/@MerriNet" rel="me" data-before="cover">
+				<span>Mastodon</span>
+			</Link>
+		</li>
+	</ul>
+</nav>
 
 I also have a predictable firstname.lastname Gmail account.
 
@@ -85,12 +97,18 @@ lokerointijärjestelmien kanssa. Jos tarvitset apua luokitteluun, niin silloin "
 
 <div class={inlineFlex}>
 	<span>Seurata voi vaikka näissä paikoissa: </span>
-	<Link hreflang="en" href="https://github.me/Merri">
-		<span>GitHub</span>
-	</Link>
-	<Link hreflang="fi" href="https://fi.linkedin.com/in/merri">
-		<span>LinkedIn</span>
-	</Link>
+	<span class={inlineFlex}>
+		<Icon href="/icons/social/github.svg" title="GitHub" />
+		<Link hreflang="en" href="https://github.me/Merri">
+			<span>GitHub</span>
+		</Link>
+	</span>
+	<span class={inlineFlex}>
+		<Icon href="/icons/social/linkedin.svg" title="LinkedIn" />
+		<Link hreflang="fi" href="https://fi.linkedin.com/in/merri">
+			<span>LinkedIn</span>
+		</Link>
+	</span>
 	<span> ja </span>
 	<span class={inlineFlex}>
 		<Icon href="/icons/social/mastodon.svg" title="Mastodon" />
