@@ -105,3 +105,5 @@ dist
 
 # Astro 0.20 and older
 .snowpack
+
+!public/icons/
