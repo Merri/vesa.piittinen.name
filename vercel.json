@@ -155,6 +155,11 @@
 			"source": "/suomeksi/transport-tycoon-deluxe/Ruutu8.png",
 			"destination": "https://vesa.piittinen.name/assets/ttd/Ruutu8.png",
 			"permanent": true
+		},
+		{
+			"source": "/suomeksi/the-settlers-ii",
+			"destination": "https://vesa.piittinen.name/suomeksi/the-settlers-2",
+			"permanent": true
 		}
 	]
 }
