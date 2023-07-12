@@ -160,6 +160,11 @@
 			"source": "/suomeksi/the-settlers-ii",
 			"destination": "https://vesa.piittinen.name/suomeksi/the-settlers-2",
 			"permanent": true
+		},
+		{
+			"source": "/suomeksi/heroes-iii-suomeksi",
+			"destination": "https://vesa.piittinen.name/suomeksi/heroes-3",
+			"permanent": true
 		}
 	]
 }
