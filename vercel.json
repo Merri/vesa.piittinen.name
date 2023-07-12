@@ -27,8 +27,13 @@
 			"permanent": true
 		},
 		{
-			"source": "/doctype",
-			"destination": "https://codepen.io/Merri",
+			"source": "/doctype/xhtml/test.xml",
+			"destination": "https://vesa.piittinen/assets/doctype/test.xml",
+			"permanent": true
+		},
+		{
+			"source": "/doctype/xhtml/xhtml11.xsl",
+			"destination": "https://vesa.piittinen/assets/doctype/html11.xsl",
 			"permanent": true
 		},
 		{

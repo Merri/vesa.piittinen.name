@@ -1,0 +1,389 @@
+---
+const CONTENT_TYPES = ['text/html', 'text/xml', 'application/xhtml+xml', 'application/xml']
+
+const DOCTYPES = {
+	None: {
+		None: '',
+	},
+	HTML: {
+		'HTML 4.01': '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">',
+		'HTML 4.01 Strict':
+			'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Strict//EN" "http://www.w3.org/TR/html4/strict.dtd">',
+		'HTML 4.01 Transitional':
+			'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">',
+		'HTML 4.01 Frameset':
+			'<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">',
+		'DOCTYPE html': '<!DOCTYPE html>',
+	},
+	XHTML: {
+		'XHTML 1.0 Strict':
+			'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">',
+		'XHTML 1.0 Transitional':
+			'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">',
+		'XHTML 1.0 Frameset':
+			'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Frameset//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-frameset.dtd">',
+		'XHTML 1.0 Basic':
+			'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.0//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic10.dtd">',
+		'XHTML 1.1':
+			'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">',
+		'XHTML 1.1 Basic':
+			'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML Basic 1.1//EN" "http://www.w3.org/TR/xhtml-basic/xhtml-basic11.dtd">',
+	},
+	'Quirks (Mozilla)': {
+		'IBM XHTML 1.1 Transitional':
+			'<!DOCTYPE html SYSTEM "http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd">',
+		'W3C HTML 4.01 Transitional': '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">',
+		'W3C HTML 4.01 Frameset': '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN">',
+		'W3C HTML 4.0 Transitional': '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">',
+		'W3C HTML 4.0 Frameset': '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Frameset//EN">',
+		'SoftQuad HoTMetaL PRO 6.0':
+			'<!DOCTYPE html PUBLIC "-//SoftQuad Software//DTD HoTMetaL PRO 6.0::19990601::extensions to HTML 4.0//EN">',
+		'SoftQuad HoTMetaL PRO 4.0':
+			'<!DOCTYPE html PUBLIC "-//SoftQuad//DTD HoTMetaL PRO 4.0::19971010::extensions to HTML 4.0//EN">',
+		'IETF HTML//EN//3.0': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML//EN//3.0">',
+		'W3O W3 HTML 3.0//EN//': '<!DOCTYPE html PUBLIC "-//W3O//DTD W3 HTML 3.0//EN//">',
+		'W3O W3 HTML 3.0//EN': '<!DOCTYPE html PUBLIC "-//W3O//DTD W3 HTML 3.0//EN">',
+		'W3O HTML 3 1995-03-24//EN': '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3 1995-03-24//EN">',
+		'IETF HTML 3.0//EN': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 3.0//EN">',
+		'IETF HTML 3.0//EN//': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 3.0//EN//">',
+		'IETF HTML 3//EN': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 3//EN">',
+		'IETF HTML Level 3//EN': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML Level 3//EN">',
+		'IETF HTML Level 3//EN//3.0': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML Level 3//EN//3.0">',
+		'IETF HTML 3.2//EN': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 3.2//EN">',
+		'AS HTML 3.0 asWedit + extensions//EN': '<!DOCTYPE html PUBLIC "-//AS//DTD HTML 3.0 asWedit + extensions//EN">',
+		'AdvaSoft HTML 3.0 asWedit + extensions//EN':
+			'<!DOCTYPE html PUBLIC "-//AdvaSoft Ltd//DTD HTML 3.0 asWedit + extensions//EN">',
+		'IETF HTML Strict//EN//3.0"': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML Strict//EN//3.0">',
+		'W3O W3 HTML Strict 3.0//EN//': '<!DOCTYPE html PUBLIC "-//W3O//DTD W3 HTML Strict 3.0//EN//">',
+		'IETF HTML Strict Level 3//EN': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML Strict Level 3//EN">',
+		'IETF HTML Strict Level 3//EN//3.0': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML Strict Level 3//EN//3.0">',
+		HTML: '<!DOCTYPE html PUBLIC "HTML">',
+		'IETF HTML//EN': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML//EN">',
+		'IETF HTML//EN//2.0': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML//EN//2.0">',
+		'IETF HTML 2.0//EN': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0//EN">',
+		'IETF HTML Level 2//EN': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML Level 2//EN">',
+		'IETF HTML Level 2//EN//2.0': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML Level 2//EN//2.0">',
+		'IETF HTML 2.0 Level 2//EN': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0 Level 2//EN">',
+		'IETF HTML Level 1//EN': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML Level 1//EN">',
+		'IETF HTML Level 1//EN//2.0': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML Level 1//EN//2.0">',
+		'IETF HTML 2.0 Level 1//EN': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0 Level 1//EN">',
+		'IETF HTML Level 0//EN': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML Level 0//EN">',
+		'IETF HTML Level 0//EN//2.0': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML Level 0//EN//2.0">',
+		'IETF HTML Strict//EN': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML Strict//EN">',
+		'IETF HTML Strict//EN//2.0': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML Strict//EN//2.0">',
+		'IETF HTML Strict Level 2//EN': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML Strict Level 2//EN">',
+		'IETF HTML Strict Level 2//EN//2.0': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML Strict Level 2//EN//2.0">',
+		'IETF HTML 2.0 Strict//EN': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0 Strict//EN">',
+		'IETF HTML 2.0 Strict Level 2//EN': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0 Strict Level 2//EN">',
+		'IETF HTML Strict Level 1//EN': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML Strict Level 1//EN">',
+		'IETF HTML Strict Level 1//EN//2.0': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML Strict Level 1//EN//2.0">',
+		'IETF HTML 2.0 Strict Level 1//EN': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.0 Strict Level 1//EN">',
+		'IETF HTML Strict Level 0//EN': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML Strict Level 0//EN">',
+		'IETF HTML Strict Level 0//EN//2.0': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML Strict Level 0//EN//2.0">',
+		'WebTechs Mozilla HTML//EN': '<!DOCTYPE html PUBLIC "-//WebTechs//DTD Mozilla HTML//EN">',
+		'WebTechs Mozilla HTML 2.0//EN': '<!DOCTYPE html PUBLIC "-//WebTechs//DTD Mozilla HTML 2.0//EN">',
+		'Netscape HTML//EN': '<!DOCTYPE html PUBLIC "-//Netscape Comm. Corp.//DTD HTML//EN">',
+		'Netscape HTML Strict//EN': '<!DOCTYPE html PUBLIC "-//Netscape Comm. Corp.//DTD Strict HTML//EN">',
+		'Microsoft Internet Explorer 2.0 HTML//EN':
+			'<!DOCTYPE html PUBLIC "-//Microsoft//DTD Internet Explorer 2.0 HTML//EN">',
+		'Microsoft Internet Explorer 2.0 HTML Strict//EN':
+			'<!DOCTYPE html PUBLIC "-//Microsoft//DTD Internet Explorer 2.0 HTML Strict//EN">',
+		'Microsoft Internet Explorer 2.0 Tables//EN':
+			'<!DOCTYPE html PUBLIC "-//Microsoft//DTD Internet Explorer 2.0 Tables//EN">',
+		'Microsoft Internet Explorer 3.0 HTML//EN':
+			'<!DOCTYPE html PUBLIC "-//Microsoft//DTD Internet Explorer 3.0 HTML//EN">',
+		'Microsoft Internet Explorer 3.0 HTML Strict//EN':
+			'<!DOCTYPE html PUBLIC "-//Microsoft//DTD Internet Explorer 3.0 HTML Strict//EN">',
+		'Microsoft Internet Explorer 3.0 Tables//EN':
+			'<!DOCTYPE html PUBLIC "-//Microsoft//DTD Internet Explorer 3.0 Tables//EN">',
+		'Sun HotJava HTML//EN': '<!DOCTYPE html PUBLIC "-//Sun Microsystems Corp.//DTD HotJava HTML//EN">',
+		'Sun HotJava Strict HTML//EN':
+			'<!DOCTYPE html PUBLIC "-//Sun Microsystems Corp.//DTD HotJava Strict HTML//EN">',
+		'IETF HTML 2.1E//EN': '<!DOCTYPE html PUBLIC "-//IETF//DTD HTML 2.1E//EN">',
+		"O'Reilly HTML Extended 1.0//EN":
+			'<!DOCTYPE html PUBLIC "-//O\'Reilly and Associates//DTD HTML Extended 1.0//EN">',
+		"O'Reilly HTML Extended Relaxed 1.0//EN":
+			'<!DOCTYPE html PUBLIC "-//O\'Reilly and Associates//DTD HTML Extended Relaxed 1.0//EN">',
+		"O'Reilly HTML 2.0//EN": '<!DOCTYPE html PUBLIC "-//O\'Reilly and Associates//DTD HTML 2.0//EN">',
+		'SQ HTML 2.0 HoTMetaL + extensions//EN':
+			'<!DOCTYPE html PUBLIC "-//SQ//DTD HTML 2.0 HoTMetaL + extensions//EN">',
+		'Spyglass HTML 2.0 Extended//EN': '<!DOCTYPE html PUBLIC "-//Spyglass//DTD HTML 2.0 Extended//EN">',
+		'Silmaril HTML Pro v0r11 19970101//EN': '<!DOCTYPE html PUBLIC "+//Silmaril//DTD HTML Pro v0r11 19970101//EN">',
+		'W3C HTML Experimental 19960712//EN': '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML Experimental 19960712//EN">',
+		'W3C HTML 3.2//EN': '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2//EN">',
+		'W3C HTML 3.2 Final//EN': '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">',
+		'W3C HTML 3.2 Draft//EN': '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Draft//EN">',
+		'W3C HTML Experimental 970421//EN': '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML Experimental 970421//EN">',
+		'W3C HTML 3.2S Draft//EN': '<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2S Draft//EN">',
+		'W3C W3 HTML//EN': '<!DOCTYPE html PUBLIC "-//W3C//DTD W3 HTML//EN">',
+		'Metrius Metrius Presentational//EN': '<!DOCTYPE html PUBLIC "-//Metrius//DTD Metrius Presentational//EN">',
+	},
+	MATHML: {
+		'MATHML 1.01': '<!DOCTYPE math SYSTEM "http://www.w3.org/Math/DTD/mathml1/mathml.dtd">',
+		'MATHML 2.0':
+			'<!DOCTYPE math PUBLIC "-//W3C//DTD MathML 2.0//EN" "http://www.w3.org/TR/MathML2/dtd/mathml2.dtd">',
+		'XHTML (= host) + MATHML + SVG':
+			'<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN" "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd">',
+		'XHTML + MATHML + SVG (= host)':
+			'<!DOCTYPE svg:svg PUBLIC "-//W3C//DTD XHTML 1.1 plus MathML 2.0 plus SVG 1.1//EN" "http://www.w3.org/2002/04/xhtml-math-svg/xhtml-math-svg.dtd">',
+	},
+	SVG: {
+		'SVG 1.0':
+			'<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">',
+		'SVG 1.1 Full':
+			'<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">',
+		'SVG 1.1 Basic':
+			'<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Basic//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-basic.dtd">',
+		'SVG 1.1 Tiny':
+			'<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1 Tiny//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11-tiny.dtd">',
+	},
+	WML: {
+		'WML 2.0': '<!DOCTYPE html PUBLIC "-//WAPFORUM//DTD WML 2.0//EN" "http://www.wapforum.org/DTD/wml20.dtd">',
+	},
+} as const
+
+const contentType = (Astro.url.searchParams.get('content-type') ?? 'text/html')
+	.toLocaleLowerCase()
+	.replace(/[^a-z/+]/g, '')
+const lineChanges = Astro.url.searchParams.get('linechanges') != null
+const tabs = Astro.url.searchParams.get('tabs') != null
+const headersContentType = `${contentType}; charset=utf-8`
+
+function escapeHtml(unsafe: string) {
+	return unsafe
+		.replace(/&/g, '&amp;')
+		.replace(/</g, '&lt;')
+		.replace(/>/g, '&gt;')
+		.replace(/"/g, '&quot;')
+		.replace(/'/g, '&#039;')
+}
+
+const welcome = !Astro.url.searchParams.has('doctype')
+let doctype = Astro.url.searchParams.get('doctype') ?? ''
+let htmlDoctype = ''
+
+if (!welcome) {
+	doctype = doctype && `<!DOCTYPE ${doctype.replace(/^<!DOCTYPE /i, '').replace(/[<>]/g, '')}>`
+	htmlDoctype = doctype
+} else {
+	htmlDoctype = DOCTYPES.HTML['HTML 4.01 Strict']
+}
+
+const xml = contentType.includes('xml') || doctype.toLocaleLowerCase().includes('xhtml')
+const closeTag = xml ? ' /' : ''
+
+const headers = new Headers()
+
+headers.set('Content-Type', headersContentType)
+
+return new Response(
+	new Blob([
+		`${lineChanges ? '\r\n' : ''}${tabs ? '\t' : ''}${htmlDoctype}
+<html ${xml ? 'xmlns="http://www.w3.org/1999/xhtml" xml:' : ''}lang="en">
+	<head>
+		<meta http-equiv="content-type" content="${escapeHtml(headersContentType)}"${closeTag}>
+		<meta name="viewport" content="width=device-width, initial-scale=1"${closeTag}>
+		<meta name="description" content="On this page you can debug quirksmode in browsers in a very broad way."${closeTag}>
+		<link rel="canonical" content="https://vesa.piittinen.name/doctype"${closeTag}>
+		<title>DOCTYPE test${doctype && ': ' + escapeHtml(doctype)}</title>
+		<style type="text/css">${xml ? '/*<![CDATA[*/' : ''}
+
+/* BEGIN TEST CSS */
+
+body { background : FFF; }
+@safari60 { body { background : #FFF; } }
+table { position : absolute; visibility : hidden; }
+td { margin : 0; padding : 0; }
+
+/* END TEST CSS */
+
+/* main layout (with IE quirks mode centering tricks) */
+body { font-family : 'Trebuchet MS', 'Tahoma', sans-serif; text-align : center; }
+#document {
+	margin : 0 auto;
+	position : relative;
+	text-align : left;
+	width : 43em;
+}
+#footer { font-size : 8pt; text-align : center; }
+
+/* the quirks boxes */
+#standards { background : #070; }
+#limited { background : #009; }
+#quirks { background : #900; }
+#document #nojs { background : #555; display : block; }
+#nojs,#standards,#limited,#quirks {
+	border : 1px solid #000;
+	color : #FFF;
+	display : none;
+	height : 100px;
+	line-height : 50px;
+	margin-bottom : 3em;
+	outline : 1px solid #CCC;
+	padding : 0 20px;
+	text-shadow : 2px 2px 2px #000;
+}
+#document div h2,#document div p { margin : 0; padding : 0; text-align : center; }
+#document div h2 { font-size : 200%; font-variant : small-caps; line-height : 75px; }
+#document div p { line-height : 40px; margin-top : -20px; }
+#document h1 { font-size : 200%; height : 1.5em; margin : 0; top : 104px; position : absolute; }
+
+/* form, list and text colors */
+p { text-align : justify; }
+li p { text-align : left; }
+form,ul {
+	background : #F9F9F9;
+	border : 1px solid #BBB;
+	margin : 10px 0;
+	outline : 1px solid #0A0;
+	padding : 10px 10px 10px 30px;
+	width : 40em;
+}
+span.standards { color : #070; }
+span.limited { color : #009; }
+span.quirks { color : #900; }
+
+/* form */
+form { padding : 10px 20px; }
+label { float : left; width : 12em; }
+p.submit { margin-left : 12em; }
+i { font-size : 9pt; font-style : normal; }
+		${xml ? '/*]]>*/' : ''}</style>
+		<script type="text/javascript">${xml ? '/*<![CDATA[*/' : ''}
+
+window.onload = function() {
+	// select box behavior
+	document.getElementById('docselect').onchange = function() { document.getElementById('doctype').value = this.value; }
+	// JavaScript support for pages served as XML
+	if( !document.body ) document.body = document.getElementsByTagName('body')[0];
+	// remove no JavaScript box
+	document.getElementById('document').removeChild(document.getElementById('nojs'));
+
+// BEGIN TEST JAVASCRIPT
+
+	// these values are always the same in all browsers when in standards mode, but always different in quirks mode
+	var standards = (document.body.clientWidth == document.body.offsetWidth);
+	if( standards ) {
+		// CSS check
+		if( document.body.currentStyle ) {
+			// checks whether invalid CSS style in the stylesheet was applied
+			standards = (document.body.currentStyle.backgroundColor == 'transparent');
+		} else {
+			// another method as currentStyle is not supported in Mozilla (and some other browsers)
+			document.body.style.backgroundColor = 'FFF';
+			standards = (document.body.style.backgroundColor == '');
+		}
+		if( standards ) {
+			// check behavior of table cells to see if we have a limited quirks mode or real standards
+			var check_limited = document.getElementById('check_limited');
+			if( check_limited.scrollHeight == 1 ) {
+				document.getElementById('limited').style.display = 'block';
+			} else {
+				document.getElementById('standards').style.display = 'block';
+			}
+			return;
+		}
+	}
+	document.getElementById('quirks').style.display = 'block';
+
+// END TEST JAVASCRIPT
+
+}
+		${xml ? '/*]]>*/' : ''}</script>
+	</head>
+	<body>
+		<div id="document">
+			<h1>Layout Mode Test</h1>
+			<div id="standards"><h2>No quirks mode!</h2><p>Also known as the full standards mode.</p></div>
+			<div id="limited"><h2>Limited quirks mode!</h2><p>Also known as the almost standards mode.</p></div>
+			<div id="quirks"><h2>Quirks mode!</h2><p>Also known as the mode you should not use.</p></div>
+			<div id="nojs"><h2>JavaScript disabled</h2><p>This test requires JavaScript.</p></div>
+${
+	welcome
+		? `
+			<h2>Test document and content type browser support</h2>
+			<p>This page allows you to check what kind of layout mode is triggered when a page is served with a certain DOCTYPE and content type combination. This page has no value in pre-IE6 browsers as all of those could only render in quirks mode.</p>
+			<h3>The test</h3>
+			<p>Test itself is rather simple: first level test is to see whether document.body's clientWidth and offsetWidth are the same. They always match in not quirk modes, ie. the so-called standards mode. There are actually a separation to two "standards" modes: no quirks and limited quirks. To ensure the browser is in either standards mode, the CSS parsing behavior is checked for: incorrect color values should be omitted.</p>
+			<p>Finally, to distinguish between the two standards modes, a check for table cell height with a single 1px image is ran: the cell should be the height of the text, if it instead is only 1 pixel then we are in the limited quirks mode and not in the no quirks mode.</p>
+			<p>The page switches between HTML and XHTML output depending on whether it should be well formed XML or not. The HTML/XHTML validates with the most common DOCTYPEs. The CSS does not validate as invalid CSS is required by the test.</p>
+			<h3>See also...</h3>
+			<p>Similar test for <a href="/doctype/xhtml">XHTML 1.1 with XML and XSLT</a> served as application/xml (because you can't serve application/xhtml+xml to Internet Explorer).</p>
+`
+		: `
+			<p><a href="/doctype">Back to introduction</a> or <a href="https://validator.w3.org/check?uri=referer">validate this page</a>.</p>
+`
+}
+			<h2>DOCTYPE and media type</h2>
+			<form action="/doctype" method="get">
+				<p>
+					<label for="doctype">Give a custom DOCTYPE:</label>
+					<input id="doctype" name="doctype" size="70" type="text" value="${escapeHtml(doctype)}"${closeTag}>
+				</p>
+				<p>
+					<label for="docselect">Or select one here:</label>
+					<select id="docselect">
+						<option value="${escapeHtml(doctype)}">Current on this page</option>
+						${Object.entries(DOCTYPES)
+							.map(
+								([group, groupItems]) =>
+									`<optgroup label="${escapeHtml(group)}">
+								${Object.entries(groupItems)
+									.map(
+										([key, value]) =>
+											`<option value="${escapeHtml(value)}"${
+												value === doctype ? ' selected="selected"' : ''
+											}>${escapeHtml(key)}</option>`
+									)
+									.join('')}
+							</optgroup>`
+							)
+							.join('')}
+					</select>
+				</p>
+				<p>
+					<label for="content-type">Media type:</label>
+					<select id="content-type" name="content-type">
+						<option value="${escapeHtml(contentType)}">Current: (${escapeHtml(contentType)})</option>
+						${CONTENT_TYPES.map(
+							(value) =>
+								`<option${value === contentType ? ' selected="selected"' : ''}>${escapeHtml(
+									value
+								)}</option>`
+						).join('')}
+					</select>
+					<i>(<a href="http://www.w3.org/TR/xhtml-media-types/">W3C: XHTML Media Types</a>)</i>
+				</p>
+				<p>Extra whitespace before DOCTYPE:</p>
+				<p>
+					<label for="linechanges">Linechanges:</label>
+					<input type="checkbox" id="linechanges" name="linechanges" value="1"${closeTag}>
+				</p>
+				<p>
+					<label for="tabs">Tabs:</label>
+					<input type="checkbox" id="tabs" name="tabs" value="1"${closeTag}>
+				</p>
+				<p class="submit"><input type="submit" value="Test"${closeTag}></p>
+			</form>
+			<h2>Notes:</h2>
+			<ul>
+				<li><p>This page tests for layout mode used by the browser with a given DOCTYPE.</p></li>
+				<li><p>There are three modes: <span class="quirks">quirks mode</span>, <span class="limited">limited quirks mode</span> and <span class="standards">no quirks mode</span>.</p></li>
+				<li><p>Internet Explorer 7 and 6 <strong>don't</strong> have a real <span class="standards">non-quirks mode</span>, it is similar to the <span class="limited">limited quirks mode</span> of the other browsers. IE 5.5 and before only have a <span class="quirks">quirks mode</span>.</p></li>
+				<li><p>Test is done via automatic CSS validity and JavaScript checks. Incorrect behavior reveals <span class="quirks">quirks mode</span> or <span class="limited">limited quirks mode</span>.</p></li>
+				<li><a href="https://github.com/Merri/vesa.piittinen.name/tree/main/src/pages/doctype/index.astro" rel="noopener noreferrer" target="_blank">GitHub source of this page</a></li>
+			</ul>
+		</div>
+
+<!-- BEGIN TEST HTML -->
+
+		<table><tr><td id="check_limited"><img alt="" src="1px.gif" height="1" width="1"${closeTag}></td></tr></table>
+
+<!-- END TEST HTML -->
+
+	</body>
+</html>`,
+	]),
+	{ headers }
+)
+---

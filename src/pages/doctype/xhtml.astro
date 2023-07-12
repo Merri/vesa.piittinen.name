@@ -1,0 +1,149 @@
+---
+const headers = new Headers()
+
+headers.set('Content-Type', 'application/xml')
+
+return new Response(
+	new Blob([
+		`<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="/assets/doctype/xhtml11.xsl"?>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+	<head>
+		<title>Layout Mode Test: XHTML 1.1 with XML and XSLT</title>
+		<style type="text/css">/*<![CDATA[*/
+/* BEGIN TEST CSS */
+
+body { background : FFF; }
+@safari60 { body { background : #FFF; } }
+table { position : absolute; visibility : hidden; }
+td { margin : 0; padding : 0; }
+
+/* END TEST CSS */
+
+/* main layout (with IE quirks mode centering tricks) */
+body { font-family : 'Trebuchet MS', 'Tahoma', sans-serif; text-align : center; }
+#document {
+	margin : 0 auto;
+	position : relative;
+	text-align : left;
+	width : 43em;
+}
+#footer { font-size : 12pt; text-align : center; }
+
+/* the quirks boxes */
+#standards { background : #070; }
+#limited { background : #009; }
+#quirks { background : #900; }
+#document #nojs { background : #555; display : block; }
+#nojs,#standards,#limited,#quirks {
+	border : 1px solid #000;
+	color : #FFF;
+	display : none;
+	height : 100px;
+	line-height : 50px;
+	margin-bottom : 3em;
+	outline : 1px solid #CCC;
+	padding : 0 20px;
+	text-shadow : 2px 2px 2px #000;
+}
+#document div h2,#document div p { margin : 0; padding : 0; text-align : center; }
+#document div h2 { font-size : 200%; font-variant : small-caps; line-height : 75px; }
+#document div p { line-height : 40px; margin-top : -20px; }
+#document h1 { font-size : 200%; height : 1.5em; margin : 0; top : 104px; position : absolute; }
+
+/* form, list and text colors */
+p { text-align : justify; }
+li p { text-align : left; }
+ul {
+	background : #F9F9F9;
+	border : 1px solid #BBB;
+	margin : 10px 0;
+	outline : 1px solid #0A0;
+	padding : 10px 10px 10px 30px;
+	width : 40em;
+}
+.standards { color : #070; }
+.limited { color : #009; }
+.quirks { color : #900; }
+.nojs { color : #555; }
+
+		/*]]>*/</style>
+		<script type="text/javascript">/*<![CDATA[*/
+window.onload = function() {
+	// JavaScript support for pages served as XML
+	if( !document.body ) document.body = document.getElementsByTagName('body')[0];
+	// remove no JavaScript box
+	document.getElementById('document').removeChild(document.getElementById('nojs'));
+
+// BEGIN TEST JAVASCRIPT
+
+	// these values are always the same in all browsers when in standards mode, but always different in quirks mode
+	var standards = (document.body.clientWidth == document.body.offsetWidth);
+	if( standards ) {
+		// CSS check
+		if( document.body.currentStyle ) {
+			// checks whether invalid CSS style in the stylesheet was applied
+			standards = (document.body.currentStyle.backgroundColor == 'transparent');
+		} else {
+			// another method as currentStyle is not supported in Mozilla (and some other browsers)
+			document.body.style.backgroundColor = 'FFF';
+			standards = (document.body.style.backgroundColor == '');
+		}
+		if( standards ) {
+			// check behavior of table cells to see if we have a limited quirks mode or real standards
+			var check_limited = document.getElementById('check_limited');
+			if( check_limited.scrollHeight == 1 ) {
+				document.getElementById('limited').style.display = 'block';
+			} else {
+				document.getElementById('standards').style.display = 'block';
+			}
+			return;
+		}
+	}
+	document.getElementById('quirks').style.display = 'block';
+
+// END TEST JAVASCRIPT
+
+}
+		/*]]>*/</script>
+	</head>
+	<body>
+		<div id="document">
+			<h1>Layout Mode Test</h1>
+			<div id="standards"><h2>No quirks mode!</h2><p>Also known as the full standards mode.</p></div>
+			<div id="limited"><h2>Limited quirks mode!</h2><p>Also known as the almost standards mode.</p></div>
+			<div id="quirks"><h2>Quirks mode!</h2><p>Also known as the mode you should not use.</p></div>
+			<div id="nojs"><h2>JavaScript disabled</h2><p>This test requires JavaScript.</p></div>
+			<h2>XHTML 1.1 with XML and XSLT</h2>
+			<p>This page tests which layout mode is triggered when the page is an XML page, containing actually XHTML which is transformed to true XHTML page by using an XSL stylesheet.</p>
+			<p>This test page is derived from a <a href="/doctype">doctype and media type test</a>.</p>
+			<h3>The results...</h3>
+			<p>All browsers handle the page correctly as XML and check for well formedness.</p>
+			<p>Internet Explorer 7 and 6: this page is in <b class="quirks">quirks mode</b>.</p>
+			<p>Opera 9.25: this page is in <b class="standards">no quirks mode</b> but <b class="nojs">without JavaScript</b>.</p>
+			<p>Opera 9.5, Firefox, Safari 3: this page is in <b class="standards">no quirks mode</b>.</p>
+			<h3>Downloads</h3>
+			<p><a href="/assets/doctype/test.xml">test.xml</a> and <a href="/assets/doctype/xhtml11.xsl">xhtml11.xsl</a>.</p>
+			<h2>Notes:</h2>
+			<ul>
+				<li><p>This page tests for layout mode used by the browser when page is served as XML.</p></li>
+				<li><p>There are three modes: <span class="quirks">quirks mode</span>, <span class="limited">limited quirks mode</span> and <span class="standards">no quirks mode</span>.</p></li>
+				<li><p>Internet Explorer 7 and 6 <strong>don't</strong> have a real <span class="standards">non-quirks mode</span>, it is similar to the <span class="limited">limited quirks mode</span> of the other browsers. IE 5.5 and before only have a <span class="quirks">quirks mode</span>.</p></li>
+				<li><p>Test is done via automatic CSS validity and JavaScript checks. Incorrect behavior reveals <span class="quirks">quirks mode</span> or <span class="limited">limited quirks mode</span>.</p></li>
+				<li><a href="https://github.com/Merri/vesa.piittinen.name/tree/main/src/pages/doctype/xhtml.astro" rel="noopener noreferrer" target="_blank">GitHub source of this page</a></li>
+			</ul>
+		</div>
+		<p id="footer">Test author: <a href="https://vesa.piittinen.name/">Vesa Piittinen</a></p>
+
+<!-- BEGIN TEST HTML -->
+
+		<table><tr><td id="check_limited"><img alt="" src="1px.gif" height="1" width="1" /></td></tr></table>
+
+<!-- END TEST HTML -->
+
+	</body>
+</html>`,
+	]),
+	{ headers }
+)
+---
