@@ -98,6 +98,7 @@ const {
 				--light-reduced-opacity: 0.333;
 				--light-header: #37270b;
 				--light-line: #BBAE9C;
+				--light-pre: hue-rotate(180deg) invert(1) sepia(0.4) hue-rotate(-25deg) brightness(1.1) saturate(1.5);
 
 				--dark-focus: #ffbde2;
 				--dark-bg: #132b1f;
@@ -109,6 +110,7 @@ const {
 				--dark-reduced-opacity: 0.5;
 				--dark-header: #fff3d3;
 				--dark-line: #797959;
+				--dark-pre: brightness(0.9) contrast(1.2) sepia(0.4) hue-rotate(-25deg) saturate(2);
 
 				--default-theme: 'vaalea';
 				color-scheme: light;
@@ -122,6 +124,7 @@ const {
 				--reduced-opacity: var(--light-reduced-opacity);
 				--header-color: var(--light-header);
 				--line-color: var(--light-line);
+				--pre-filter: var(--light-pre);
 			}
 
 			:root[lang='en'] {
@@ -159,6 +162,7 @@ const {
 					--reduced-opacity: var(--dark-reduced-opacity);
 					--header-color: var(--dark-header);
 					--line-color: var(--dark-line);
+					--pre-filter: var(--dark-pre);
 				}
 				:root[lang='en'] {
 					--default-theme: 'dark';
@@ -177,6 +181,7 @@ const {
 				--reduced-opacity: var(--light-reduced-opacity);
 				--header-color: var(--light-header);
 				--line-color: var(--light-line);
+				--pre-filter: var(--light-pre);
 			}
 
 			:root[data-color-scheme='dark'] {
@@ -191,6 +196,7 @@ const {
 				--reduced-opacity: var(--dark-reduced-opacity);
 				--header-color: var(--dark-header);
 				--line-color: var(--dark-line);
+				--pre-filter: var(--dark-pre);
 			}
 
 			:global(html) {
@@ -220,6 +226,13 @@ const {
 
 			:global(html)::after {
 				filter: invert(1) contrast(0.5);
+			}
+
+			:global(pre.github-dark) {
+				border-radius: 0.5rem;
+				filter: var(--pre-filter);
+  				margin: 0 -1rem;
+  				padding: 1rem;
 			}
 
 			:global(blockquote) {
