@@ -3,7 +3,6 @@
 	display: inline-flex;
 	flex-wrap: wrap;
 	gap: 0.5rem;
-	justify-content: space-evenly;
 	text-align: left;
 	vertical-align: middle;
 }
