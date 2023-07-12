@@ -1,0 +1,30 @@
+---
+title: Maintaining the past
+description: One of the nasty parts of having a long internet presence is that you have all those old things still around. So, I preserved a quirks mode test page.
+pubDate: 2023-07-12
+layout: $layouts/BlogPost.astro
+tags:
+    - legacy
+    - css
+    - html
+    - ie
+---
+
+import Icon from '$/components/Icon.astro'
+
+I have been on the internet for a long time. One of the things that I don't like is when things just disappear. Be it a
+refactored site by a company or someone remaking their personal site, I really dislike when old links no longer work.
+
+While I'm not perfect in preserving old URLs myself I tend do make sure I do maintain some backwards compatibility. So
+now that I did write this site on Astro it did pose me a challenge: what to do with my old legacy
+[DOCTYPE test page](/doctype)? The original was written by me in PHP apparently around 2010. Looking at the CSS style it
+might be far older than that!
+
+I ended up rewriting it in Astro. Although in a rather limited way, because Astro does not allow to change the DOCTYPE
+in an easy fashion when rendering a component. So it is good old manually managed string templating. The page works now
+just like it did before. And as an added bonus, for the first time, the source is also up on GitHub.
+
+I have no idea if anyone finds this valuable anymore. We have had no need for quirks mode for a long time as HTML5 did
+succeed any to my knowledge nobody is using other than `<!DOCTYPE html>` on their sites.
+
+> You can let me know if this is valuable on <Icon href="/icons/social/mastodon.svg" /> Mastodon:<br />`@MerriNet@mastodon.social`
