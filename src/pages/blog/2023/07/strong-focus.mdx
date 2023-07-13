@@ -1,0 +1,187 @@
+---
+title: Strong focus
+description: I have a strong opinion on how strong your focus indicators should be. They should be strong!
+pubDate: 2023-07-13
+layout: $layouts/BlogPost.astro
+tags:
+    - html
+    - css
+    - a11y
+    - WebDesign
+---
+
+import Emoji from '$/components/Emoji.astro'
+import Icon from '$/components/Icon.astro'
+import { inlineFlex } from '$/components/inlineFlex.module.css'
+import styles from './strong-focus.module.css'
+
+This is a summary on how I think about focus indicators, and how to solve pretty much all the issues around using them.
+
+## Rule one
+
+Focus indication should **always** be strong and highly visible.
+
+<button style="outline: 3px solid var(--focus-color); outline-offset: 3px;">Strong!</button>
+
+## Rule two
+
+You should use the same indicator for everything. It should be a global style.
+
+```css
+:where(:focus:not(:focus-visible)) {
+	outline: none;
+}
+
+:where(:focus:focus-visible) {
+	outline: 3px solid Highlight;
+	outline-offset: 3px;
+}
+```
+
+<details>
+	<summary>Are they the same?</summary>
+	<div>
+		<div>
+			<p class={inlineFlex} style="gap: 2rem; margin: 1rem;">
+				<button style="outline: 3px solid var(--focus-color); outline-offset: 3px;">Button: same!</button>
+				<a style="outline: 3px solid var(--focus-color); outline-offset: 3px;">Link: same!</a>
+				<input
+					readonly
+					style="outline: 3px solid var(--focus-color); outline-offset: 3px;"
+					value="Input: same!"
+				/>
+			</p>
+		</div>
+	</div>
+</details>
+
+## Rule three
+
+Focused elements should have a style that pushes them above the others in a group or a list:
+
+1. `position: relative;` works for many regular cases.
+2. `transform: translateX(0);` can also be enough to push above, but sometimes subpixels are nasty.
+3. `z-index: 1;` when out of options.
+
+```css
+/* make focused element be above the others */
+.someElement:focus {
+	transform: translateX(0);
+}
+```
+
+## Rule four
+
+Focus indicator should never clip. On a container either use `contain: layout;` over `overflow: hidden;`, or if you must
+have a `contain: content;` (= `overflow: hidden;`) then use negative margin + padding trick to increase the size of the
+drawn container.
+
+<div class={inlineFlex} style="gap: 2rem;">
+	<div class={styles.poorContainment}>
+		<button style="outline: 3px solid var(--focus-color); outline-offset: 3px;">
+			Clipping <Emoji as="⛔" />
+		</button>
+		<br />
+		<span>Sad</span>
+	</div>
+	<div class={styles.betterContainment}>
+		<button style="outline: 3px solid var(--focus-color); outline-offset: 3px;">
+			Visible! <Emoji as="✔️" />
+		</button>
+		<br />
+		<span>Happy</span>
+	</div>
+	<div>
+
+```css
+/* If you do also need the padding: */
+.container {
+	background-clip: padding-box;
+	border: 1rem solid tranparent;
+	margin: -1rem;
+}
+```
+
+    </div>
+
+</div>
+
+And if this is too hard, move the focus indicator inside:
+
+```css
+.container > *:focus-visible {
+	outline-offset: -6px;
+}
+```
+
+But you may also need to adjust the indicator color.
+
+## Rule five
+
+Clearly visible focus indicator is more important than visual attractiveness.
+
+If you try to design a focus indicator to be pretty you are likely making it less noticeable. That is wrong. It must be
+visually annoying.
+
+Do not apply a continuous animation on a focus indicator. Focus indicator should be highly visible on itself and adding
+continuous animation on an already highly visible element can cause motion sickness or headache. It can also be
+confusing to a person with very limited vision since focus indicators usually do not animate continously.
+
+## Tip one
+
+If you have a card element it can be cleaner to have focus indicator on the whole card even when the clickable area is
+only a button. You can achieve this with a pseudo element on the button:
+
+```css
+.card {
+	position: relative;
+	/* or this is enough as well: */
+	container-type: inline-size;
+}
+
+.card button:focus {
+	outline: none;
+}
+
+.card button:focus-visible::before {
+	content: '';
+	inset: 0;
+	pointer-events: none;
+	position: absolute;
+	outline: 3px solid Highlight;
+	outline-offset: 3px;
+}
+```
+
+By removing `pointer-events: none;` you can also make the whole card clickable. Also, you can use `:focus-within` on the
+card element to make sure the outline appears above the other cards.
+
+<div class={inlineFlex} style="align-items: flex-start;">
+	<div class={styles.card}>
+		<strong>A Card</strong>
+		<p>Focus me with keyboard</p>
+		<button>Do it!</button>
+	</div>
+	<div class={styles.card}>
+		<strong>B Card</strong>
+		<p>Oh no leave me alone</p>
+		<button>Don't come here</button>
+	</div>
+	<div class={styles.card}>
+		<strong>C Card</strong>
+		<p>You focused B didn't you?</p>
+		<button>Of course</button>
+	</div>
+</div>
+
+## Tip two
+
+Make use of CSS custom properties: define a `--focus-color`. When used in a local theme system you can make sure that
+most of the time your focus color works well regardless of background. At minimum you could have a team rule to adjust
+the CSS variable instead of copy-pasting all the focus indicator styles only to change the indicator color.
+
+Alternate to this option is to use two contrasting colors such as pure black and white, however making this work can be
+tricky. You could use `box-shadow`, but it doesn't work well with a default global style since things such as cards can
+often have a shadow, which would be a style conflict.
+
+> I occasionally post about web stuff on my <Icon href="/icons/social/mastodon.svg" /> Mastodon:<br />`@MerriNet@mastodon.social`
