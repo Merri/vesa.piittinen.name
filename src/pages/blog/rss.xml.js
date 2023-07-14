@@ -1,5 +1,5 @@
 import rss, { pagesGlobToRssItems } from '@astrojs/rss'
-import isBefore from 'date-fns/isBefore'
+import { isBefore } from 'date-fns'
 
 export async function get(context) {
 	const now = new Date()
