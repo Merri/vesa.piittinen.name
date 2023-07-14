@@ -23,7 +23,7 @@
 	"redirects": [
 		{
 			"source": "/browser_bugs/border-collapse.html",
-			"destination": "https://vesa.piittinen/blog",
+			"destination": "https://vesa.piittinen/blog/2007/03/border-collapse",
 			"permanent": true
 		},
 		{

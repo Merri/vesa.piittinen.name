@@ -1,0 +1,81 @@
+---
+title: Border collapse bugs in table element
+description: This is a bug testcase for issues with border-collapse in Mozilla Firefox 2, Internet Explorer 5 through 7, and from Opera 7 to 9.10.
+pubDate: 2007-03-21
+modDate: 2023-07-14
+layout: $layouts/BlogPost.astro
+tags:
+    - html
+    - css
+    - bug
+---
+
+import { hiddenCell, tableCell, tableWithBorderCollapse } from './border-collapse.module.css'
+
+This is a very old bug testcase page from year 2007.
+
+## `border-collapse : collapse;` CSS bugs with tables
+
+<table class={tableWithBorderCollapse}>
+	<tr>
+		<th class={hiddenCell}>This cell should not be visible.</th>
+	</tr>
+	<tr>
+		<td class={tableCell}>This cell should be surrounded by a single 1px red border.</td>
+	</tr>
+</table>
+
+What we have above is a regular table with two cells: the first one has been hidden while the other is visible. border-collapse : collapse; has been applied and borders of 1px added to both table and cells. However, both Firefox and IE render the table incorrectly: Firefox doesn't render the borders at all while Internet Explorer renders the border of the hidden cell.
+
+```html
+<table class="tableWithBorderCollapse">
+	<tr>
+		<th class="hiddenCell">This cell should not be visible.</th>
+	</tr>
+	<tr>
+		<td class="tableCell">This cell should be surrounded by a single 1px red border.</td>
+	</tr>
+</table>
+```
+
+This bug exists in Firefox up to version 2 and in Internet Explorer versions 5 to 7.
+
+### How to resolve?
+
+In this case you could resolve the bug by hiding the entire row instead.
+
+---
+
+## Opera bug
+
+Below is another table with four cells: the first one is hidden while the other ones are visible.
+
+<table class={tableWithBorderCollapse}>
+	<tr>
+		<th class={hiddenCell}>This cell should not be visible.</th>
+		<td class={tableCell}>This cell should be visible.</td>
+	</tr>
+	<tr>
+		<td class={tableCell}>This cell should be visible.</td>
+		<td class={tableCell}>This cell should be visible.</td>
+	</tr>
+</table>
+
+Opera renders only half of the top border of the table while it should render all of it. This bug exists in versions from Opera 7 to Opera 9.10.
+
+```html
+<table class="tableWithBorderCollapse">
+	<tr>
+		<th class="hiddenCell">This cell should not be visible.</th>
+		<td class="tableCell">This cell should be visible.</td>
+	</tr>
+	<tr>
+		<td class="tableCell">This cell should be visible.</td>
+		<td class="tableCell">This cell should be visible.</td>
+	</tr>
+</table>
+```
+
+### How to resolve?
+
+You must have an empty cell in the table.

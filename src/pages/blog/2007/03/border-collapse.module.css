@@ -1,0 +1,12 @@
+.tableWithBorderCollapse {
+	border-collapse: collapse;
+	border: 1px solid red;
+}
+
+.tableCell {
+	border: 1px solid red;
+}
+
+.hiddenCell {
+	display: none;
+}
