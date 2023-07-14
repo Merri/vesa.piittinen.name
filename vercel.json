@@ -23,17 +23,17 @@
 	"redirects": [
 		{
 			"source": "/browser_bugs/border-collapse.html",
-			"destination": "https://vesa.piittinen/blog/2007/03/border-collapse",
+			"destination": "https://vesa.piittinen.name/blog/2007/03/border-collapse",
 			"permanent": true
 		},
 		{
 			"source": "/doctype/xhtml/test.xml",
-			"destination": "https://vesa.piittinen/assets/doctype/test.xml",
+			"destination": "https://vesa.piittinen.name/assets/doctype/test.xml",
 			"permanent": true
 		},
 		{
 			"source": "/doctype/xhtml/xhtml11.xsl",
-			"destination": "https://vesa.piittinen/assets/doctype/html11.xsl",
+			"destination": "https://vesa.piittinen.name/assets/doctype/html11.xsl",
 			"permanent": true
 		},
 		{
