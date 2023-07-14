@@ -66,6 +66,8 @@ const {
 		<meta name="msapplication-TileColor" content="#193929" />
 		<meta name="theme-color" content="#ffffff" />
 
+		<link rel="canonical" href={permalink || new URL(Astro.url.pathname, Astro.site).toString()} />
+
 		{permalink !== '' && (
 			<meta property="og:type" content="website" />
 			<meta property="og:url" content={permalink} />
