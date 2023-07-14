@@ -1,4 +1,7 @@
 ---
+import { MarkdownInstance } from 'astro'
+import isBefore from 'date-fns/isBefore'
+
 import BlogPostPreview from '$/components/BlogPostPreview.astro'
 import Icon from '$/components/Icon.astro'
 import { inlineFlexIcon } from '$/components/inlineFlex.module.css'
@@ -6,17 +9,23 @@ import Link from '$/components/Link.astro'
 import Tags from '$/components/Tags.astro'
 import { Post } from '$layouts/BlogPost.astro'
 import Layout from '$layouts/Layout.astro'
-import { MarkdownInstance } from 'astro'
 
 const tags = new Set(
 	(new URL(Astro.request.url).searchParams.get('tags') ?? '')
+		.toLowerCase()
 		.split(',')
 		.map((tag) => tag.trim())
 		.filter((tag) => tag)
 )
 
+const now = new Date()
+
 const allPosts = await Astro.glob<MarkdownInstance<Post>>('./blog/[0-9][0-9][0-9][0-9]/[0-9][0-9]/*.(md|mdx)')
-const posts = allPosts.filter((post) => tags.size === 0 || post.frontmatter.tags?.some((tag) => tags.has(tag)))
+
+const posts = allPosts
+	.filter((post) => isBefore(new Date(post.frontmatter.pubDate), now))
+	.filter((post) => tags.size === 0 || post.frontmatter.tags?.some((tag) => tags.has(tag.toLowerCase())))
+
 posts.sort((a, b) => +new Date(b.frontmatter.pubDate) - +new Date(a.frontmatter.pubDate))
 ---
 

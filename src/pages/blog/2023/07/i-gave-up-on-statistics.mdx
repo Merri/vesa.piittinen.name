@@ -1,0 +1,98 @@
+---
+title: I gave up on statistics
+description: For a very long time it has been almost essential to track traffic on your site and peek on the analytics. But what if you... don't?
+pubDate: 2023-07-17
+layout: $layouts/BlogPost.astro
+tags:
+    - WebDev
+    - WebHistory
+    - IndieWeb
+    - SocialMedia
+---
+
+import Icon from '$/components/Icon.astro'
+
+At the dawn of the web we had a page. And that page had whatever we had put on it. However, like books, it was a one
+sided affair: there was no direct interaction between the audience and the creator. You had text, you had small images,
+and... well, links. The biggest initial innovation of the web over books.
+
+One of the first popular things that broke this pattern was counters. You would embed an external image from a service
+elsewhere, and upon each download of the image the counter would go up. This was one of the first means of gaining
+Internet points, and it brought a simple social element into having a website. You could ask your friend to visit and
+you could tell if they visited if the counter went up. Because that is how low the traffic was back in the early days.
+
+Later on we got more such social widgets to embed to your page: webpolls, guestbooks, comment forms. All of these had a
+promise of giving life and social aspect, a further motivation to interact with people. However, there was a certain
+limit to this which holds true to this day: it is an awful lot of work for a single person to keep on providing new
+stuff for an audience. So over time &ndash; on most of the sites &ndash; these services were more like a ghost town.
+
+## The rise of statistics
+
+Most often servers are setup with access logs. At some point people started making tools to grab data from the logs and
+summarize daily, weekly, and monthly stats. This mechanism however was limited to webmasters of the time and rarely was
+available for hosted sites.
+
+Then we got an evolution of the idea: combine it with one pixel image embedded on your site, just like a counter!
+Eventually a lot of people started making use of statistics services to see much more than they could before, such as
+where other people were coming from and visit back. The statistics also started to improve and evolved to track unique
+browsers (and later users) instead of just plain hits.
+
+It was around this time we got Google Analytics. It eventually became de-facto analytics service everybody was using.
+It became a valuable skill to know how Analytics works. And one of the reasons for it's popularity was, of course, the
+human desire for Internet points.
+
+## Capitalist web
+
+Commercial social media brought some innovations. One of these innovations was to provide new mechanisms for people to
+collect Internet points: likes. One of the things that you no longer see on pages is an embedded like button to
+Facebook. This area was taken over by Twitter by getting people to embed tweets, which provided more than a single
+action like button. Facebook would have to innovate again to be different and beneficial so they ended up evolving likes
+into reactions. But they lost the embedded content game against Twitter.
+
+There is a reason companies like embeds: they make it possible to track on people, and this is very beneficial for
+advertisements. Personalized, targetted ads with zero human interaction effort is the wet dream of a marketer.
+Essentially this is the game played by all the major internet companies.
+
+### Privacy concerns
+
+This was one of the biggest shifts in recent web history, and a very important one: European Union ended the game of
+tracking people without their consent. A side effect of this was of course all the cookie consent dialogs on many sites.
+People often blame EU. But you could very well make a site with no need for tracking, and thus, without a separate
+cookie consent dialog. And really, you could separate the permissions and consents per feature instead of making a
+single point of loads of checkboxes, but they want to make you allow everything by making the dialogs annoying unless
+you press the big button that gives all the rights.
+
+To me it is rather insane that people in United States have so little power over the capitalist powers that they keep on
+being sheeps with trackers in their necks. "But I have VPN! I pay for services to take me off lists to be safe from
+spam! Our system works!" is the naivety they live in. Of course the mechanism is familiar considering how the health
+care and school systems work in the US. Poorly.
+
+GDPR and all the other privacy laws are guarding against the abuse of tracking people via embedded content. It is the
+better way. You should pay taxes to the government for basic services and protection, not an overpriced service tax to
+companies.
+
+## The downside of Internet points
+
+If you have followed the web then nothing of this is new: the game played by the internet companies, and the privacy
+issues. To focus back on to the internet points and their addictive nature on the human mind, could they also be harmful
+in another way? Are there negative effects on me having analytics tracking on my site, even if I'm using a paid privacy
+first service?
+
+And my conclusion on this thought was: yes. It did have an effect on me and how I thought about my sites. Over the years
+I have been giving more attention to the bigger sites instead of the smaller ones. However this was totally irrational:
+the happiness of creation often lies in the smaller sites where you have more creative freedom and less
+responsibilities. Putting too much effort on the bigger and more popular sites, continuously, eventually did wear me
+down. Especially as I finally successfully transitioned to work life as a front-end developer.
+
+I have taken action: I no longer have analytics on my sites. I still have the tracking script included on some of them,
+but they will be eventually removed.
+
+Instead of focusing on following user numbers or wasting my time on thinking about things like where I could get more
+people to come and visit the sites, I rather focus solely on content. Of course I'll be doing minimal advertisement on
+stuff like this blog on Mastodon, but that I now consider more of helping out others to find valuable stuff instead of
+having traffic for traffic's sake.
+
+Doing that would of course be possible even with analytics, but I think this kind of concious choice gives more freedom
+to my brains. I will no longer need to waste any time thinking about analytics related stuff.
+
+> Instead of me seeing from statistics that you have visited my site, why not let me know elsewhere? I'm on <Icon href="/icons/social/mastodon.svg" /> Mastodon, maybe you should be too?<br />`@MerriNet@mastodon.social`
