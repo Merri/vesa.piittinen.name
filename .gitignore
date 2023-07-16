@@ -103,7 +103,7 @@ dist
 # TernJS port file
 .tern-port
 
-# Astro 0.20 and older
-.snowpack
+.vercel
 
 !public/icons/
+

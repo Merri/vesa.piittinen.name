@@ -6,6 +6,7 @@ import node from '@astrojs/node'
 import preact from '@astrojs/preact'
 import fs from 'node:fs'
 import { deflate } from 'pako'
+import sitemap from '@astrojs/sitemap'
 import vercel from '@astrojs/vercel/serverless'
 
 const isDeno = process.argv.includes('--deno')
@@ -37,7 +38,13 @@ export default inflate(array);`
 
 export default defineConfig({
 	adapter: (isDeno && deno()) || (isNode && node({ mode: 'standalone' })) || vercel(),
-	integrations: [preact(), mdx()],
+	integrations: [
+		preact(),
+		mdx(),
+		sitemap({
+			filter: (page) => !page.includes('rss.xml'),
+		}),
+	],
 	//output: 'static',
 	output: 'server',
 	site: 'https://vesa.piittinen.name',

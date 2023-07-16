@@ -24,6 +24,7 @@
 		"@astrojs/mdx": "0.19.7",
 		"@astrojs/preact": "2.2.1",
 		"@astrojs/rss": "2.4.3",
+		"@astrojs/sitemap": "1.4.0",
 		"@astrojs/vercel": "3.5.1",
 		"@babel/core": "7.22.5",
 		"@babel/plugin-transform-react-jsx-source": "7.22.5",
