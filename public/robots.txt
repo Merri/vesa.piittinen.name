@@ -3,3 +3,12 @@ Disallow: /fonts/
 Disallow: /icons/
 
 Sitemap: https://vesa.piittinen.name/sitemap-index.xml
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /

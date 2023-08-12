@@ -1,0 +1,68 @@
+---
+title: Why I dislike React, and how to escape
+description: React has been around for 10 years. A lot has happened within those past ten years and while I still use React at work, in my own projects I never consider React as a viable option. Why?
+pubDate: 2023-08-12
+layout: $layouts/BlogPost.astro
+tags:
+    - react
+    - astro
+    - WebDev
+---
+
+Considering my age my professional career started pretty late, only ten years ago. And I like to think that before getting hired I was very likely the most skilled web programmer in my country that hadn't ever been hired to work professionally. The 10 year period that followed has been the entire life of React and it only took about a year until I got my hands into it. So at this point I have about nine years of React experience.
+
+Then what I think about React? Well... I think React is the number one reason to wasted development time. Well I admit I exaggerate *a little bit*, but there is a truth into this.
+
+## Innovation
+
+React has been great in many ways. It did innovate and bring ideas near the web space that hadn't been known by the web folks. The idea of components is a solid one. And the latter addition of hooks have their own merits as far as code style goes, even if the technical details and issues are less favourable.
+
+The success of React in the company space has ensured that we got as good as possible TypeScript support once TypeScript really caught on. Although, I've never been the highest fan of TypeScript either, even though I do understand the benefits it brings. But at this point I value TypeScript higher than I do React. These days I consider and use TypeScript as a documentation tool which made it much more acceptable to me: I think I save some time from writing docs.
+
+React however does not have anything of similar value to me these days. When looking around and noticing the existance of Preact, SolidJS and others, these tools do everything React does, and do it better. Especially now that signals are a thing &ndash; and I think this despite the fact I still haven't made much use of signals! This is one of the limitations I have by still working mostly with React as it is what we use at work.
+
+The latest addition to React, Server Components, has been the biggest **meh!** I've had with React. Hooks were a meh also, but I somewhat tolerate hooks. Short code is nice. But what RSC brings to the table? Well... it brings in a mess. If you think what React is supposed to be, it is a front-end view library. However when you start talking about it as a Server Component renderer then you get more questions than answers. You now have a tool that is supposed to be a front-end utility, but it has a server-only mode. That just feels very wrong.
+
+Of course there are benefits to RSC, but I don't like how much of a vendor lock it feels like. Say, if you have a website based on Next.js and React, and one day you found out that there would be something better than Next.js, wouldn't you like to switch? We actually had a similar situation with Gatsby: we were stuck in an old version and had a desire to move into something better, and moving to the latest version was major work anyway. So we switched over to Next.
+
+But now with RSC React adds one more layer of complexity: if you buy the hype, spend the time to learn RSC and use it extensively &ndash; and you probably must use it extensively to fix the performance issues &ndash; you will make it harder to switch over to any other framework. You are being limited to only solutions that support React Server Components natively because moving away from RSC has become too big of a deal.
+
+## Performance woes
+
+A continuing issue with React is the size of it: React brings in it's own massive replacements of native DOM features such as event handling. These were very useful in the Internet Explorer era to guarantee the same behaviour across browsers. But this is no 2013 anymore! IE has been dead the whole ongoing decade. All the browsers are now evergreen and support web standards. The only reason for React to keep with their own event system is React Native: the solution for mobile app development. But for the browser environment the event system is just added weight.
+
+Size of React is an issue as in a sense React doesn't do that much for you. It shouldn't be a multiple tens of kilobytes of extra bundle size for your website. Other view libraries prove this by being a lot smaller. You would also assume that by being bigger React would use that size to provide something magical to be faster than the competition, but that is also a no: React is often one of the slower ones in benchmarks, often by a large margin.
+
+Then we also have hooks. They bring in their own performance issues: you need to be aware of the downfalls of hooks so that you can avoid writing badly performing components. The need of dependency arrays make things pretty bad: you can't pass in objects and arrays carelessly! You have to guarantee that their reference remains the same. So those have to be memoized, or you should consider passing in some other type. This can easily become a lot of complexity to deal with that you don't need to bother with in other solutions (like signals).
+
+During my time with React I've spent way too much time on solving problems that are, in the end, related to how React has been designed. These are issues that I shouldn't have, at least not for the most part. Things like how to handle focus in page transitions, optimizing sizes of bundles, optimizing page loading, all sorts of issues that are solved in native web solutions but have been implemented again in React because React simply hasn't been appreciative of how the web works.
+
+## Hostility towards the web platform
+
+This is another major area of React I don't really like: React often chooces patterns that make it harder to stay close with the web. These are small things, but React choosing to prefer `className` over `class` in JSX is one of the annoyances. JSX _looks like_ HTML and you also use it to generate HTML, so why not stick with HTML attributes?
+
+React also makes access to CSS features harder. The `style` property is a great example: React only supports it's use via an object. And this object is also typed so that you can only use the known features. So each time CSS gets new features there is a time when you can't pass them to `style` without TypeScript complaining about it. Some things don't seem to get resolved at all: you still can't pass CSS variables to `style` without doing type trickery.
+
+I can only ask the question: why? Why can't we get a type for `style` that allows for CSS variables with no extra fuss?
+
+All these small things add up. By making it harder to use native web platform features you are giving in the suggestion that you should use something else. And this led us to (runtime) CSS-in-JS which has been one of the most annoying things ever. Solutions like Styled Components rose to popularity because they made things easier with React, but pretty much anyone who has worked extensively with CSS never really liked how Styled Components worked. But if React hadn't been "hostile" towards the web's native platform we might not ever had seen such as big rise (and fall) of CSS-in-JS.
+
+With React basic usability and accessibility related topics tend to have been more troublesome than they needed to be. Like, we got `useId` with React 18. Very, very recently. This is something that should've existed much earlier, because ID stability is one of the most basic tools that you need when doing forms and giving anchors for screen readers to refer to.
+
+The historical record for writing React components has also "encouraged" avoidance of semantic HTML. In many React codebases you have a situation where you can't really ever see what semantic elements are being used unless you really dig deep. It might be really hard to figure out the final HTML elements. And while this is not entirely React's fault as is, they could've had a much better policy towards their own documentation and highlight the importance of semantic elements and provide patterns and solution to how to keep them visible.
+
+## The escape pod
+
+I consider the above points valid concerns. And React has failed in it's most recent development: it has pushed harder to become a hybrid framework library mess rather than actually evolving and innovating to become something that truly solves issues. RSC only solves issues that are relavent in React context and they do have their reasons for doing what they've done, but I simply do not agree that the web development community needs what React now brings to the table. We simply do not need React Server Components.
+
+However many of us are bound to React at their daily work. You simply can't transition away from React with a little bit of work. Preact is likely the easiest target to transition to, but a lot of the existing React libraries and utilities do not work with Preact at all. The bigger your project the more impossible it becomes.
+
+Lately React has really been pushing Next.js hard, and the reason for that is clear: Next.js has also made itself entirely dependant on React. If you use Next you can only use React with it. They live in a synergy. But there is a way out!
+
+If you have a desire to eventually have more options at your disposal, the ability to choose the technologies to use, the best fit for each case, then you should consider moving to Astro. Why?
+
+Astro is open. Astro uses web standards: the knowledge you gain when using Astro is mostly portable to other web solutions. Astro's own syntax is like a superior version of JSX by having less limitations. Astro makes it easy to use CSS in a variety of ways. Astro allows to use vanilla JS with less hassle. Astro is currently the most performant JS framework. RSC is totally irrelevant solution in the context of Astro. And finally: these days Next.js doesn't really do anything that you couldn't also achieve with Astro.
+
+You can port your server side to Astro, and this is likely much smaller part of your site than all the React components that you have. It is much more doable and viable than trying to refactor all your React components. So by switching the server to Astro you open your options wide open: you get to keep your existing React components while getting the option to start moving away from React gradually.
+
+Or maybe you can keep React and simply use Astro to fix the biggest pain points in performance. All that without devoting to learning a React-only syntax that does not port to anywhere else.
