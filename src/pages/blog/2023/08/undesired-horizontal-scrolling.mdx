@@ -1,0 +1,112 @@
+---
+title: Undesired horizontal scrolling
+description: One of the issues with responsive design and lots of people working on a single site is that there is a chance to make the page too wide accidentally.
+pubDate: 2023-08-21
+layout: $layouts/BlogPost.astro
+tags:
+    - html
+    - css
+    - WebDev
+---
+
+import Codepen from '$/components/Codepen.astro'
+
+I guess this is a pretty common issue: you have a website. You work on it and all is fine. Until suddenly you check your
+phone, start scrolling the page and **BOOM!** your page is scrolling in all directions! Nooo! All that careful craft and
+now everything is ruined!
+
+Lets have a look at some solutions.
+
+## Paint protection suit
+
+There can be a lot of causes for horizontal scrollbars. Maybe you changed `box-sizing` to `content-box` and one of the
+elements had `width: 100%;` and some padding. So the total width exceeds the available space. Or maybe some absolutely
+positioned element draws slightly past the full width of the page. Or maybe content folks introduced a title text with a
+very long word, didn't remember to add a soft hyphen (or they can't do that), and now that breaks the page in smallest
+mobile sizes.
+
+There is also one cause for this that can be extremely tricky to figure out: you do a `visually-hidden` trick but forget
+to apply `overflow: hidden;` to the rules, and there is a sentence hidden with it. Looking at the element with browser
+dev tools you see the element is 1&times;1 pixels like it is supposed to, but actually due to `white-space: nowrap;`
+(which is a required style in this case) the text is a one long line which also affects the page width.
+
+I want to congratulate everyone who have had to debug that cause when fixing horizontal scrolling.
+
+## Dirty fixes
+
+Of course you might not ever get into those issues because you've been clever and added `overflow-x: hidden;` or a
+`contain: paint;` to your body element. Ha! No more pesky horizontal scrollbar, freedoooom!
+
+But I'm a nasty guy who is here to tell you that this solution is like piling trash under a rug. Sure, it fixes the
+immediate issue, but it also does something that I do want to argue is far worse: from that point on any developer or
+content editor might accidentally add in something that is out of the view of an user, and **you might never find out
+about the issue**.
+
+The issue might happen only on a very specific viewport size none of your team members happens to check on just the
+right place of the site. This is a very challenging part of responsive design, and the problem might be something that
+makes a feature or content inaccessible to people, but they won't even know to complain since they can't see what is
+missing. Not even know that something should be there.
+
+This is why I have solved the problem in a different way: by applying a global
+`overflow-wrap: break-word; word-break: break-word;` style. Now this one is sure to make people open their eyes and just
+go full on "why? Why would you do that to yourself?"
+
+## Breaking everything
+
+I guess I have to defend the `break-word` solution. The major downside of this rule is that it breaks words in an ugly
+way: if you don't have soft hyphens in words then the titles will look bad. However: a title with a word too wide will
+still be readable instead of being clipped. Of course English language doesn't have a lot of very long words, but the
+sites I work on have Finnish and we do have real words like Äteretsiputeretsipuolilautatsibaari (okay I admit this one
+was just a name of a bar in Salla many years ago).
+
+Another common issue when introducing this rule to an existing project is that usually many places in UI have their text
+cut. However I'd argue these are places where CSS is buggy anyway: the layout should by default reserve enough space for
+the text. Besides the lazy fix of `white-space: nowrap;` is easy enough to apply, at least until there is time for to do
+a proper fix.
+
+Now that we've gone though the issues I want to point out the biggest benefit of this solution over a
+`overflow-x: hidden;` on body: instead of having hidden issues you might never find your issues are noticeable. Newly
+made stuff will still make the horizontal scrollbar visible and thus be fixed during development. While this is annoying
+it is much better than not knowing about an issue. Also: word breaking is highly visible and annoying issue that you
+want to fix. And that is the point: you have issues that you can easily notice and fix immediately.
+
+## Balanced text
+
+A recent addition to Chromium based browsers has been `text-wrap: balance;` and it is a very nice addition. However
+there is a downside as well: it doesn't play nice with `break-word`!
+
+Let's say you have a title "Magnificent toy", but there is enough space only to have "Magnificent" entirely on the
+first line. What will happen with balanced wrapping and `break-word`?
+
+```
+Magnific
+ent toy
+```
+
+Well... That is undesirable. This might get fixed by applying soft hyphen to the longer word, but that isn't really an
+ideal fix since this issue can happen pretty much anywhere.
+
+So it seems the `text-wrap: balance;` implementation is rather naive and the line length calculation will apply with
+`break-word`, ignoring the fact that the whole word would in normal conditions fit to the given line, and breaks it.
+
+<Codepen id="wvRvOBE" title="text-wrap: balance; is broken with word-break: break-word;" />
+
+Personally I consider this behavior a bug, even if it goes precicely as stated in specs (I don't know). If the word
+would fit the line then it should not be broken even if `break-word` is active together with balanced text.
+
+So far this has been the first real issue that I've encountered with this `break-word` strategy to aid in eliminating
+unexpected horizontal scrollbars caused by text content. However you might still not want to have `break-word` because
+you're English only and all your words are always short and nice and unlikely to be wider than the narrowest phone
+viewport. Which is fine: I'm only bringing up this option to aid those who might find it useful for their project.
+
+## Other strategies
+
+One strategy that could be employed would be to have a test that would check a page for existance of a horizontal
+scrollbar on main body. However that is a rather costly test as it doesn't scale well for checking an entire site in
+multiple viewport sizes. Also the harm is usually mostly in touch devices where you want to keep the scrolling vertical
+at all times for the main page content. On a desktop computer a horizontal scrollbar is most often just a minor visual
+annoyance that doesn't ruin user experience at all.
+
+In the end: it is more important that all content remain accessible even with unintended layout behavior happening
+rather than &ndash; in worst case &ndash; entirely blocking user from accessing a feature or information. So maybe that
+horizontal scrollbar isn't *that* bad of an issue that you must eliminate it with an `overflow-x: hidden;` on body.
