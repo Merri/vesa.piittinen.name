@@ -17,7 +17,7 @@ now everything is ruined!
 
 Lets have a look at some solutions.
 
-## Paint protection suit
+## The causes
 
 There can be a lot of causes for horizontal scrollbars. Maybe you changed `box-sizing` to `content-box` and one of the
 elements had `width: 100%;` and some padding. So the total width exceeds the available space. Or maybe some absolutely
@@ -49,7 +49,7 @@ missing. Not even know that something should be there.
 
 This is why I have solved the problem in a different way: by applying a global
 `overflow-wrap: break-word; word-break: break-word;` style. Now this one is sure to make people open their eyes and just
-go full on "why? Why would you do that to yourself?"
+go full on "why? Why would you do that to yourself?" Besides, it only helps with text, right? Right?!?
 
 ## Breaking everything
 
@@ -65,10 +65,10 @@ the text. Besides the lazy fix of `white-space: nowrap;` is easy enough to apply
 a proper fix.
 
 Now that we've gone though the issues I want to point out the biggest benefit of this solution over a
-`overflow-x: hidden;` on body: instead of having hidden issues you might never find your issues are noticeable. Newly
-made stuff will still make the horizontal scrollbar visible and thus be fixed during development. While this is annoying
-it is much better than not knowing about an issue. Also: word breaking is highly visible and annoying issue that you
-want to fix. And that is the point: you have issues that you can easily notice and fix immediately.
+`overflow-x: hidden;` on body: the issues are noticeable instead of being hidden issues you might never find. Newly made
+stuff will still make the horizontal scrollbar visible and thus be fixed during development. While this is annoying it
+is much better than not knowing about an issue. Also: word breaking is highly visible and annoying issue that you want
+to fix. And that is the point: you have **easy** issues that you can quickly notice and fix immediately.
 
 ## Balanced text
 
