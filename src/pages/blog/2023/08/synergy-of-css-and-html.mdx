@@ -1,0 +1,346 @@
+---
+title: Synergy of CSS and HTML
+description: There are many ways to approach CSS and HTML. So how I go about this with my experience of 25 years of web development?
+pubDate: 2023-08-23
+layout: $layouts/BlogPost.astro
+tags:
+    - html
+    - css
+    - WebDev
+---
+
+import Link from '$/components/Link.astro'
+
+You might've occasionally seen me complain about Styled Components (or runtime CSS-in-JS in general), or be grumpy
+towards Tailwind. This might put off some people, especially those who either have put a lot of effort into learning
+those tools, or who simply are easily bandwagoned into a cultish behavior where there are "them vs us".
+
+Personally I don't care about hype and I'm always more into the practical, true value of a thing. And I really like more
+looking at the big picture &ndash; at least every time that I can spare my mind a break from all the details! So here I
+will first cover some tools that I think get things wrong from my perspective to give a contrasting point on why I think
+synergic use of web standards is a better way to go.
+
+## The trend of the past 10 years
+
+When it comes to web technology there really is no beating HTML and CSS. And I think we've had enough of the fun going
+all in with the "everything in JavaScript" mindset that started with Node and React 10 years ago. Especially the latter
+created an expectation that "if it isn't available for React it doesn't exist". While this isn't entirely a true
+statement it is pretty much how things felt like for many years. And worst of this is that React is in many ways
+incompatible with the rest of the industry. What is in React stays in React.
+
+This similar mindset has spilled over to other solutions as well, and I think both Styled Components and Tailwind are a
+great example. It isn't that rare to hear about teams where writing CSS as per usual **is entirely forbidden** and you
+can only write in their specified flavor of CSS-in-JS or in Tailwind. I let you decide how wise such a decision is.
+
+Maybe the hard part about web standards such as HTML and CSS is that to gain some developer conveniences for larger and
+longer term development you do want to have some tools to assist. And this is what we've got to aid us in the past ten
+years in the form of extensive JavaScript tooling which simply didn't exist before. But while this tooling was growing
+up we got these "midpoint solutions" to help us out which arguably made many of us take a turn to the wrong direction
+for a while.
+
+For example React is becoming more of a legacy tool each passing day as it so far has refused to admit it has got some
+things wrong, and that it's greatest past asset of guaranteeing better cross-browser compatibility, even with Internet
+Explorer, has died out. Innovations React now introduces are only innovative when you consider React, but not to the web
+industry at large.
+
+## Weakness of a lacking synergy
+
+So I've mentioned the word "synergy". In the web context I would define this as something that makes use of finding
+strengths in the technologies and then making use of those strengths to create solutions that are greater than the sum
+of their parts.
+
+This is an area where I find solutions like Styled Components and Tailwind truly lacking, both for different reasons. A
+characteristic way to use Styled Components is to write components. Usually you end up having this kind of syntax:
+
+```tsx
+// Defined in a separate style file:
+export const Container = styled.div``
+
+// And used in a "normal" component file:
+function Component({ children }: Props) {
+	return <Container>{children}</Container>
+}
+```
+
+The problem here? Semantics are lost. You don't immediately see that Container is a div element. And this is a general
+React issue as well, not only a problem with Styled Components. You lack synergy here, because typically what you do end
+up with is HTML, or a DOM element.
+
+The problem is a bit less of an issue for commonly shared components, like maybe you have a Box component that you use
+for most of the heavy lifting of layouts, and you know that it always by default renders as a div. That isn't a problem.
+
+But with Styled Components you usually define lots and lots of different components with varying amount of styles. This
+makes it impossible to immediately know what HTML elements are being rendered. You can check the final output, but it
+can be very hard to match that with what you see in your JSX.
+
+Then how about Tailwind? Tailwind only provides utility classes so it can't have the same problem! So what I think is
+Tailwind's problem?
+
+Tailwind has it's own limited subset of CSS that becomes gradually outdated as CSS improves. While Tailwind could and
+probably does expand, it means that it continuously needs to expand it's own vocabulary. You can already notice the harm
+this does to Tailwind's own homepage: it has to load an awful lot of styles and this does already harm the performance
+of the site. Of course, you can optimize Tailwind on your site.
+
+The weird thing I've noticed about Tailwind sites is that they often make an extensive use of mostly div soup. Meaning,
+there is very little use of semantic markup. What is wrong? Well, the lack of synergy! Tailwind lets anyone do visual
+layouts fast, and this speed it allows makes the focus go a bit too much in the favor of visual end results. So yes,
+here I am arguing that a Tailwind developer does not consider their surroundings enough. Maybe there are some who do,
+but not enough that I'd be convinced that Tailwind would have synergy with the web technology.
+
+Finally, a common "issue" I notice with sites made with Styled Components and Tailwind is that they are based on doing a
+reset: all elements begin with "nothing": no margins, one font, even buttons and inputs without a style. All styles must
+be re-defined from scratch, you can't write a content page with semantic elements and expect it to be readable.
+
+I also consider resets to lack synergy. They can be a good fit for writing a highly interactive app-like site, but most
+sites aren't like that.
+
+## Bringing in the synergy
+
+I guess I've spent enough energy on tools that I don't give much value to. It is time to look into what I consider a
+better approach to HTML and CSS, the synergic use of web standards!
+
+Instead of resets I prefer normalizing CSS. This means that semantic elements retain their browser defaults where those
+are useful, and you can write a meaningful page even with just those basic styles. A recent evolution from just
+normalizing has been zero-class CSS frameworks such as <Link href="https://simplecss.org/">Simple.css</Link>. The idea
+is just to provide a good starting point.
+
+But why is this valuable? Because you can provide just a single CSS file from say, a component library, which can be
+used on **any HTML page** and that will be enough to provide something that already looks like a company's or
+organization's page even though you are only using bare semantic HTML. And it can look pretty already at that point.
+This is very valuable for getting new projects started off faster as they don't need to spend time on figuring out the
+basics. You have semantic HTML for content available right away!
+
+However developers often do desire the ability to reset the margins and "other fluff" away. So how to go about that?
+Well, you provide solutions that help with it! For example, you can provide typographic CSS classes which also do common
+resets to avoid some issues with cascade in the specific context of typography:
+
+```css
+:where(.text16Regular) {
+	font-family: 'Our Sans Serif Of Choice', ui-sans-serif, Helvetica, sans-serif;
+	font-size: 1rem;
+	font-weight: 400;
+	letter-spacing: 0;
+	margin: 0;
+}
+```
+
+The above is a very minimalistic example, but it does some useful resets. Not only do they get the desired typography
+they get zero margins. Yet the specificity being `0, 0, 0` thanks to `:where()` it is also easy to override the margin
+with another utility or by using custom CSS. Pure synergy as you have something that remains hugely compatible with
+normalized CSS, or zero-class base CSS, or whatever you want to call it. You could even swap the base CSS with something
+entirely different, or not provide it, and you remain more or less compatible with how browser styles behave by default.
+
+You are embracing the default behavior of the browser which is familiar to anyone who has spent time learning CSS and
+have fought the default. They know they exist, and by retaining them they are reminded they exist each time they are
+restyling a semantic element. And that way it doesn't become alien in the same way that might happen on a resets based
+system.
+
+Of course there also needs to be a culture of embracing semantic HTML or you still end up with a div soup.
+
+## State and variations
+
+Buttons are a great example of an element that have a lot going for them. And oftentimes we wish to define custom hover,
+focus, and active states on them. Oh and yes, there is disabled state too, but it isn't always the greatest option when
+looking from screen reader accessibility perspective so you should probably not use it that much, if at all.
+
+Defining a single set of button styles is easy enough, but what about the secondary, tertiary, or error buttons? What
+about those buttons that look entirely different to regular buttons like circular close buttons? Or one off buttons that
+need a reset but still need some of our regular button styles?
+
+My solution for this issue was to create synergy: a reusable reset.
+
+```css
+:where(.button) {
+	-webkit-appearance: none;
+	appearance: none;
+	display: inline-flex;
+	gap: 0.5rem;
+	flex: none;
+	font-family: ui-sans-serif, Helvetica, sans-serif;
+	font-size: 1.25rem;
+	font-weight: 600;
+	line-height: 1.25;
+	margin: 0;
+	padding: 0;
+	text-decoration: none;
+	/* ... whatever else that is desired as baseline for all buttons... */
+}
+
+:where(.button):is(:link, :visited, :hover, :focus, :active) {
+	/* if button style used on link then take the underline away */
+	text-decoration: none;
+	/* ... other desired baseline styles ... */
+}
+```
+
+You could also call this different if desired, like `baseButton` or `buttonReset`. The point is that it does the reset
+which makes it reusable for more than just a single one off button.
+
+But a button without padding is not often what you want. So you need to expand upon this. If you stay with just vanilla
+CSS one of the ways to go is to make use of data attributes. However in the tooling oriented world you also have the
+option of using CSS Modules which has `composes`. It is really just a class name concat utility with a fancier name.
+The advantage is that you can then more easily develop classes like `blueButton` or `smallBlueButton` which are easy
+enough to import directly from the CSS module file for use.
+
+But data attributes are also a nice way to go! And they are also easier to manage in a more vanilla CSS setting than
+repeating all class name variations in the button reset style.
+
+```css
+:where(.button[data-button~='primary' i]) {
+	background: blue;
+	color: white;
+}
+
+:where(.button[data-button~='black' i]) {
+	background: black;
+	color: white;
+}
+
+:where(.button[data-button~='small' i]) {
+	border-radius: 0.125rem;
+	font-size: 0.875rem;
+	padding: 0.25rem 0.5rem;
+}
+
+:where(.button[data-button~='medium' i]) {
+	border-radius: 0.25rem;
+	font-size: 1rem;
+	padding: 0.5rem 0.75rem;
+}
+
+:where(.button[data-button~='circular' i]) {
+	aspect-ratio: 1 / 1;
+	border-radius: 50%;
+}
+```
+
+The above is one option for how to do a convenient utility on data attributes: allow for a space separated list. With
+the above you can already do:
+
+```html
+<button class="button" type="submit" data-button="primary medium">Submit form</button>
+
+<!-- usually you'd probably put in an icon instead -->
+<button class="button" type="button" data-button="black circular">Big<br />circle!</button>
+```
+
+You can really craft these small utilities to work together! But it doesn't need to end there: what if you considered
+allowing to mix both typography and button classes to exist together? The only issue is specificity: you'd need to make
+sure that typography will be preferred over button's own typography no matter which order the styles are loaded. So that
+would mean bumping specificity on typography one step higher, but might also mean bumping some button styles so that
+desired things like padding are guaranteed to remain.
+
+The benefit here is that these open up the option for some niche cases where maybe a designer has thought that a
+monospace font would work better. And for that case you wouldn't need to create a new utility to button, instead just
+use an appropriate monospace class from typography in the button and you're good to go. Synergy!
+
+## Componentization
+
+So far we've mostly looked at just the pure HTML and CSS, and tactics in how to make semantic HTML be an asset instead
+of being a burden. However there is also the aspect of modern JavaScript tooling with view libraries and TypeScript.
+
+The way I think about components, especially ones in a component library, is that they exist to provide convenience. And
+that is also what TypeScript assists with: you get automatic suggestions for available options. Although that feature is
+also available even without TypeScript, but usually you want to have bigger projects with types everywhere. It documents
+things nicely.
+
+However if we look at the earlier example where we had a `data-button` attribute with space separated list, there is one
+problem with that: it is not easy to type! You **can** type it, of course, but space separated strings will quickly
+become too complex to type as each new option increases valid values exponentially. Should we abandon the idea of space
+separated lists?
+
+No. We can keep that! What we instead need to consider is how to design a convenient API over a button. There are a few
+things that people tend to like to do with a button:
+
+1. Default to `type="button"` (native HTML button defaults to `type="submit"` = form submit bugs every so often).
+2. Provide separate props for (color) variations, shapes, sizes.
+3. Or boolean props.
+
+This means you will have two different APIs: you have the CSS that is designed to work with HTML, or actually with any
+web library, and then you have the component API which more or less hides the CSS API entirely, and might also hide some
+of the HTML API as well. Like the example of `type="button"` above so that it doesn't need to be repeated so often.
+
+With React we might end up with a component like this:
+
+```tsx
+import { type ComponentPropsWithoutRef } from 'react'
+
+/* The empty strings exist to allow for intentional "not set" to opt-out of defaults. */
+interface Props extends ComponentPropsWithoutRef<'button'> {
+	variant?: '' | 'primary' | 'black'
+	size?: '' | 'small' | 'medium'
+	shape?: '' | 'circular'
+}
+
+export function Button({
+	className = '',
+	shape,
+	size = 'medium',
+	variant = 'primary',
+	type = 'button',
+	...props
+}: Props) {
+	const button = [shape, size, variant].filter((x) => x).join(' ') || undefined
+
+	return <button {...props} className={`button ${className}`.trim()} data-button={button} type={type} />
+}
+```
+
+This is a simplified example as in real life you probably need to allow for passing the ref as well at a minimum.
+
+I didn't use boolean props here, because their technical implementation isn't as clean as just doing what can be done
+with named props like `variant` and `size`. Or in other words: I find this synergy better.
+
+The consumer side syntax difference to boolean props:
+
+```tsx
+/* boolean props */
+<Button primary medium>
+    Short!
+</Button>
+
+/* without boolean props */
+<Button variant="primary" size="medium">
+    Longer!
+</Button>
+```
+
+I think there is an additional benefit of helping with the concepts when not using boolean props, but it seems like the
+ultra short syntax allowed by boolean props has won in many component libraries.
+
+You might have noticed that I used `ComponentPropsWithoutRef<'button'>` to allow all `button` styles to be passed
+through. This enhances the options for using the Button component just like a native HTML button by providing all the
+attributes if a developer so desires. So this is another form of synergy that can be allowed when you use a native HTML
+button under the hood. Allowing everything doesn't always make sense for all components. But most of the time you do
+want to provide hatches for at least `ref`, `className` and `style` at a minimum.
+
+## Lessons learned
+
+I hope this has helped to provide understanding on the value of synergy in web development, why some tools have a lack
+of it, and how you can create more synergy by embracing it even in tools that are not optimal for the synergy.
+
+In summary you should now know some basics on:
+
+1. What is the value of semantic HTML and how to keep it easy to write it.
+2. Existance and value of default base styles / normalized CSS / zero-class semantic CSS
+3. How to build CSS utilities on top of the above, and how to allow their mixed use
+4. Benefit of HTML data attributes
+5. How and why to separate HTML & CSS API from a component API
+
+This way of doing things is generally how I prefer to build modern websites. By staying close to HTML and CSS, and by
+working from defaults and only overriding as necessary, I can have things that are more portable in the future and are
+more quickly open to new future features that we keep on getting to HTML and CSS all the time. Frameworks like Tailwind
+can't simply keep up with it, especially as some new features are such a big shift that they might not even be possible
+to implement in a pure CSS utility mindset.
+
+Of course this article is very incomplete as it is. I didn't cover CSS variables which you can also make part of the
+synergy. This topic is very large as by it's nature it has to cover a wide variety of topics and technologies. The only
+way you can get synergy is by learning the various technologies and what are the ideals of each of them.
+
+For example, you need to consider usability / accessibility as they are an important part of what these technologies are used for, and HTML especially brings a lot for you out-of-the-box unless you ignore it and go for the div soup.
+
+Whether this kind of thinking works for you is a different thing: maybe you prefer tools that let you go fast
+immediately instead of spending some time for thinking a synergetic system. Or maybe you work in conditions that do not
+allow for spending time outside of just pushing out more features. My own position is currently as a component library
+maintainer and I've been given (or I've gained the trust) the freedom to spend time on it. This is a privilege that I
+can acknowledge is not available for everyone.
