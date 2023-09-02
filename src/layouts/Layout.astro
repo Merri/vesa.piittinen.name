@@ -1,5 +1,5 @@
 ---
-import './alku.css'
+import 'alku/alku.css'
 
 export interface Props {
 	lang: 'en' | 'fi'
@@ -373,7 +373,7 @@ const {
 	</head>
 	<body>
 		<div id="link-to-external-site" hidden>{linkToExternalSite}</div>
-		<a class="skip-link" data-hidden="visually" href="#main">{jumpToContent}</a>
+		<a class="skip-link" data-text="visually-hidden" href="#main">{jumpToContent}</a>
 		<nav>
 			<ul role="list">
 				<li><a href="/" lang="fi">Vesa Piittinen</a></li>

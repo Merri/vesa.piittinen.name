@@ -47,6 +47,9 @@ devDependencies:
   '@types/node':
     specifier: 20.3.3
     version: 20.3.3
+  alku:
+    specifier: 1.0.0
+    version: 1.0.0
   astro:
     specifier: 2.7.2
     version: 2.7.2(@types/node@20.3.3)
@@ -1149,6 +1152,10 @@ packages:
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
+    dev: true
+
+  /alku@1.0.0:
+    resolution: {integrity: sha512-vP4RGeLBl3OiJE3vDPSRIXjbDbJdCPmcLC+pDiWfz1RCkf9HB4dlJFbJBeHk5km9M9Rgvs9QknJwZZ0PP8Ir8A==}
     dev: true
 
   /ansi-align@3.0.1:
