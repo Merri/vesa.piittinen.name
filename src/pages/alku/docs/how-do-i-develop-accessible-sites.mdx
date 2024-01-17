@@ -1,0 +1,104 @@
+---
+title: How do I develop accessible websites?
+description: If you need to know how to get started then this will help you out.
+layout: $layouts/AlkuEnglish.astro
+---
+
+# How do I develop accessible websites?
+
+Accessibility is a topic that is constantly becoming more and more important on the web landscape. It has been important
+since the beginning, but due to society changing a bit slowly &ndash; especially on anything that relates to minorities
+and divergent people &ndash; it has taken a while that legislation, recommendations, and just pure basic knowledge has
+grown enough to reach a critical mass of people.
+
+I'm not going to do deep on why accessibility is important. Personally, to me it is just plain good usability. It has
+been proven time and again that once you "get" how to do accessible sites you actually improve the experience for
+**everyone**. For comparison this same idea also applies to the real world and maybe we sometime will also get nicer,
+less noisy, and less bright cities. Simply by accounting the needs of diverse people better.
+
+Anyway, I throw in some of my experience regarding the topic.
+
+## The screen reader
+
+You should spend time to learn how to use a screen reader. On desktop. On mobile.
+
+The most basic thing is that given that you can't see visually anything, the information announced should be sufficient
+to understand what is happening. **How** this information is provided is a bit irrelevant, there are many ways to solve
+a problem. This might sometimes give you a feeling that you end up getting conflicting information regarding screen
+reader accessibility on the web, especially when comparing technical solutions.
+
+Ignore the conflict. Instead learn the difference of **why** some specific technical solution is suggested in one place,
+and why it is different elsewhere. And in the end what matters is that enough and sufficient information is available
+that the experience is understandable.
+
+And to understand better you should learn about the various features provided by each screen reader. There are many ways
+to navigate your way around!
+
+## Don't confuse links and buttons
+
+This is a very basic thing about the web, but only use links for navigating around, and let buttons be for interactions.
+
+Example: even if it is technically possible, do not implement an accordion using `:target`. Why? Because it relies on
+links, and links are for navigating. But when you click such an accordion open there will be no indication of a state
+change: a screen reader won't know to tell that hey, you just opened something, a state changed and new content is now
+accessible!
+
+Instead use a button as is recommended, and make sure that the button announces the state change (eg. open / closed).
+
+Understanding the difference of links and buttons is important, even if you may in some cases create links that look
+like buttons. An unfortunately popular design pattern.
+
+## Screen readers are used by people who can see
+
+You tell me what?!? Why would anyone torture themselves with a screen reader if they can see?!
+
+Not all blindness is total blindness. Some people have very poor eyesight. Some others may have only partial sight in
+their eye and see only a narrow strip at once.
+
+This means that not all screen reader users use a keyboard. They use a mouse just fine. Instead they may use an onscreen
+magnifier to help out.
+
+## Keyboard is important
+
+Supporting doing everything via keyboard makes sense. For example, it is quite too often that people develop "very
+advanced and cool" drag and drop interfaces which require high precision. And that will ultimately make those tools
+exclusive to those that are able to use them. This is why you should consider also supporting keyboard, and better yet,
+allow getting the stuff done with just basic mouse use. Even if it is slower than dragging and dropping stuff around.
+
+As an important reminder not everything has to be done in 1-to-1 fashion! Say, if you have an input that has + and -
+buttons to increase a value, you do not need to make those buttons accessible to a keyboard if you provide another
+mechanism already, for example, up and down arrows. It might actually be better to not give access to those individual
+buttons because it would be just more noise to the user!
+
+## Accessibility is boring
+
+Accessibility is very interesting and challenging, but it doesn't really build up hype anywhere. It isn't like a fresh
+new JS framework or CSS utility tool that get people all pumped up and form a cult around it. Why is that?
+
+A part of it is that we are dealing a very broad topic. By it's very nature accessibility concerns vary wildly and you
+can't really carve out a solution that works "like a silver bullet". It is just plain hard work and continuous struggle
+to do better.
+
+Additionally the people that accessibility concerns the most are minorities. People who often have trauma and are
+excluded out from participating. This means that people have **used to being treated poorly**: they are used to sites
+that just keep reading irrelevant stuff over and over while being totally silent about that most important thing that
+needs to get done. Sites like these are humiliating to use if you can't make up what is happening, and are forced to ask
+for help.
+
+The worst thing is that this can happen even on a site that has been done with accessibility concerns on mind just
+because some thing wasn't considered in an accessible fashion right from the beginning, technical solutions were made,
+and now nobody is willing to give development time to fix it "because it's already done" and changing the technical
+solution would be a very, very big hit to team velocity. It happens.
+
+This is why it is not that great of an idea to even go ahead an attempt to make it cool by having some form of populist
+take on accessibility. The people you are targeting will likely feel alienated by that. So accessibility is important,
+but boring. I recommend you to learn to tolerate boring in your life especially if you like to maximize your time usage
+and "never have a bad time".
+
+## Summary
+
+Make sites that are understandable regardless the way they are used. Study all sorts of diversity and "disability".
+Remember that disability is often caused by the surroundings. Popular conventions may be wrong. Unique and fancy
+solutions need special attention to accessibility to ensure they work for everyone. Keep your ego down: if you think you
+have a great solution and want to push it out, you might end up doing more harm than good in case what you have done is
+not accessible.

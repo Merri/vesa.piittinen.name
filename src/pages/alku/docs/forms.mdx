@@ -1,0 +1,267 @@
+---
+title: Form controls in Alku
+description: Documentation on using form input elements in Alku CSS framework.
+layout: $layouts/AlkuEnglish.astro
+---
+
+import Icon from '$/components/Icon.astro'
+
+# Forms
+
+In Alku nearly all input controls have been harmonized to equal height. No width has been applied so you retain some
+backwards compatibility with any existing HTML page that is unstyled or low on CSS.
+
+## Form layouts
+
+You can create form layouts with rather minimalistic syntax.
+
+
+### Compact inline form
+
+Here is a traditional web inline style login form with the help of `data-box` utility:
+
+<figure role="presentation" style="padding-block: 16px 32px;">
+	<form onsubmit="return false">
+		<fieldset data-box="row">
+			<legend>
+				<strong>Sign in to continue</strong>
+			</legend>
+			<input type="email" placeholder="Email" />
+			<input type="password" placeholder="Password" />
+			<label for="default-remember">
+				<input type="checkbox" id="default-remember" />
+				<span>Remember me</span>
+			</label>
+			<button type="submit">Sign in</button>
+		</fieldset>
+	</form>
+</figure>
+
+<details>
+    <summary>Show code</summary>
+
+```html
+<form onsubmit="return false">
+	<fieldset data-box="row">
+		<legend>
+			<strong>A compact inline form</strong>
+		</legend>
+		<input type="email" placeholder="Email" />
+		<input type="password" placeholder="Password" />
+		<label for="default-remember">
+			<input type="checkbox" id="default-remember" />
+			Remember me
+		</label>
+		<button type="submit">Sign in</button>
+	</fieldset>
+</form>
+```
+
+</details>
+
+### Complex forms
+
+You can use `data-grid="auto"` to create fluid grids.
+
+<figure role="presentation" style="background: var(--muted-02); padding-block: 48px;">
+	<form data-column="mediumContent" onsubmit="return false">
+		<fieldset data-grid="auto">
+			<label>
+				<span>First name:</span>
+				<input name="firstname" />
+			</label>
+			<label>
+				<span>Last name:</span>
+				<input name="lastname" />
+			</label>
+			<label data--="fullRow">
+				<span>Email:</span>
+				<input aria-describedby="email-description" type="email" name="email" />
+				<small aria-hidden="true" id="email-description" data-text-color="state">
+					<span>Your email will never be exposed.</span>
+				</small>
+			</label>
+			<button>Submit</button>
+		</fieldset>
+	</form>
+</figure>
+
+`<label />` works as form field which you can place to a grid.
+
+<details>
+    <summary>Show code</summary>
+
+```html
+<form data-column="mediumContent">
+	<fieldset data-grid="auto">
+		<label>
+			First name:
+			<input name="firstname" />
+		</label>
+		<label>
+			Last name:
+			<input name="lastname" />
+		</label>
+		<label data--="fullRow">
+			Email:
+			<input aria-describedby="email-description" type="email" name="email" />
+			<small aria-hidden="true" id="email-description" data-text-color="state">
+				Your email will never be exposed.
+			</small>
+		</label>
+		<button>Submit</button>
+	</fieldset>
+</form>
+```
+
+</details>
+
+## Field states
+
+By specifying `aria-invalid` you can signal invalid and valid states.
+
+Element following input that has `data-text-color="state"` will match the input field state color.
+
+<figure role="presentation" style="background: var(--muted-02); padding-block: 48px;">
+	<div data-column="mediumContent">
+		<h3>Outside label</h3>
+		<div data-grid="auto" style="--grid-auto: 10rem;">
+			<input aria-invalid="true" value="Invalid" />
+			<input aria-invalid="false" value="Valid" />
+			<input readonly value="Read only" />
+			<input disabled value="Disabled" />
+		</div>
+		<h3>Inside label</h3>
+		<div data-grid="auto" style="--grid-auto: 10rem;">
+			<label>
+				<span>Invalid:</span>
+				<input aria-describedby="invalid-desc" aria-invalid="true" />
+				<small aria-hidden="true" id="invalid-desc" data-text-color="state">
+					<span>Error happened</span>
+				</small>
+			</label>
+			<label>
+				<span>Valid:</span>
+				<input aria-describedby="valid-desc" aria-invalid="false" />
+				<small aria-hidden="true" id="valid-desc" data-text-color="state">
+					<span>Submit ok</span>
+				</small>
+			</label>
+			<label>
+				<span>Read only:</span>
+				<input aria-describedby="readonly-desc" readonly />
+				<small aria-hidden="true" id="readonly-desc" data-text-color="state">
+					<span>Copy if needed</span>
+				</small>
+			</label>
+			<label>
+				<span>Disabled:</span>
+				<input aria-describedby="disabled-desc" disabled />
+				<small aria-hidden="true" id="disabled-desc" data-text-color="state">
+					<span>Maybe don't use</span>
+				</small>
+			</label>
+		</div>
+	</div>
+</figure>
+
+Usually you should avoid disabled controls as they do not really provide any value to user.
+
+You should assign invalid and valid states after blur and/or form submit.
+
+```html
+<div data-grid="auto" style="--grid-auto: 10rem;">
+	<input aria-invalid="true" value="Invalid" />
+	<input aria-invalid="false" value="Valid" />
+	<input readonly value="Read only" />
+	<input disabled value="Disabled" />
+</div>
+```
+
+## Supported input types
+
+You have a lot of input types available!
+
+<figure role="presentation" style="background: var(--muted-02); padding-block: 48px;">
+	<div data-column="mediumContent" style="gap: 2rem;">
+		<section data-grid="auto" style="--grid-auto: 14rem;">
+			<hgroup data--="fullRow">
+				<h3>Checkbox option</h3>
+				<p>Checkboxes within labels have a gap to the text.</p>
+			</hgroup>
+			<label>
+				<input type="checkbox" />
+				<span>Give her chocolate</span>
+			</label>
+			<label>
+				<input type="checkbox" />
+				<span>Give him a flower</span>
+			</label>
+			<label title="TBH creature">
+				<input type="checkbox" />
+				<span>Give them a yippee</span>
+			</label>
+			<label data--="newRow">
+				<span>Give her chocolate</span>
+				<input type="checkbox" />
+			</label>
+			<label>
+				<span>Give him a flower</span>
+				<input type="checkbox" />
+			</label>
+			<label title="TBH creature">
+				<span>Give them a yippee</span>
+				<input type="checkbox" />
+			</label>
+		</section>
+		<section data-grid="" style="gap: 16px;">
+			<hgroup>
+				<h3>Radio option</h3>
+				<p>Besides name attribute you can group radio buttons inside a fieldset.</p>
+			</hgroup>
+			<fieldset data-box="inline row">
+				<legend data-text="semibold 18">Pick a favorite</legend>
+				<label>
+					<input type="radio" name="favorite" checked />
+					<span>Books</span>
+				</label>
+				<label>
+					<input type="radio" name="favorite" />
+					<span>Theatre</span>
+				</label>
+				<label>
+					<input type="radio" name="favorite" />
+					<span>Music</span>
+				</label>
+				<label>
+					<input type="radio" name="favorite" />
+					<span>Streams</span>
+				</label>
+				<label>
+					<input type="radio" name="favorite" />
+					<span>Movies</span>
+				</label>
+				<label>
+					<input type="radio" name="favorite" />
+					<span>Games</span>
+				</label>
+				<label>
+					<input type="radio" name="favorite" />
+					<span>None of the above</span>
+				</label>
+			</fieldset>
+		</section>
+		<section data-grid="" style="gap: 16px;">
+			<hgroup>
+				<h3>Toggle option</h3>
+				<p>Checkbox can appear as a toggle by applying role="switch".</p>
+			</hgroup>
+			<fieldset>
+				<label>
+					<input type="checkbox" role="switch" />
+					<span>Pikachu is surprised</span>
+				</label>
+			</fieldset>
+		</section>
+	</div>
+</figure>

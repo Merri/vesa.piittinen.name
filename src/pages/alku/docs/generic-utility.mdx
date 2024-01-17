@@ -1,0 +1,75 @@
+---
+title: Generic utility in Alku
+description: Documentation on using the generic data-- utility in Alku CSS framework.
+layout: $layouts/AlkuEnglish.astro
+---
+
+# Generic utility
+
+`data--` is a tiny helper utility.
+
+<div data-grid="" data-scrolling="inline">
+
+| Value           | Description                                                                                        |
+| :-------------- | :------------------------------------------------------------------------------------------------- |
+| `newRow`        | Place item to first column in a grid. `grid-column: 1;`                                            |
+| `fullRow`       | Place item to all columns in a grid. `grid-column: 1 / -1;`                                        |
+| `max100%`       | Limit maximum width to 100%. `max-inline-size: 100%;`                                              |
+| `100%`          | Set width to 100%. `inline-size: 100%;`                                                            |
+| `bottom`        | `vertical-align: bottom;`                                                                          |
+| `middle`        | `vertical-align: middle;`                                                                          |
+| `top`           | `vertical-align: top;`                                                                             |
+| `cover::before` | Position invisible cover absolutely over the top of the container using `::before` pseudo element. |
+| `cover::after`  | Position invisible cover absolutely over the top of the container using `::after` pseudo element.  |
+| `focus`         | Show focus indicator (unless a child element has focus).                                           |
+| `focus::before` | Relocate focus indicator to `::before` pseudo element.                                             |
+| `focus::after`  | Relocate focus indicator to `::after` pseudo element.                                              |
+| `focusInside`   | Change focus offset to show focus indicator inside the element.                                    |
+| `focusInside`   | Change focus offset to show focus indicator outside the element.                                   |
+
+</div>
+
+As can be seen the first ones could be written to `style` attribute. These exist in this utility for being commonly
+needed, and to be possibly easier to remember as part of the utility.
+
+## Creating a card
+
+You can use the cover and focus features to create cards that are clickable from everywhere despite link being only a
+single item within card!
+
+<div
+	data-color="contrast"
+	data-box="column"
+	style="border-radius: 12px; gap: 8px; padding: 16px; position: relative; width: 12rem;"
+>
+	<h3 data-text="semibold 20">This is my card</h3>
+	<p data-text="14">There are things here.</p>
+	<a href="#creating-a-card" data--="cover::before focus::before focusInside">
+		<span>Clickaroo!</span>
+	</a>
+</div>
+
+```html
+<div
+	data-color="contrast"
+	data-box="column"
+	style="border-radius: 12px; gap: 8px; padding: 16px; position: relative; width: 12rem;"
+>
+	<h3 data-text="semibold 20">This is my card</h3>
+	<p data-text="14">There are things here.</p>
+	<a href="#creating-a-card" data--="cover::before focus::before focusInside">Clickaroo!</a>
+</div>
+```
+
+Notice how focus indicator appears inside the card, and the whole card reacts to hover and clicking, and you do have the
+expected keyboard focus behavior.
+
+As for the cards it makes more sense to write them using `class`, not via utilities and `style` attribute.
+
+## Focus
+
+`data--="focus"` is mostly useful as an additional development aid.
+
+<button data--="focus" type="button">
+	<span>I always indicate focus</span>
+</button>

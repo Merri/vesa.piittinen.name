@@ -1,0 +1,257 @@
+---
+import { Code } from 'astro:components'
+import 'alku'
+import AlkuLayout from '$layouts/AlkuLayout.astro'
+import Icon from '$/components/Icon.astro'
+import Link from '$/components/Link.astro'
+---
+
+<AlkuLayout
+	lang="en"
+	title="Alku: accessible CSS framework"
+	description="A CSS framework considering people first, with powerful and useful utilities."
+>
+	<hgroup class="superhero">
+		<h1>Alku</h1>
+		<p data-text="24" style="margin-block: 16px; text-wrap: pretty;">
+			We are divergent.<br />
+			The base styles should reflect that.
+		</p>
+		<p data-text-color="muted">A CSS framework for people who desire to have more accessible defaults.</p>
+		<p data-box="inline row" style="margin-block: 48px 0; text-align: center;">
+			<a
+				data-button="mediumSize canvasColor outline"
+				href="https://www.unpkg.com/alku/index.css"
+				download="alku.min.css"
+			>
+				Download
+				<Icon href="/icons/download.svg" />
+			</a>
+			<Link data-button="mediumSize canvasColor outline" href="https://github.com/Merri/alku">
+				GitHub
+				<Icon href="/icons/social/github.svg" />
+			</Link>
+			<label data-text="visuallyHidden" for="manager">Install using:</label>
+			<input
+				id="manager"
+				list="install-with"
+				onfocus={'this.select()'}
+				size="16"
+				style="font-family: var(--mono-font);"
+				value="npm i alku -D"
+			/>
+			<datalist id="install-with">
+				<option>npm i alku -D</option>
+				<option>bun i alku -D</option>
+				<option>pnpm i alku -D</option>
+				<option>yarn add alku -D</option>
+			</datalist>
+		</p>
+		<p data-text="14" style="margin-block: 8px 0;"><small>Size through network: 7.8 Kb</small></p>
+	</hgroup>
+	<div
+		data-text="14"
+		data-scrolling="inline"
+		style="background: var(--muted-02); border: thin solid var(--muted-10); margin-inline: -16px; padding-inline: 16px 32px;"
+	>
+		<h2 id="features" data-text="visuallyHidden">Features</h2>
+		<ul aria-describedby="features" data-box="row" data-text-color="muted" style="gap: 8px 48px;">
+			<li>Powerful utilities</li>
+			<li>Harmonized styles</li>
+			<li>Small but complete</li>
+			<li>Neutral colors</li>
+			<li>Readable typography</li>
+			<li>Underlined links</li>
+			<li>External link icon</li>
+			<li>Styled form controls</li>
+			<li>Strong focus indicator</li>
+			<li>Out of your way</li>
+		</ul>
+	</div>
+	<div style="margin-block-start: 64px;">
+		<div>
+			<p>Read <a href="/alku/docs/getting-started">getting started</a>, or import everything:</p>
+			<div style="margin-block: 32px 64px; margin-inline: -16px;">
+				<Code
+					code={`<!-- quick start -->
+<link
+	crossorigin="anonymous"
+	href="https://www.unpkg.com/alku/index.css"
+	integrity=""
+	rel="stylesheet"
+>`}
+					lang="html"
+				/>
+			</div>
+		</div>
+	</div>
+	<dl data-grid="auto" style="--grid-auto: 22rem; gap: 48px; margin-block: 32px 64px;">
+		<div>
+			<dt data-text="heading2">Accessible</dt>
+			<dd data-text="16">
+				<p>
+					The goal is to to be what the defaults could be in the browsers of today if updated to what we now
+					know to be good for most people.
+				</p>
+				<p>
+					Changes prioritize usability, clarity, and consistency. Common recommended patterns are a part of
+					the framework.
+				</p>
+			</dd>
+		</div>
+		<div>
+			<dt data-text="heading2">Harmonized</dt>
+			<dd data-text="16">
+				<p>Normalized, and more!</p>
+				<p>
+					Alku uses system colors, supports light and dark mode, provides fluid typography and emoji
+					fallbacks.
+				</p>
+				<p>Common small annoyances such as varying heights of form elements have been eliminated.</p>
+			</dd>
+		</div>
+		<div data--="fullRow" class="hero">
+			<dt data-text="heading2">
+				<Link href="https://modernfontstacks.com">
+					<span data-text="slab">Modern</span>{' '}
+					<span data-text="didone">Font</span>{' '}
+					<span data-text="industrial">Stacks</span>{' '}
+					<span data-text="handwritten">included!</span>
+				</Link>
+			</dt>
+			<dd data-text="20">
+				<p>You get a broad selection of zero download, immediately available font stacks.</p>
+				<p>Available through the convenient <code>data-text</code> utility!</p>
+			</dd>
+		</div>
+		<div>
+			<dt data-text="heading2">Easy</dt>
+			<dd data-text="16">
+				<p>
+					Use semantic HTML and get great results! Drop in to HTML like any <Link
+						href="https://github.com/troxler/awesome-css-frameworks#class-less"
+					>
+						minimalist or class-less CSS framework
+					</Link>
+				</p>
+				<p>
+					Utilities allow you to build effectively and reset styles as needed. Base styles solve some common
+					grievances for you. Everything is crafted to work together.
+				</p>
+			</dd>
+		</div>
+		<div>
+			<dt data-text="heading2">Modular</dt>
+			<dd data-text="16">
+				<p>
+					Use what you need. Alku is broad in scope so it contains a lot. Thanks to modularity you can pick
+					the parts you find the most useful.
+				</p>
+				<p>Classes are your playground and your styles have priority over the framework.</p>
+			</dd>
+		</div>
+		<div data--="fullRow" class="hero">
+			<dt data-text="heading2">Interested?</dt>
+			<dd data-text="24">
+				<p>Head over to the <a href="/alku/docs">documentation</a>!</p>
+			</dd>
+		</div>
+	</dl>
+	<style>
+		dt {
+			letter-spacing: 0.0625em;
+		}
+
+		.superhero {
+			background: var(--muted-04);
+			border: thin solid var(--muted-30);
+			margin-block: 32px;
+			margin-inline: -16px;
+			padding: 48px 16px;
+			text-align: center;
+		}
+
+		.hero {
+			background: var(--muted-02);
+			border: thin solid var(--muted-10);
+			margin-inline: -16px;
+			padding: 48px 16px;
+			text-align: center;
+			text-wrap: pretty;
+		}
+	</style>
+	<div data-column="mediumContent">
+		<hgroup>
+			<h2 data-text="heading3">Disclaimer</h2>
+			<p>This CSS framework will not magically make your stuff accessible!</p>
+		</hgroup>
+		<div>
+			<p>
+				Using this framework gives you an attempt of more accessible defaults to base your foundation on, but
+				accessibility is a continuous journey of learning about the needs others have so that they can use the
+				web.
+			</p>
+			<p>
+				Your job as web developer is creating usability that negates disabilities. You enable more people to
+				experience the web.
+			</p>
+			<p>
+				"I don't need that, that is too hard to be implemented, we don't have time for that" are your warning
+				signs. You can't let ego take over.
+			</p>
+		</div>
+	</div>
+	<!--h2>Inspiration</h2>
+	<p>Everything is an evolution of what has been done before. Alku is a hotchpotch of opinioned thoughts!</p>
+	<ul>
+		<li>
+			<Link data-text="20 external link" href="https://modernfontstacks.com">Modern Font Stacks</Link>
+			<p data-text-color="muted">Restored my hope for having nice fonts without webfonts.</p>
+		</li>
+		<li>
+			<Link data-text="20 external link" href="https://necolas.github.io/normalize.css/">normalize.css</Link>
+			<p data-text-color="muted">
+				Questioned resets and provided a great alternative when CSS was more troublesome.
+			</p>
+		</li>
+		<li>
+			<Link data-text="20 external link" href="https://github.com/csstools/sanitize.css">sanitize.css</Link>
+			<p data-text-color="muted">
+				Built on normalize ideas, but is more opinioned and modular.<br />
+				<small>I disagree with many of the opinions, because this is the Internet.</small>
+			</p>
+		</li>
+		<li>
+			<Link data-text="20 external link" href="https://github.com/jensimmons/cssremedy">CSS Remedy</Link>
+			<p data-text-color="muted">
+				Works as an example of what doesn't catch on that well: fixes "mistakes of CSS" or "technical debt", but
+				as it doesn't provide enough practical value this solution hasn't really been talked a lot about in the
+				web development circles since the initial release.
+			</p>
+		</li>
+		<li>
+			<Link data-text="20 external link" href="https://simplecss.org/">Simple.css</Link>
+			<p data-text-color="muted">
+				A minimalistic starter framework with the emphasis on making semantic HTML look nice. However recently
+				has also introduced some classes, expanding to utilities.
+			</p>
+		</li>
+		<li>
+			<Link data-text="20 external link" href="https://picocss.com/">Pico.css</Link>
+			<p data-text-color="muted">
+				A beautiful minimalistic CSS framework, although puts visual appeal over usability and has signs of ARIA
+				abuse.<br />
+				<small>
+					For example <code>&lt;table role="grid" /&gt;</code> should not be used only as a style toggle as it
+					requires related grid functionality to be implemented.
+				</small>
+			</p>
+		</li>
+	</ul>
+	<p>
+		CSS frameworks tend to mention Bootstrap as their inspiration, but Alku does not derive from there. Most of my
+		framework-like opinions come from years of experience of issues people have with CSS which I've lately started
+		to solve in my job as I have inherited a component library. Alku itself however originates as a hobby project
+		and does things that I can't do in my job.
+	</p-->
+</AlkuLayout>

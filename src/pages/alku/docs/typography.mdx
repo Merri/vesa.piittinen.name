@@ -1,0 +1,379 @@
+---
+title: Typography in Alku
+description: Covers typography and typography utilities in Alku CSS framework
+layout: $layouts/AlkuEnglish.astro
+---
+
+import Link from '$/components/Link.astro'
+
+# Typography
+
+Alku retains default margins on semantic elements and focuses on improving the default readability. Additionally emoji
+fallback is provided, and you can add `var(--emoji-font)` at the end of your custom `font-family` stacks.
+
+-   [Headings](#headings)
+-   [Heading group](#heading-group)
+-   [Inline text elements](#inline-text-elements)
+-   [Blockquote](#blockquote)
+-   [Typographic utilities](#typographic-utilities) ([Sizes](#sizes), [Visually hidden](#visually-hidden), [Modern Font Stacks](#modern-font-stacks))
+-   [Text color](#text-color)
+-   [Fluid font size system](#fluid-font-size-system)
+
+---
+
+## Headings
+
+Semantic headings have a larger upper margin to provide improved visual separation.
+
+<figure style="background: var(--muted-04); border: thin solid var(--muted-10); contain: layout; margin: 0; padding: 0 48px;">
+	<div role="presentation">
+		<h1>Heading 1</h1>
+		<h2>Heading 2</h2>
+		<h3>Heading 3</h3>
+		<h4>Heading 4</h4>
+		<h5>Heading 5</h5>
+		<h6>Heading 6</h6>
+	</div>
+</figure>
+
+Removing margin is easy by using the `data-text` utility, or by declaring your own rules in a specific context, for
+example you could change the margin when a heading is a direct first child of a `<header>` element.
+
+---
+
+## Heading group
+
+As per updated HTML spec you can use one heading element alongside multiple paragraph elements.
+
+<figure style="background: var(--muted-04); border: thin solid var(--muted-10); contain: layout; margin: 0; padding: 0 48px;">
+	<hgroup role="presentation">
+		<h2>Heading</h2>
+		<p>Subheading</p>
+	</hgroup>
+</figure>
+
+```html
+<hgroup>
+	<h2>Heading</h2>
+	<p>Subheading</p>
+</hgroup>
+```
+
+Margins are collapsed and the subheading paragraph has muted text color, but only if it immediately follows a heading
+element.
+
+You can undo the muting:
+
+<figure style="background: var(--muted-04); border: thin solid var(--muted-10); contain: layout; margin: 0; padding: 0 48px;">
+	<hgroup role="presentation">
+		<h2>Heading</h2>
+		<p data-text-color="current">Subheading</p>
+	</hgroup>
+</figure>
+
+```html
+<hgroup>
+	<h2>Heading</h2>
+	<p data-text-color="current">Subheading</p>
+</hgroup>
+```
+
+---
+
+## Inline text elements
+
+Note that with most fonts available in Modern Font Stacks the weights 600 and 700 will give the same result (700).
+
+<figure style="background: var(--muted-04); border: thin solid var(--muted-10); contain: layout; margin: 0; padding: 0 48px;">
+	<div data-grid="auto" style="--grid-auto: 18rem; column-cap: 48px;" role="presentation">
+		<div>
+			<strong>Strong</strong> <code>strong</code> (weight 600)
+		</div>
+		<div>
+			<b>Bold</b> <code>b</code> (weight 700)
+		</div>
+		<div>
+			<em>Italic</em> <code>cite, em, i</code> (emphasis)
+		</div>
+		<div>
+			<s>Strikethrough</s> <code>s</code> (outdated info)
+		</div>
+		<div>
+			<small>Small</small> <code>small</code> (tiny print)
+		</div>
+		<div>
+			<abbr>Abbr</abbr> <code>abbr</code> (acronyms)
+		</div>
+		<div>
+			<u>Underline</u> <code>u</code> (underlined text)
+		</div>
+		<div>
+			<mark>Mark</mark> <code>mark</code> (highlighted text)
+		</div>
+		<div>
+			<ins>Inserted</ins> <code>ins</code> (added)
+		</div>
+		<div>
+			<del>Deleted</del> <code>del</code> (removed)
+		</div>
+		<div>
+			<sup>Super</sup> <code>sup</code> (superscript)
+		</div>
+		<div>
+			<sub>Sub</sub> <code>sub</code> (subscript)
+		</div>
+		<div>
+			<kbd>Ctrl + Z</kbd> <code>kbd</code> (keyboard action)
+		</div>
+		<div>
+			<code>let i = 0;</code> <code>code</code> (code)
+		</div>
+		<div>
+			<samp>? Syntax error</samp> <code>samp</code> (output)
+		</div>
+	</div>
+</figure>
+
+Additionally anchors look like links: <a>Anchor</a> <code>&lt;a /&gt;</code>. This allows to repurpose it to inline
+buttons for handling button-like behavior (as it is impossible to make a button render as an inline link). However the
+need for this is likely a sign of poor design, and it would be better to use a real button looking like a button to do
+the action.
+
+Additional reading:
+
+-   <Link href="https://www.tpgi.com/screen-readers-support-for-text-level-html-semantics/">
+    	<span>Screen readers support for text level HTML semantics</span>
+    </Link>
+
+---
+
+## Blockquote
+
+The blockquote has more than a plain style:
+
+<blockquote>
+	<h3>What a wonderful life!</h3>
+	<p>Hello world is such a bringer of happiness to our life.</p>
+	<cite>- A post by John Smith on Mastodon</cite>
+</blockquote>
+
+```html
+<blockquote>
+	<h3>What a wonderful life!</h3>
+	<p>Hello world is such a bringer of happiness to our life.</p>
+	<cite>- A post by John Smith on Mastodon</cite>
+</blockquote>
+```
+
+You can also place the blockquote within a `data-column` container:
+
+<div data-column="narrowContent">
+	<blockquote>
+		<h3>What a wonderful life!</h3>
+		<p>Hello world is such a bringer of happiness to our life.</p>
+		<cite>- A post by John Smith on Mastodon</cite>
+	</blockquote>
+</div>
+
+<details>
+    <summary>Show code</summary>
+
+```html
+<div data-column="narrowContent">
+	<blockquote>
+		<h3>What a wonderful life!</h3>
+		<p>Hello world is such a bringer of happiness to our life.</p>
+		<cite>- A post by John Smith on Mastodon</cite>
+	</blockquote>
+</div>
+```
+
+</details>
+
+---
+
+## Typographic utilities
+
+`data-text` works as a typographic style reset (zero specificity), and it removes margin and padding, and inherits color
+by default (specificity of `0, 1, 0`). If you only need the resets you can write `data-text=""`.
+
+<div data-grid data-scrolling="inline">
+
+| Value            | Description                                                                       |
+| :--------------- | :-------------------------------------------------------------------------------- |
+| `heading1`       | `<h1 />` without margin                                                           |
+| `heading2`       | `<h2 />` without margin                                                           |
+| `heading3`       | `<h3 />` without margin                                                           |
+| `heading4`       | `<h4 />` without margin                                                           |
+| `heading5`       | `<h5 />` without margin                                                           |
+| `heading6`       | `<h6 />` without margin                                                           |
+| `heading`        | Use default heading font                                                          |
+| `default`        | Use default font                                                                  |
+| `mono`           | Use default monospace font                                                        |
+| `serif`          | Browser / system <span data-text="serif">serif</span> (+ emoji fallback)          |
+| `sansSerif`      | Browser / system <span data-text="sansSerif">sans-serif</span> (+ emoji fallback) |
+| `monospace`      | Browser / system <span data-text="monospace">monospace</span> (+ emoji fallback)  |
+| `link`           | Link style                                                                        |
+| `external link`  | External link style. Note that the words must be in this order.                   |
+| `thin`           | Weight 100                                                                        |
+| `extraLight`     | Weight 200                                                                        |
+| `light`          | Weight 300                                                                        |
+| `regular`        | Weight 400                                                                        |
+| `medium`         | Weight 500                                                                        |
+| `semiBold`       | Weight 600                                                                        |
+| `bold`           | Weight 700                                                                        |
+| `extraBold`      | Weight 800                                                                        |
+| `black`          | Weight 900                                                                        |
+| `extraBlack`     | Weight 950                                                                        |
+| `italic`         | Oblique 10% (italic)                                                              |
+| `underline`      | Underline                                                                         |
+| `visuallyHidden` | Visually hidden utility: keep text accessible for screen readers.                 |
+
+</div>
+
+So for example `<div data-text="heading3 italic external link mono" />` will result into what you would expect from what
+it says: text in the size and weight of heading3, monospace italic, and looking like an external link.
+
+<figure style="background: var(--muted-04); border: thin solid var(--muted-10); contain: layout; margin: 0; padding: 0 48px;">
+	<div data-text="heading3 italic external link mono" role="presentation">
+		<span>Is it silly? Well yes. It is.</span>
+	</div>
+</figure>
+
+### Sizes
+
+For non-heading text the following font sizes are available: 26, 24, 22, 20, 18, 16, 14. Usage:
+
+```html
+<span data-text="regular 18">Slightly bigger text than the usual 16.</span>
+```
+
+The sizes are fluid and increase gradually from 400px to 800px viewport width (in default font size).
+
+### Visually hidden
+
+You can use `visuallyHidden` for skip links:
+
+```html
+<a data-text="visuallyHidden" href="#main">Jump to content</a>
+```
+
+Skip links are somewhat a workaround in the modern web to ease access to the main content for screen reader users. If
+you do not have a lot of stuff before the main content of your page then skip links are unnecessary.
+
+Skip link becomes visible when focused with keyboard. You can use `class` to customize the appearance. You most likely
+want to make the element absolutely positioned in a way that it won't have effect on page flow, thus avoiding layout
+shifting.
+
+You can use visually hidden utility for other purposes as well. In these usages you must make sure that there are no
+interactive / focusable / tabbable elements within the element that is being hidden visually. In other words use it for
+text content only!
+
+The reason visually hidden is used for text content over `aria-label` is that automated translation tools have ignored
+`aria-label`, but translate visually hidden elements as per usual. There is also another option: `aria-labelledby`. This
+has not been favored as it requires an unique ID, and generating those have been troublesome in popular JavaScript
+frameworks.
+
+So these are your three options:
+
+```html
+<!-- aria-label -->
+<button aria-label="Close">
+	<svg ...></svg>
+</button>
+
+<!-- visually hidden -->
+<button>
+	<span data-text="visuallyHidden">Close</span>
+	<svg ...></svg>
+</button>
+
+<!-- aria-labelledby: the span could also be generic and reside at the top of the HTML page -->
+<button aria-labelledby="close-text">
+	<span hidden id="close-text">Close</span>
+	<svg ...></svg>
+</button>
+```
+
+The third one is so rare that I haven't seen much of it in the wild wild web.
+
+In the past we also used to hide interactive elements such as checkboxes using a visually hidden class, but this should
+no longer be done as we now have full control over styling these elements.
+
+### Modern Font Stacks
+
+All the variants from <Link href="https://modernfontstacks.com">Modern Font Stacks</Link> are available:
+
+<div data-grid data-scrolling="inline">
+
+| Value          | Description                                                            |
+| :------------- | :--------------------------------------------------------------------- |
+| `system`       | <span data-text="system">System stack</span> (GitHub version)          |
+| `handwritten`  | <span data-text="handwritten">Handwritten stack</span>                 |
+| `transitional` | <span data-text="traditional">Transitional serif stack</span>          |
+| `oldstyle`     | <span data-text="oldstyle">Old style serif stack</span>                |
+| `slab`         | <span data-text="slab">Slab serif stack</span>                         |
+| `antique`      | <span data-text="antique">Antique serif stack</span>                   |
+| `didone`       | <span data-text="didone">Didone serif stack</span>                     |
+| `humanist`     | <span data-text="humanist">Humanist sans serif stack</span>            |
+| `geometric`    | <span data-text="geometric">Geometric humanist sans serif stack</span> |
+| `classical`    | <span data-text="classical">Classical humanist sans serif stack</span> |
+| `grotesque`    | <span data-text="grotesque">Neo-grotesque sans serif stack</span>      |
+| `industrial`   | <span data-text="industrial">Industrial sans serif stack</span>        |
+| `rounded`      | <span data-text="rounded">Rounded sans serif stack</span>              |
+| `monoslab`     | <span data-text="monoslab">Monospace slab serif stack</span>           |
+| `monocode`     | <span data-text="monocode">Monospace code stack</span>                 |
+
+</div>
+
+So if you want a part of the site use operating system default font you can do it with `data-text="system"`.
+
+---
+
+## Text color
+
+You can use `data-text-color` to change color:
+
+<div data-grid data-scrolling="inline">
+
+| Value      | Description                                                         |
+| :--------- | :------------------------------------------------------------------ |
+| `current`  | Apply currentColor                                                  |
+| `muted`    | Muted text color (<span data-text-color="muted">sample</span>)      |
+| `negative` | Negative text color (<span data-text-color="negative">red</span>)   |
+| `positive` | Positive text color (<span data-text-color="positive">green</span>) |
+
+</div>
+
+Note that when using `positive` and `negative` you should use other visual means to indicate the positive or negative
+aspect as color blindness may prevent noticing the difference based on color only. Use symbols, icons, emoji etc.
+
+---
+
+## Fluid font size system
+
+Alku has fluid typography ranging from 400px to 800px viewport width. The sizes are fairly legible and large to ensure
+better readability by default.
+
+<div data-grid data-scrolling="inline">
+
+| Element     | Min size        | Max size        | CSS variable                               |
+| :---------- | :-------------- | :-------------- | :----------------------------------------- |
+| `<h1 />`    | 32px (2rem)     | 48px (3rem)     | `--font-size-32`                           |
+| `<h2 />`    | 28px (1.75rem)  | 40px (2.5rem)   | `--font-size-28`                           |
+| n/a         | 26px (1.625rem) | 32px (2rem)     | `--font-size-26`                           |
+| `<h3 />`    | 24px (1.5rem)   | 28px (2.75rem)  | `--font-size-24`                           |
+| `<h4 />`    | 22px (1.375rem) | 26px (1.625rem) | `--font-size-22`                           |
+| `<h5 />`    | 20px (1.25rem)  | 24px (1.5rem)   | `--font-size-20`                           |
+| `<h6 />`    | 18px (1.125rem) | 22px (1.375rem) | `--font-size-18`                           |
+| `<pre />`   | 16px (1rem)     | 20px (1.25rem)  | `--font-size-16` and `--default-font-size` |
+| n/a         | 14px (0.875rem) | 18px (1.125rem) | `--font-size-14`                           |
+| `<small />` | 87.5%           | 87.5%           | n/a                                        |
+
+</div>
+
+Page default font size is applied to `<body />`, `<button />`, and `<optgroup />`
+
+`<input />`, `<select />`, and `<textarea />` are set to 1rem (16px) to avoid Safari zooming in upon focus.
+
+You can make page wide overrides by altering the font CSS variables in `:root`.

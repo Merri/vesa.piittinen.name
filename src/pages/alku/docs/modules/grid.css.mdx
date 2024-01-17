@@ -1,0 +1,134 @@
+---
+title: Alku grid module
+description: Documentation for data-grid CSS utility
+layout: $layouts/AlkuEnglish.astro
+---
+
+# grid.css module
+
+Provides additions to `data-grid` utility over what is defined on [alku.css](./alku.css). This separation exists as body
+element is enhanced to have a center column by default, and this is implemented with grid.
+
+-   [Grid features](#grid-features)
+-   [Content column grid](#content-column-grid)
+-   [Fluid minimum width grid](#fluid-minimum-width-grid)
+-   [Stacking items](#stacking-items)
+-   [Scrollable tables](#scrollable-tables)
+
+---
+
+## Grid features
+
+The table below includes all options available in `data-grid`.
+
+<div data-scrolling="inline" data-grid="">
+
+| Value           | Module   | Description                                                                                            |
+| :-------------- | :------- | :----------------------------------------------------------------------------------------------------- |
+| `false`         | alku.css | Disable grid on body element. Can only be used alone.                                                  |
+| `*content`      | alku.css | Any individual value ending with "content" triggers the column grid.                                   |
+| `narrowContent` | alku.css | Narrow content column close to 60ch.                                                                   |
+| `smallContent`  | alku.css | Small content column close to 70ch.                                                                    |
+| `mediumContent` | alku.css | Medium content column close to 80ch. This is the default width.                                        |
+| `largeContent`  | alku.css | Large content column at `65rem`.                                                                       |
+| `centerItems`   | grid.css | Center all items.                                                                                      |
+| `stackItems`    | grid.css | Stack all items on top of each other. The biggest item decides the size of the grid.                   |
+| `auto`          | grid.css | A fluid grid with minimum desirable width items. Gap of `1rem`. Use `--grid-auto` to define the width. |
+| `padding`       | grid.css | Apply 15% padding on each side.                                                                        |
+| `paddingStart`  | grid.css | Apply 30% padding on left side (LTR) or right side (RTL).                                              |
+| `paddingEnd`    | grid.css | Apply 30% padding on right side (LTR) or left side (RTL).                                              |
+
+</div>
+
+---
+
+## Content column grid
+
+The content column is a concept you can find in minimalistic classless CSS frameworks: you get a three column grid where
+the middle column is for content, and the two other columns are reserved for empty equal width space. This grid is
+applied to the body element.
+
+Alku builds upon this idea by making it a utility you can apply on any element. Additionally:
+
+-   You can define the desired width of the column
+-   Stretching the body to 100% viewport height has been refined to place footer at the very bottom by default
+
+Some elements can span all the columns, in Alku's case immediate child `<header />` and `<footer />` do this. To have
+any other element behave like this you can use `style="grid-column: 1 / -1;"`. And if you want header or footer to not
+span all columns you can apply `style="grid-column: 2;"`.
+
+### Content column CSS variables
+
+<div data-scrolling="inline" data-grid="">
+
+| Variable          | Description                                                                                            |
+| :---------------- | :----------------------------------------------------------------------------------------------------- |
+| `--content-width` | Width applied to the content column. For example: `data-grid="content" style="--content-width: 50%;"`. |
+
+</div>
+
+---
+
+## Fluid minimum width grid
+
+Generates a grid where grid items will take 100% of available width unless there is enough space to split to the minimum desired width. You can pass `--grid-auto` to define the desired width.
+
+This grid is very useful for creating fluid responsive forms. You can split a single grid item further with a nested fluid grid.
+
+You may occasionally get too much space for a form and get too many columns. You can combat this issue in two ways:
+
+1. Use the padding utility on the fluid grid
+2. Or apply a narrower content column on a parent of the fluid grid
+
+### Padding CSS variables
+
+<div data-scrolling="inline" data-grid="">
+
+| Variable                        | Description                                                       |
+| :------------------------------ | :---------------------------------------------------------------- |
+| `--default-grid-padding-medium` | Set the "15%" padding as used by `padding`.                       |
+| `--default-grid-padding-large`  | Set the "30%" padding as used by `paddingStart` and `paddingEnd`. |
+
+</div>
+
+---
+
+## Stacking items
+
+Traditionally web developers have used `position: absolute;` to stack items on top of each other. With grid this has
+been greatly simplified, but Alku exposes this possibility as an utility.
+
+```html
+<header data-grid="stackItems">
+	<div style="background: var(--muted-02); aspect-ratio: 3 / 1; width: 90vw; max-width: var(--content-width);"></div>
+	<hgroup data-grid="centerItems">
+		<h2>Heading on image</h2>
+		<p>Subtitle on topic</p>
+	</hgroup>
+</header>
+```
+
+The div simulates what could be a responsive `<img />` instead:
+
+<header data-grid="stackItems">
+	<div style="background: var(--muted-02); aspect-ratio: 3 / 1; width: 90vw; max-width: var(--content-width);"></div>
+	<hgroup data-grid="centerItems">
+		<h2>Heading on image</h2>
+		<p>Subtitle on topic</p>
+	</hgroup>
+</header>
+
+---
+
+## Scrollable tables
+
+Together with the scrolling.css module you can create tables that stretch to 100% minimum width, and scroll horizontally
+when there isn't enough space:
+
+```html
+<div data-scrolling="inline" data-grid="">
+	<table>
+		...
+	</table>
+</div>
+```

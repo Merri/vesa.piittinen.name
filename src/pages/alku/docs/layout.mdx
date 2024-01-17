@@ -1,0 +1,563 @@
+---
+title: Creating basic layouts in Alku
+description: Documentation how to create layouts in Alku CSS framework.
+layout: $layouts/AlkuEnglish.astro
+---
+
+import Icon from '$/components/Icon.astro'
+import Link from '$/components/Link.astro'
+
+# Layout
+
+There are times when you need more complex layouts than the out-of-the-box experience with native HTML: full width
+blocks in one column. Almost the only exception to that is the table element, but we are not looking at it here.
+
+Alku provides a few utilities to help you out to align items into varying complexity of rows, grids, and columns. These
+utilities have been designed to be fluid, or in other words, be as useful as possible without the need for defining
+breakpoints which have become the norm since the beginning of responsive web design.
+
+Traditional responsive web design usually designates sizes such as mobile, tablet, and desktop. There is just one major
+gotcha: <Link href="https://viewports.fyi/" rel="nofollow">there are no ideal viewport sizes</Link>! Thus fluid patterns
+could be considered a more useful approach: build your stuff so that it doesn't break no matter how narrow the viewport
+gets.
+
+Yes, even down to original Game Boy resolution of 160 &times; 144. Knowing what people are like somebody is probably
+writing a browser for the Game Boy at some point. <small>(The irony: this page only works best down to around 240
+pixels.)</small>
+
+-   [Box utility](#box-utility)
+-   [Column utility](#column-utility)
+-   [Flex utility](#flex-utility)
+-   [Grid utility](#grid-utility)
+-   [Scrolling utility](#scrolling-utility)
+-   [Spacing is your responsibility](#spacing-is-your-responsibility)
+-   [Tips: style attribute](#tips-style-attribute)
+
+---
+
+## Box utility
+
+<ul data-box="row" style="gap: 8px 48px; margin-block: 16px;">
+	<li>
+		<a href="#block-and-trim">Block and trim</a>
+	</li>
+	<li>
+		<a href="#column">Column</a>
+	</li>
+	<li>
+		<a href="#row">Row</a>
+	</li>
+	<li>
+		<a href="#fluid-row">Fluid row</a>
+	</li>
+	<li>
+		<a href="#inline-block">Inline block</a>
+	</li>
+</ul>
+
+<div data-grid="" data-scrolling="inline" style="margin-block: 2rem;">
+
+| Value    | Description                                                                          |
+| :------- | :----------------------------------------------------------------------------------- |
+| `inline` | Will turn the element to inline box, either `inline-block;` or `inline-flex`.        |
+| `row`    | Enables `display: flex;`. Renders items as a row. The items will wrap to a new line. |
+| `column` | Enables `display: flex;`. Renders items as a column.                                 |
+| `trim`   | Removes top margin of first item and bottom margin of last item.                     |
+
+</div>
+
+<div data-column="largeContent" style="background-color: var(--muted-02); border: thin solid var(--muted-10); margin-inline: -16px;"><div>
+
+### Block and trim
+
+By declaring `data-box` on an element it will gain `display: block;`. A difference to regular block elements is that Box
+will always contain the margin of it's children instead of letting it collapse through.
+
+The sample below demonstrates the difference:
+
+<figure role="presentation" data-text-color="positive" style="overflow: hidden; padding: 16px; resize: horizontal;">
+	<div style="border: thick solid;">
+		<div data-color="contrast">
+			<h4>Regular div</h4>
+			<p>Hello world.</p>
+		</div>
+	</div>
+	<br />
+	<div style="border: thick solid;">
+		<div data-box="" data-color="contrast">
+			<h4>Block Box</h4>
+			<p>Hello world.</p>
+		</div>
+	</div>
+	<br />
+	<div style="border: thick solid;">
+		<div data-box="trim" data-color="contrast">
+			<h4>Trim Box</h4>
+			<p>Hello world.</p>
+		</div>
+	</div>
+</figure>
+
+```html
+<div style="border: thick solid;">
+	<div data-color="contrast">
+		<h4>Regular div</h4>
+		<p>Hello world.</p>
+	</div>
+</div>
+<br />
+<div style="border: thick solid;">
+	<div data-box="" data-color="contrast">
+		<h4>Block Box</h4>
+		<p>Hello world.</p>
+	</div>
+</div>
+<br />
+<div style="border: thick solid;">
+	<div data-box="trim" data-color="contrast">
+		<h4>Trim Box</h4>
+		<p>Hello world.</p>
+	</div>
+</div>
+```
+
+You can use `data-box` to turn inline elements to block elements.
+
+### Column
+
+Places items into a vertical list separated by a gap of 1rem by default. Use the `gap` or `column-gap` CSS property to
+control the spacing.
+
+<figure role="presentation" style="overflow: hidden; padding: 16px; resize: horizontal;">
+	<div data-box="column">
+		<input placeholder="First name" />
+		<input placeholder="Last name" />
+		<button type="button">Find</button>
+	</div>
+</figure>
+
+```html
+<div data-box="column">
+	<input placeholder="First name" />
+	<input placeholder="Last name" />
+	<button type="button">Find</button>
+</div>
+```
+
+### Row
+
+You can create a regular wrapping row by using `data-box="row"`. The items are separated by a gap of 1rem by default.
+Use the `gap`, `column-gap`, or `row-gap` CSS property to control the spacing.
+
+<figure role="presentation" style="overflow: hidden; padding: 16px; resize: horizontal;">
+	<div data-box="row">
+		<input placeholder="First name" />
+		<input placeholder="Last name" />
+		<button type="button">Find</button>
+	</div>
+</figure>
+
+Note that you can resize the example!
+
+```html
+<div data-box="row">
+	<input placeholder="First name" />
+	<input placeholder="Last name" />
+	<button type="button">Find</button>
+</div>
+```
+
+### Fluid row
+
+Normally the row flex items retain their default inline size. To change this behavior you can define
+`--min-desired-size` CSS variable to the Box element to make the child items have a minimum desired size.
+
+<figure role="presentation" style="overflow: hidden; padding: 16px; resize: horizontal;">
+	<div data-box="row" style="--min-desired-size: 16rem;">
+		<input placeholder="First name" />
+		<input placeholder="Last name" />
+		<button type="button">Find</button>
+	</div>
+</figure>
+
+```html
+<div data-box="row" style="--min-desired-size: 16rem;">
+	<input placeholder="First name" />
+	<input placeholder="Last name" />
+	<button type="button">Find</button>
+</div>
+```
+
+You can also control the behavior of the childs by using [`data-flex` utility](#flex-utility) on them. In this case we
+might want to disable the automatic sizing on the button:
+
+<figure role="presentation" style="overflow: hidden; padding: 16px; resize: horizontal;">
+	<div data-box="row" style="--min-desired-size: 16rem;">
+		<input placeholder="First name" />
+		<input placeholder="Last name" />
+		<button data-flex="none" type="button">
+			<span>Find</span>
+		</button>
+	</div>
+</figure>
+
+When you resize this example you can notice how you now have four different results depending on how much space is
+available. You can fully control this behavior by adjusting the minimum desired size value.
+
+```html
+<div data-box="row" style="--min-desired-size: 16rem;">
+	<input placeholder="First name" />
+	<input placeholder="Last name" />
+	<button data-flex="none" type="button">Find</button>
+</div>
+```
+
+You can even set the minimum desired size per child item!
+
+<figure role="presentation" style="overflow: hidden; padding: 16px; resize: horizontal;">
+	<div data-box="row">
+		<input placeholder="Last name" style="--min-desired-size: 20rem;" />
+		<input placeholder="First name" style="--min-desired-size: 12rem;" />
+		<button data-flex="none" type="button">
+			<span>Find</span>
+		</button>
+	</div>
+</figure>
+
+Note that when the CSS variable is not set on Box you can omit `data-flex="none"`:
+
+```html
+<div data-box="row">
+	<input placeholder="Last name" style="--min-desired-size: 20rem;" />
+	<input placeholder="First name" style="--min-desired-size: 12rem;" />
+	<button type="button">Find</button>
+</div>
+```
+
+### Inline block
+
+Sometimes you want to prevent a specific set of words from breaking within inline text. In these cases using
+`data-box="inline"` can be a useful way to achieve the result.
+
+<figure role="presentation" style="overflow: hidden; padding: 16px; resize: horizontal;">
+	<span>There are words here and </span>
+	<span data-box="inline" data-text-color="positive">
+		<span>this text will break independently</span>
+	</span>
+	<span> when it does not fit with the rest.</span>
+</figure>
+
+Note that usually you use this with a two or three words. Also, now that we do have CSS features such as
+`text-wrap: pretty;` this inline block trick is becoming less relevant.
+
+</div></div>
+
+---
+
+## Column utility
+
+With `data-column` you can align content to a centered column.
+
+<div data-grid="" data-scrolling="inline" style="margin-block: 32px;">
+
+| Value           | Description                                                     |
+| :-------------- | :-------------------------------------------------------------- |
+| `narrowContent` | Narrow content column close to 60ch.                            |
+| `smallContent`  | Small content column close to 70ch.                             |
+| `mediumContent` | Medium content column close to 80ch. This is the default width. |
+| `largeContent`  | Large content column at `65rem`.                                |
+| `*Content`      | Any value ending with `Content` triggers the column grid.       |
+
+</div>
+
+The `<body>` element is assigned `data-column="mediumContent"` styles by default. You can opt-out of this with
+`<body data-column="">`.
+
+In content columns `<header>` and `<footer>` elements will not be in the center column, but instead take all the space
+available.
+
+<figure role="presentation" style="overflow: hidden; resize: horizontal;">
+	<section data-column="narrowContent">
+		<header data-column="narrowContent" data-color="contrast">
+			<div>Header</div>
+		</header>
+		<div>
+			<h3>Narrow content</h3>
+			<p>
+				Hello world, again. I guess writing lorem ipsum would be kinda boring and it is too easy to use
+				generators, so why not see the trouble and write non-sensical stuff you read as something important even
+				though it is totally irrelevant.
+			</p>
+			<p>But hey, this sample is kinda like a mini replica of what happens to the whole body element!</p>
+		</div>
+		<footer data-column="narrowContent" data-color="contrast">
+			<div>Footer</div>
+		</footer>
+	</section>
+</figure>
+
+<details>
+    <summary>Show code</summary>
+
+```html
+<section data-column="narrowContent">
+	<header data-column="narrowContent" data-color="contrast">
+		<div>Header</div>
+	</header>
+	<div>
+		<h3>Narrow content</h3>
+		<p>
+			Hello world, again. I guess writing lorem ipsum would be kinda boring and it is too easy to use generators,
+			so why not see the trouble and write non-sensical stuff you read as something important even though it is
+			totally irrelevant.
+		</p>
+		<p>But hey, this sample is kinda like a mini replica of what happens to the whole body element!</p>
+	</div>
+	<footer data-column="narrowContent" data-color="contrast">
+		<div>Footer</div>
+	</footer>
+</section>
+```
+
+</details>
+
+Tips!
+
+1. You can use nested content columns inside other content columns.
+2. You can use `data-column` also within those headers and footers to align their internal content to the same content
+   column size.
+3. Customized content widths are also possible!
+
+<figure role="presentation" style="overflow: hidden; resize: horizontal;">
+	<section data-column="content" style="--content-width: 20rem;">
+		<div data-box="trim" data-color="contrast">
+			<h3>Very narrow content</h3>
+			<p>Hello world.</p>
+		</div>
+	</section>
+</figure>
+
+```html
+<section data-column="content" style="--content-width: 20rem;">
+	<div data-box="trim" data-color="contrast">
+		<h3>Very narrow content</h3>
+		<p>Hello world.</p>
+	</div>
+</section>
+```
+
+---
+
+## Flex utility
+
+Just to clarify for possible confusion: `data-flex` is **not flexbox**. Instead it lets you control the behavior of
+**flex items**. You find these especially useful to control the child items when using `data-box="row"`.
+
+<div data-grid="" data-scrolling="inline" style="margin-block: 2rem;">
+
+| Value  | Description                                                      |
+| :----- | :--------------------------------------------------------------- |
+| `auto` | Item will automatically shrink and expand as space is available. |
+| `none` | Item will retain it's size (but `max-width` is still in effect). |
+| `100%` | Item will take all available space.                              |
+
+</div>
+
+These values are really just `flex: auto;`, `flex: none;`, and `flex: 100%;` which are a valuable trio of CSS flex item
+behavior to learn in case you are not familiar with them.
+
+All `data-flex` items are granted `box-sizing: border-box; max-width: 100%;` as this is the desirable default in the
+context of flex items.
+
+---
+
+## Grid utility
+
+Setting `data-grid=""` on an element is equivalent of `display: grid;`. Thus elements, by default, will be rendered as
+a column with no gaps.
+
+<div data-grid="" data-scrolling="inline" style="margin-block: 32px;">
+
+| Value          | Description                                                                                                   |
+| :------------- | :------------------------------------------------------------------------------------------------------------ |
+| `centerItems`  | Center all items.                                                                                             |
+| `stackItems`   | Stack all items on top of each other. The biggest item decides the size of the grid.                          |
+| `auto`         | A fluid grid with minimum desirable width items. Gap of `1rem`. Use `--min-desired-size` to define the width. |
+| `padding`      | Apply 15% padding on each side.                                                                               |
+| `paddingStart` | Apply 30% padding on left side (LTR) or right side (RTL).                                                     |
+| `paddingEnd`   | Apply 30% padding on right side (LTR) or left side (RTL).                                                     |
+
+</div>
+
+---
+
+## Scrolling utility
+
+`data-scrolling=""` makes an element scrollable when it's child items exceed the size of their container.
+
+Passing a value will limit the scroll direction:
+
+<div data-grid="" data-scrolling="inline" style="margin-block: 32px;">
+
+| Value    | Description                                              |
+| :------- | :------------------------------------------------------- |
+| `inline` | Horizontally scrolling container. No vertical scrolling. |
+| `block`  | Vertically scrolling container. No horizontal scrolling. |
+
+</div>
+
+A common use for this utility is to wrap tables, graphs, or enlargened images.
+
+```html
+<div data-scrolling="inline">
+	<table>
+		...
+	</table>
+</div>
+```
+
+Horizontal scrolling is enabled on `<pre>` elements by default, and is also automatically applied on elements that only
+contain a `<table>` as their only child on browsers that support the `:has()` selector.
+
+---
+
+## Spacing is your responsibility
+
+Alku does not provide utilities to handle spacing as the rules tend to be design specific and thus including such
+utilities would either be unnecessary bloat, or too limited for practical use. Instead spacing is only concerned when
+having a need for reasonable defaults: this is why there are gaps in columns, rows, and grids.
+
+This is similar to how semantic headings have margins out-of-the-box, and you can easily override these with your own
+styles. While you do not need to touch it, you can also control default spacing by setting `--default-spacing` CSS
+variable. This will effect many default spacings including things such as heading element margins, list element margins,
+and gaps in rows and grids.
+
+<div data-box="row">
+	<button type="button" onclick={`document.documentElement.style = '--default-spacing: 0px';`}>
+		<span>--default-spacing: 0px</span>
+	</button>
+	<button type="button" onclick={`document.documentElement.style = '--default-spacing: 32px';`}>
+		<span>--default-spacing: 32px</span>
+	</button>
+	<button type="button" onclick={`document.documentElement.style = '';`}>
+		<span>Reset to default</span>
+	</button>
+</div>
+
+The spacing default value is `16px` as margin, padding, and gaps should be defined in pixel values. The reason behind
+this is that meeting <Link href="https://www.w3.org/TR/WCAG22/#resize-text">WCAG2.2 requires that a site should support
+200% text size increase</Link>, that is, not zooming but changing the browser default text size.
+
+While defining font size and things like available width should be based on relative units and should increase as
+default font size increases, it is not ideal if your spacings also increase: in the case of 200% it can limit available
+space more than necessary. And you could also argue that increasing text size should not replicate zooming.
+
+The following buttons simulate 200% text size increase by applying `font-size: 2rem;` on the root HTML element, and you
+can compare how `1rem` and `16px` are different despite being effectively the same on default font size:
+
+<div data-box="row">
+	<button type="button" onclick={`document.documentElement.style = '--default-spacing: 1rem; font-size: 2rem';`}>
+		<span>--default-spacing: 1rem;</span>
+	</button>
+	<button type="button" onclick={`document.documentElement.style = '--default-spacing: 16px; font-size: 2rem';`}>
+		<span>--default-spacing: 16px;</span>
+	</button>
+</div>
+
+---
+
+## Tips: style attribute
+
+There isn't anything fundamendally wrong in using the `style` attribute. Using it is fine. Usually you only need to move
+away from using it once you have a repeating pattern, or you need more complex rules such as media queries or handling
+state. This is when moving to `class` makes sense.
+
+```html
+<div data-color="contrast" data-box="row" style="gap: 8px 32px; padding: 16px;">
+	<label for="is-fine">This is fine!</label>
+	<button id="is-fine">Yes</button>
+	<label data-flex="100%"><input type="checkbox" role="switch" /> Perfectly fine</label>
+</div>
+```
+
+<div data-color="contrast" data-box="row" style="gap: 8px 32px; padding: 16px;">
+	<label for="is-fine">This is fine!</label>
+	<button id="is-fine">Yes</button>
+	<label data-flex="100%">
+		<input type="checkbox" role="switch" />
+		<span>Perfectly fine</span>
+	</label>
+</div>
+
+You should consider the repetition of `style` attribute, and also of data attribute utilities. If you are rendering a
+large list and each repeat the same `style` and/or make heavy use of utilities it might make sense to just give the list
+a `class` and style the items that way. Having the `class` only on the list results to least verbose output.
+
+1. Repeated styles or utilities (including `class` utilities) = most verbose
+2. Repeated single `class` in each item = less verbose
+3. Single `class` on the list = least verbose
+
+This is of course only a suggestion, but consideration of the output result is what often gets omitted by a typical
+builder type developer, and is one of the core reasons we have a history of performance issues on the web.
+
+<details>
+    <summary>Offtopic: Why people avoid `style` attribute?</summary>
+    <div data-column="mediumContent"><div>
+
+Back in the day there used to be the ideal for strict separation of HTML, CSS, and JS. Thus mindset encouraged the idea
+to keep CSS only in CSS files, therefore no `style` for you!
+
+The practical reality is that we often do mingle all three technologies together. In many frameworks today you can find
+solutions that even encourage and make it easy to mix them, reducing issues such as CSS class name collisions between
+files.
+
+However the historical ideal isn't the only reason. There are some JavaScript frameworks that use the `style` in their
+own special way that makes it less convenient.
+
+An example of this is React which treats `style` as an object. Due to the nature of React and how it handles it's own
+renders it is not optimal to pass `style` objects through component to component as even if there are no changes in
+values the object itself is a new copy upon each render.
+
+As this quickly becomes a complex matter that is hard to handle &ndash; and nobody likes writing more boilerplate code
+&ndash; people tend to avoid using `style` in React.
+
+</div></div>
+
+```tsx
+import { type CSSProperties, useMemo } from 'react'
+
+// This works if your style is static only, and does not have CSS variables:
+const staticStyle: CSSProperties = { gap: `8px 48px` }
+
+// But to allow CSS variables you need to use `as` which is a bit meh:
+const staticStyle = { '--min-desired-size': `12rem` } as CSSProperties
+
+function ComponentWithStaticStyle() {
+	return <div style={staticStyle}>...</div>
+}
+
+interface Props {
+	spacing: number
+}
+
+// desired goal: only re-render AnotherComponent if style actually changes
+function ComponentWithDynamicStyle({ gap }: Props) {
+	const dynamicStyle = useMemo(() => ({ gap: `${spacing * 16}px` }), [spacing])
+
+	return <AnotherComponent style={dynamicStyle}>...</AnotherComponent>
+}
+```
+
+<div data-column="mediumContent"><div>
+
+In addition there is also a TypeScript typing issue which makes types nag about CSS variables in React `style` objects.
+CSS variables are incredibly useful and passing them via `style` is usually highly convenient.
+
+In other words, the problem isn't the `style`, the problem are the issues caused by poor design decisions of the
+framework authors. There would be far less problems if React handled `style` as a string.
+
+I would recommend to use other framework instead. For example <Link href="https://astro.build">Astro</Link> is a great
+option, but pretty much any tool that allows you to treat `style` attribute as a string &ndash; just like it is in HTML
+&ndash; is a winner. Or if there are no performance issues by passing `style` around then that is also good.
+
+</div></div></details>

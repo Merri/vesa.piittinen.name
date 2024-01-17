@@ -1,0 +1,326 @@
+---
+title: Buttons in Alku
+description: Documentation on using data-button utility in Alku CSS framework.
+layout: $layouts/AlkuEnglish.astro
+---
+
+import Icon from '$/components/Icon.astro'
+
+# Button
+
+Alku provides a button with basic styling using system colors as the default. The same style, and others, are also
+available for non-button elements via the `data-button` utility.
+
+<figure role="presentation">
+	<div data-grid="auto" style="--grid-auto: 5rem; max-width: 30rem;">
+		<button type="button">
+			<span>I am a button!</span>
+		</button>
+		<span data-box="row">
+			<a href="#" data-button="mediumSize systemColor">
+				<span>I am a link!</span>
+			</a>
+			<button type="button" data-button="largeCircle systemColor">
+				<span data-text="visuallyHidden">I'm a button with an icon</span>
+				<Icon href="/icons/check.svg" />
+			</button>
+		</span>
+	</div>
+</figure>
+
+-   [Base style reset](#base-style-reset)
+-   [Variants](#variants) ([Color variants](#color-variants), [Use of variants and colors together](#use-of-variants-and-colors-together))
+-   [Native elements](#native-elements) ([Links](#links), [Unsupported button elements](#unsupported-button-elements))
+-   [Creating custom variants](#creating-custom-variants)
+-   [CSS variables](#css-variables)
+
+---
+
+## Base style reset
+
+You can apply a reset to any element with an empty value:
+
+```tsx
+<button data-button="" type="button">
+	Base styling
+</button>
+```
+
+<figure>
+	<button data-button="" type="button">
+		<span>Base styling</span>
+	</button>
+	<span>&emsp;</span>
+	<span data-text-color="muted">
+		<Icon href="/icons/arrow-left.svg" size={1} />
+		<small> That's the button</small>
+	</span>
+</figure>
+
+The style itself is boring, but does have a strong focus indication via `:focus-visible` &ndash; as always with Alku.
+
+The reset does a lot of small things to make the reset useful for any semantic element, although most often the cases
+are buttons and links.
+
+One of the opionated things the reset does is to make the button an `inline-flex` element with a `gap`. This makes it
+easy to use the button with SVG icons as you get a nice spacing between text and the icon.
+
+---
+
+## Variants
+
+Button variants handle things such as the amount of padding and line-height. No colors are applied. In the table below
+we have `outline` color variant added as otherwise you would not see the shape of the button.
+
+<div data-scrolling="inline" data-grid="">
+
+| Style variant  | <div style="min-width:min(30vw, 30rem)">Preview</div>                                              |
+| :------------- | :------------------------------------------------------------------------------------------------- |
+| `mediumSize`   | <button type="button" data-button="mediumSize outline">Button</button>                             |
+| `smallCircle`  | <button type="button" data-button="smallCircle outline"><Icon href="/icons/cross.svg" /></button>  |
+| `mediumCircle` | <button type="button" data-button="mediumCircle outline"><Icon href="/icons/cross.svg" /></button> |
+| `largeCircle`  | <button type="button" data-button="largeCircle outline"><Icon href="/icons/cross.svg" /></button>  |
+
+</div>
+
+The circle variants are intended for icons and do not work well with text content.
+
+```tsx
+<button type="button" data-variant="mediumSize outline">
+	mediumSize button with outline
+</button>
+```
+
+### Color variants
+
+Alku's default styles are neutral and are based on system colors. The colors are designed to work in both dark and light
+mode, even if each browser / OS combination have varying color palette. This means Alku will look different depending on
+which device AND which browser you're looking at it!
+
+All color variations include hover and active states.
+
+<div data-scrolling="inline" data-grid="">
+
+| Color variant                                               | <div style="min-width:min(25vw, 25rem)">Preview</div>                           |
+| :---------------------------------------------------------- | :------------------------------------------------------------------------------ |
+| `systemColor`<br /><small>System button colors</small>      | <button type="button" data-button="mediumSize systemColor">Color</button>       |
+| `systemContrast`<br /><small>Reverse button colors</small>  | <button type="button" data-button="mediumSize systemContrast">Contrast</button> |
+| `canvasColor`<br /><small>System document colors</small>    | <button type="button" data-button="mediumSize canvasColor">Color</button>       |
+| `canvasContrast`<br /><small>Reverse document color</small> | <button type="button" data-button="mediumSize canvasContrast">Contrast</button> |
+
+</div>
+
+### Color modifiers
+
+Additionally following modifiers can be used to adjust appearance:
+
+<div data-scrolling="inline" data-grid="">
+
+| Modifier                                                  | <div style="min-width:min(25vw, 25rem)">Preview</div>                     |
+| :-------------------------------------------------------- | :------------------------------------------------------------------------ |
+| `outline`<br /><small>Text color to button border</small> | <button type="button" data-button="mediumSize outline">Outline</button>   |
+| `muted`<br /><small>Muted color</small>                   | <button type="button" data-button="mediumSize muted">Muted</button>       |
+| `accent`<br /><small>Accent color</small>                 | <button type="button" data-button="mediumSize accent">Accent</button>     |
+| `positive`<br /><small>Positive color</small>             | <button type="button" data-button="mediumSize positive">Positive</button> |
+| `negative`<br /><small>Negative color</small>             | <button type="button" data-button="mediumSize negative">Negative</button> |
+
+</div>
+
+The following CSS variables are used in these: `--muted-color`, `--negative-color` and `--positive-color`.
+
+### Use of variants and colors together
+
+Even though there isn't an awful many of these utilities you can get a lot of different options out-of-the-box!
+
+<div data-scrolling="inline" data-grid="" data-color="dark canvas">
+
+|                             Variant | <div style="min-width:min(25vw, 25rem)">Preview</div>                                                                                                                                                                                                                                                                              |
+| ----------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|                        `mediumSize` | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize">Medium</button> <button type="button" data-button="mediumSize outline">Outline</button></div>                                                                                                                                      |
+|             `mediumSize`<br />muted | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize muted">Muted</button> <button type="button" data-button="mediumSize muted outline">Outline</button></div>                                                                                                                           |
+|            `mediumSize`<br />accent | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize accent">Accent</button> <button type="button" data-button="mediumSize accent outline">Outline</button></div>                                                                                                                        |
+|          `mediumSize`<br />positive | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize positive">Positive</button> <button type="button" data-button="mediumSize positive outline">Outline</button></div>                                                                                                                  |
+|          `mediumSize`<br />negative | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize negative">Negative</button> <button type="button" data-button="mediumSize negative outline">Outline</button></div>                                                                                                                  |
+|     `mediumSize`<br />system colors | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize systemColor">Color</button> <button type="button" data-button="mediumSize systemColor outline">Outline</button> <button type="button" data-button="mediumSize systemContrast">Contrast</button></div>                               |
+|    `mediumSize`<br />system + muted | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize systemColor muted">Muted</button> <button type="button" data-button="mediumSize systemColor muted outline">Outline</button> <button type="button" data-button="mediumSize systemContrast muted">Contrast</button></div>             |
+|   `mediumSize`<br />system + accent | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize systemColor accent">Accent</button> <button type="button" data-button="mediumSize systemColor accent outline">Outline</button> <button type="button" data-button="mediumSize systemContrast accent">Contrast</button></div>         |
+| `mediumSize`<br />system + positive | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize systemColor positive">Positive</button> <button type="button" data-button="mediumSize systemColor positive outline">Outline</button> <button type="button" data-button="mediumSize systemContrast positive">Contrast</button></div> |
+| `mediumSize`<br />system + negative | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize systemColor negative">Negative</button> <button type="button" data-button="mediumSize systemColor negative outline">Outline</button> <button type="button" data-button="mediumSize systemContrast negative">Contrast</button></div> |
+|     `mediumSize`<br />canvas colors | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize canvasColor">Color</button> <button type="button" data-button="mediumSize canvasColor outline">Outline</button> <button type="button" data-button="mediumSize canvasContrast">Contrast</button></div>                               |
+|    `mediumSize`<br />canvas + muted | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize canvasColor muted">Muted</button> <button type="button" data-button="mediumSize canvasColor muted outline">Outline</button> <button type="button" data-button="mediumSize canvasContrast muted">Contrast</button></div>             |
+|   `mediumSize`<br />canvas + accent | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize canvasColor accent">Accent</button> <button type="button" data-button="mediumSize canvasColor accent outline">Outline</button> <button type="button" data-button="mediumSize canvasContrast accent">Contrast</button></div>         |
+| `mediumSize`<br />canvas + positive | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize canvasColor positive">Positive</button> <button type="button" data-button="mediumSize canvasColor positive outline">Outline</button> <button type="button" data-button="mediumSize canvasContrast positive">Contrast</button></div> |
+| `mediumSize`<br />canvas + negative | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize canvasColor negative">Negative</button> <button type="button" data-button="mediumSize canvasColor negative outline">Outline</button> <button type="button" data-button="mediumSize canvasContrast negative">Contrast</button></div> |
+
+</div>
+
+<div data-scrolling="inline" data-grid="" data-color="light canvas">
+
+|                             Variant | <div style="min-width:min(25vw, 25rem)">Preview</div>                                                                                                                                                                                                                                                                              |
+| ----------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|                        `mediumSize` | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize">Medium</button> <button type="button" data-button="mediumSize outline">Outline</button></div>                                                                                                                                      |
+|             `mediumSize`<br />muted | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize muted">Muted</button> <button type="button" data-button="mediumSize muted outline">Outline</button></div>                                                                                                                           |
+|            `mediumSize`<br />accent | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize accent">Accent</button> <button type="button" data-button="mediumSize accent outline">Outline</button></div>                                                                                                                        |
+|          `mediumSize`<br />positive | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize positive">Positive</button> <button type="button" data-button="mediumSize positive outline">Outline</button></div>                                                                                                                  |
+|          `mediumSize`<br />negative | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize negative">Negative</button> <button type="button" data-button="mediumSize negative outline">Outline</button></div>                                                                                                                  |
+|     `mediumSize`<br />system colors | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize systemColor">Color</button> <button type="button" data-button="mediumSize systemColor outline">Outline</button> <button type="button" data-button="mediumSize systemContrast">Contrast</button></div>                               |
+|    `mediumSize`<br />system + muted | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize systemColor muted">Muted</button> <button type="button" data-button="mediumSize systemColor muted outline">Outline</button> <button type="button" data-button="mediumSize systemContrast muted">Contrast</button></div>             |
+|   `mediumSize`<br />system + accent | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize systemColor accent">Accent</button> <button type="button" data-button="mediumSize systemColor accent outline">Outline</button> <button type="button" data-button="mediumSize systemContrast accent">Contrast</button></div>         |
+| `mediumSize`<br />system + positive | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize systemColor positive">Positive</button> <button type="button" data-button="mediumSize systemColor positive outline">Outline</button> <button type="button" data-button="mediumSize systemContrast positive">Contrast</button></div> |
+| `mediumSize`<br />system + negative | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize systemColor negative">Negative</button> <button type="button" data-button="mediumSize systemColor negative outline">Outline</button> <button type="button" data-button="mediumSize systemContrast negative">Contrast</button></div> |
+|     `mediumSize`<br />canvas colors | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize canvasColor">Color</button> <button type="button" data-button="mediumSize canvasColor outline">Outline</button> <button type="button" data-button="mediumSize canvasContrast">Contrast</button></div>                               |
+|    `mediumSize`<br />canvas + muted | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize canvasColor muted">Muted</button> <button type="button" data-button="mediumSize canvasColor muted outline">Outline</button> <button type="button" data-button="mediumSize canvasContrast muted">Contrast</button></div>             |
+|   `mediumSize`<br />canvas + accent | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize canvasColor accent">Accent</button> <button type="button" data-button="mediumSize canvasColor accent outline">Outline</button> <button type="button" data-button="mediumSize canvasContrast accent">Contrast</button></div>         |
+| `mediumSize`<br />canvas + positive | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize canvasColor positive">Positive</button> <button type="button" data-button="mediumSize canvasColor positive outline">Outline</button> <button type="button" data-button="mediumSize canvasContrast positive">Contrast</button></div> |
+| `mediumSize`<br />canvas + negative | <div data-grid="auto" style="--grid-auto: 5rem;"><button type="button" data-button="mediumSize canvasColor negative">Negative</button> <button type="button" data-button="mediumSize canvasColor negative outline">Outline</button> <button type="button" data-button="mediumSize canvasContrast negative">Contrast</button></div> |
+
+</div>
+
+These combinations are also available for all the circle button variants.
+
+---
+
+## Native elements
+
+Default styling is provided for HTML elements:
+
+<div data-scrolling="inline" data-grid="">
+
+| Preview                               | Element                 | Description                             |
+| :------------------------------------ | :---------------------- | :-------------------------------------- |
+| <button type="button">Button</button> | `<button />`            | Button element in `mediumSize` variant. |
+| <input type="file" />                 | `<input type="file" />` | File input in `mediumSize` variant.     |
+
+</div>
+
+You can change colors of the input element, here is `data-button="canvasColor outline"`:
+
+<input type="file" data-button="canvasColor outline" />
+
+A limitation is that you cannot change the variant of the button. You can target `::file-selector-button` directly in
+your CSS should you wish to adjust the style.
+
+### Links
+
+Making links appear as buttons is easy enough:
+
+```tsx
+<a href="/alku/docs" data-button="mediumSize systemColor">
+	Alku documentation
+</a>
+```
+
+<figure>
+	<a href="/alku/docs" data-button="mediumSize systemColor">
+		<span>Alku documentation</span>
+	</a>
+</figure>
+
+You **should not** do anything more than that, meaning: no ARIA role trickery! Let links be announced as what they are.
+Link should behave as a link does: for navigating from a page to another, or to a hash anchor in-page.
+
+#### Button visually as a link
+
+But what about the case where you want to do the other way around: make a button that appears visually like a link? This
+is possible, although it is bad design and should be avoided. You can't do it with a `<button />` because it cannot be
+forced to become a true inline element. Alku provides an option for this via the humble anchor element:
+
+```html
+<a role="button" tabindex="0" onkeydown="...handle enter and space..." onclick="...the action...">
+	button that is visually exactly like a link, including inline line wrapping!
+</a>
+```
+
+<figure style="overflow: hidden; padding: 1rem; resize: horizontal;">
+	<span>Lorem ipsum that you can resize horizontally, with a </span>
+	<a
+		role="button"
+		tabindex="0"
+		onclick="alert('Hello world')/*Yeah DOM level 0 baby!*/"
+		onkeydown="if(event.key===' '||event.key==='Enter'){this.onclick();return true}"
+	>
+		<span>button that is visually exactly like a link, including inline line wrapping!</span>
+	</a>
+	<span> And a new future is ahead of us with lore'em IP sum!</span>
+</figure>
+
+As can be seen link style is immediately available for all anchor elements. You should make sure all button behaviors
+are implemented so that keyboard works as intended, and that the element is announced properly for screen readers.
+
+Technically you could even make it support `aria-disabled` with matching visuals but plz no. Disabled buttons are a bad
+enough pattern and designs should avoid them, and here we are already doing something that we shouldn't be doing.
+
+### Unsupported button elements
+
+Alku does not support inputs with type of `button`, `reset`, and `submit`.
+
+These elements do not provide any benefits or features over `<button />` element as they only allow for text content and
+do not support pseudo elements.
+
+The elements have an intentional "do not use" style:
+
+<div data-box="row">
+	<input type="button" value="Input type button" />
+	<input type="reset" value="Input type reset" />
+	<input type="submit" value="Input type submit" />
+</div>
+
+---
+
+## Creating custom variants
+
+Buttons use the following CSS variables for colors:
+
+```css
+:where([data-button]) {
+	/* button color */
+	--button-color-background: ButtonFace;
+	/* button border color */
+	--button-color-border: ButtonBorder;
+	/* button text color */
+	--button-color-text: ButtonText;
+	/* hover color applied over background and state color */
+	--button-color-hover: transparent;
+	/* active color applied over background and state color */
+	--button-color-active: transparent;
+	/* state color applied over background (useful with states similar to positive or negative to adjust readability) */
+	--button-color-on-state: transparent;
+}
+```
+
+Technically creating color variants is easy enough, pass in your customizations of the above CSS vars:
+
+```css
+:where([data-button~='myStyleColor' i]) {
+	/* color styles */
+}
+:where([data-button~='myStyleContrast' i]) {
+	/* contrast styles */
+}
+```
+
+I'm recommending to keep a pattern of `xxxColor` and `xxxContrast` for your own color variants as it makes them distinct
+from style variants as well as color modifiers (outline, negative, positive).
+
+---
+
+## CSS variables
+
+<div data-grid="" data-scrolling="inline">
+
+| Variable                    | Scope  | Default value   | Description                                    |
+| :-------------------------- | :----- | :-------------- | :--------------------------------------------- |
+| `--button-font-size`        | :root  | 1rem            | All buttons default font size                  |
+| `--button-font-weight`      | :root  | bold            | All buttons default font weight                |
+| `--button-gap`              | :root  | 8px             | All buttons default gap                        |
+| `--button-line-height`      | :root  | 1               | All buttons default line height                |
+| `--button-color-background` | button | ButtonFace      | Button background color                        |
+| `--button-color-border`     | button | ButtonBorder    | Button border color                            |
+| `--button-color-text`       | button | ButtonText      | Button text color                              |
+| `--button-color-hover`      | button | var(--muted-10) | Button hover and focus color (over background) |
+| `--button-color-active`     | button | var(--muted-30) | Button active color (over background)          |
+
+</div>
+
+The button scope default values apply also to `[data-button]`. Also on file inputs the values are applied on
+`[type="file"]`.

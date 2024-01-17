@@ -1,0 +1,158 @@
+---
+title: Getting started with Alku
+description: Getting started with Alku and installation with NPM.
+layout: $layouts/AlkuEnglish.astro
+---
+
+import Icon from '$/components/Icon.astro'
+import Link from '$/components/Link.astro'
+
+# Getting started
+
+Alku is a global stylesheet, that is: one CSS file. It can be used without a package manager.
+
+<a href="https://www.unpkg.com/alku/index.css" download="alku.min.css" data-button="mediumSize canvasColor outline">
+	<span>Download</span>
+	<Icon href="/icons/download.svg" />
+</a>
+
+**Usage:**
+
+-   [Via package manager](#via-package-manager)
+-   [Importing in HTML](#importing-in-html)
+-   [Personal preferences](#personal-preferences)
+-   [Starter HTML](#starter-html)
+
+## Via package manager
+
+```bash
+npm install alku --save-dev
+pnpm install alku --save-dev
+yarn add alku --save-dev
+bun install alku --save-dev
+```
+
+Alku is just a global stylesheet so including it is easy enough in your main layout component:
+
+```tsx
+// import everything
+import 'alku'
+
+// or import normalization and essential utilities
+import 'alku/alku.css'
+```
+
+## Importing in HTML
+
+To get started quickly:
+
+```html
+<!-- everything minified -->
+<link rel="stylesheet" href="https://www.unpkg.com/alku/index.css" type="text/css" />
+<!-- normalization and essentials minified -->
+<link rel="stylesheet" href="https://www.unpkg.com/alku/alku.css" type="text/css" />
+```
+
+In a more serious project you likely should host the files yourself.
+
+## Personal preferences
+
+This is a relatively common reset that is preferred by some teams or individuals:
+
+```css
+*,
+::before,
+::after {
+	box-sizing: border-box;
+	background-repeat: no-repeat;
+}
+```
+
+Alku does not do this, but you can include it on your site and it will not do harm to Alku's styles.
+
+How is this possible?
+
+1. Alku avoids setting widths and heights combined with padding or border.
+2. If a specific `box-sizing` is required it will be set with a higher than zero specificity.
+
+For example almost all form elements have been specified without a height or width, yet they have visual consistency and
+are of the same default height regardless of browser.
+
+## Starter HTML
+
+The following source includes some recommended basic page structure.
+
+Note: the HTML tags here have "self-closing" slash even though that is not necessary as per HTML spec. These can be
+omitted, but are included here for the sake of clarity (= "this element has no closing tag").
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Hello world!</title>
+		<link rel="stylesheet" href="https://www.unpkg.com/alku/index.css" type="text/css" />
+	</head>
+	<body>
+		<div id="link-to-external-site" hidden>Link to external site, opens a new window</div>
+		<a data-text="visuallyHidden" href="#main">Jump to content</a>
+
+		<header><!-- optional --></header>
+
+		<main id="main">
+			<h1>Hello world!</h1>
+			<p>
+				External link sample:
+				<a
+					href="https://vesa.piittinen.name/alku"
+					aria-describedby="link-to-external-site"
+					rel="noopener noreferrer"
+					target="_blank"
+				>
+					Alku
+				</a>
+			</p>
+		</main>
+
+		<footer><!-- optional --></footer>
+	</body>
+</html>
+```
+
+Random tip: going for minimalism? You can omit `<head />` and `<body />`! They're automatically added in when missing.
+
+### Pointers
+
+1. Remember to define page language in the `<html />` tag!
+2. Skip link is not necessary if you don't have a lot of stuff before the main content.
+3. Skip link can be styled! Just add a `class`, style it as per usual, and you can focus to the element with keyboard.
+4. Skip link's style should have `position: absolute;` so you avoid content shift.
+5. You may omit external link solution if you have your own. It is highly recommended to signal external links, with
+   descriptive text included!
+
+For favicon you may find <Link href="https://realfavicongenerator.net">RealFaviconGenerator</Link> a nice service even
+if you adjust the end result later on (provide more optimized images etc.).
+
+### Metadata
+
+For meta and social media the minimum you likely want to have:
+
+```html
+<meta name="title" content="Page title" />
+<meta name="description" content="Page description." />
+
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://www.example.com" />
+<meta property="og:title" content="Page title" />
+<meta property="og:description" content="Page description." />
+<meta property="og:image" content="/social_2024x1012.jpg?v=0" />
+<meta property="twitter:card" content="summary_large_image" />
+```
+
+The social image can be heavily optimized and compressed. It can probably be smaller than <code>2024&times;1012</code>,
+but should retain the 2 to 1 ratio. Note that the image may be clipped so you should not put any important text too
+close to the left and right edges!
+
+If you make a mistake with the social image you can increase the number after `?v=` to eventually see the image update in
+caches. Using a search parameter is a cache busting technique.
