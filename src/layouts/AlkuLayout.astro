@@ -1,0 +1,183 @@
+---
+import Link from '$/components/Link.astro'
+
+export interface Props {
+	lang: 'en' | 'fi'
+	description?: string
+	permalink?: string
+	showNav?: boolean
+	social?: string
+	title: string
+}
+
+const { lang, title, description = '', permalink = '', showNav = true, social = '/social.jpg?v=2' } = Astro.props
+
+const LANG_TABLE = {
+	en: {
+		changeTheme: `Change theme`,
+		goToLinksAtTop: `Go to links at top`,
+		jumpToContent: `Jump to content`,
+		linkToExternalSite: `Link to external site, opens a new window`,
+		moveToContent: `Move to beginning of content`,
+		theme: 'Theme',
+		themeDark: 'Dark',
+		themeDefault: 'Default',
+		themeLight: 'Light',
+	},
+	fi: {
+		changeTheme: `Vaihda teema`,
+		goToLinksAtTop: `Näytä linkit sivun alussa`,
+		jumpToContent: `Hyppää sisältöön`,
+		linkToExternalSite: `Siirryt toiselle sivustolle uuteen ikkunaan`,
+		moveToContent: `Siirry sisällön alkuun`,
+		theme: 'Teema',
+		themeDark: 'Tumma',
+		themeDefault: 'Oletus',
+		themeLight: 'Vaalea',
+	},
+} as const
+
+const {
+	changeTheme,
+	goToLinksAtTop,
+	jumpToContent,
+	linkToExternalSite,
+	moveToContent,
+	theme,
+	themeDark,
+	themeDefault,
+	themeLight,
+} = LANG_TABLE[lang]
+---
+
+<html lang={lang}>
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>{title}</title>
+		<meta name="title" content={title} />
+		{description !== '' && <meta name="description" content={description} />}
+		<slot name="head" />
+		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+		<link rel="manifest" href="/site.webmanifest" />
+		<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#193929" />
+		<meta name="msapplication-TileColor" content="#193929" />
+		<meta name="theme-color" content="#193929" />
+
+		<link rel="canonical" href={permalink || new URL(Astro.url.pathname, Astro.site).toString()} />
+		<link rel="sitemap" href="/sitemap-index.xml" />
+
+		{permalink !== '' && (
+			<meta property="og:type" content="website" />
+			<meta property="og:url" content={permalink} />
+			<meta property="og:title" content={title} />
+			<meta property="og:description" content={description} />
+			<meta property="og:image" content={social} />
+			<meta property="twitter:card" content="summary_large_image" />
+			<meta property="twitter:url" content={permalink} />
+			<meta property="twitter:title" content={title} />
+			<meta property="twitter:description" content={description} />
+			<meta property="twitter:image" content={social} />
+		)}
+		<style is:global>
+h1 {
+	letter-spacing: 0.0625em;
+}
+
+:where([data-children~="stripe" i] > :nth-child(odd)) {
+	background-color: unset;
+}
+
+:where([data-children~="stripe" i] > :nth-child(even)) {
+	background-color: var(--muted-02);
+}
+		</style>
+	</head>
+	<body data-column={showNav ? 'largeContent' : undefined}>
+		{showNav &&
+			<div id="link-to-external-site" hidden>{linkToExternalSite}</div>
+			<a class="skip-link" data-text="visuallyHidden" href="#main">{jumpToContent}</a>
+			<header>
+				<div data-column="largeContent">
+					<div data-box="inline row">
+						<nav data-flex="auto">
+							<ul>
+								<li><a href="/alku" data-text="bold underline">Alku</a></li>
+								<li><a href="/alku/docs" data-text="bold underline">Docs</a></li>
+							</ul>
+						</nav>
+						<label
+							id="theme"
+							style="cursor: pointer; flex: none; justify-content: center; padding-block: 0; padding-inline: 0.5rem; visibility: hidden;"
+							title="Changes color scheme"
+						>
+							<span data-text="visuallyHidden">Enable light mode</span>
+							<span aria-hidden="true">🌚</span>
+							<input type="checkbox" role="switch" id="set-theme" style="cursor: inherit;" />
+							<span aria-hidden="true">🌞</span>
+						</label>
+					</div>
+				</div>
+			</header>
+		}
+		<main id="main">
+			<slot />
+		</main>
+		<footer data-grid="centerItems" data-text="14">
+			<p>Alku is crafted by <a href="/">Vesa Piittinen</a></p>
+			<small><Link href="https://github.com/Merri/vesa.piittinen.name/tree/main/src/pages/alku">Documentation source on GitHub</Link></small>
+		</footer>
+		<style>
+			header {
+				background: var(--muted-02);
+				border-block-end: thin solid var(--muted-10);
+				margin-block-end: 32px;
+				padding-block: 24px;
+			}
+
+			footer {
+				background: var(--muted-02);
+				margin-block-start: 32px;
+				border-block-start: thin solid var(--muted-10);
+				padding-block: 32px;
+				text-align: center;
+			}
+		</style>
+		<script type="module" is:inline>
+			const hasLS = !(() => {
+				try {
+					localStorage.removeItem((localStorage._ = '_'))
+				} catch (e) {
+					return 1
+				}
+			})()
+
+			const theme = document.getElementById('theme')
+
+			if (hasLS && theme) {
+				theme.style.visibility = 'visible';
+				const setTheme = document.getElementById('set-theme')
+
+				if (setTheme instanceof HTMLInputElement) {
+					if (localStorage.theme) setTheme.checked = localStorage.theme === 'light'
+					else setTheme.checked = !window.matchMedia('(prefers-color-scheme: dark)').matches
+
+					setTheme.onchange = function (event) {
+						if (event.target instanceof HTMLInputElement) {
+							document.documentElement.dataset.color = localStorage.theme = (event.target.checked ? 'light' : 'dark')
+						} else {
+							localStorage.removeItem('theme')
+							delete document.documentElement.dataset.color
+						}
+					}
+				}
+
+				if (localStorage.theme != null) {
+					document.documentElement.dataset.color = localStorage.theme === 'dark' ? 'dark' : 'light'
+				}
+			}
+		</script>
+	</body>
+</html>

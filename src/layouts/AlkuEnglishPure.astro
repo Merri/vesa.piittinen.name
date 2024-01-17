@@ -1,0 +1,15 @@
+---
+import 'alku/alku.css'
+import { MarkdownContent } from 'astro'
+import AlkuLayout from './AlkuLayout.astro'
+
+export interface Props {
+	content: MarkdownContent<{ description?: string; permalink?: string; title: string }>
+}
+
+const { description, permalink = new URL(Astro.url.pathname, Astro.site).toString(), title } = Astro.props.content
+---
+
+<AlkuLayout lang="en" description={description} permalink={permalink} title={title} showNav={false}>
+	<slot />
+</AlkuLayout>

@@ -13,7 +13,7 @@ tags:
 import Emoji from '$/components/Emoji.astro'
 import Icon from '$/components/Icon.astro'
 import { inlineFlex } from '$/components/inlineFlex.module.css'
-import styles from './strong-focus.module.css'
+import styles from '$/css/strong-focus.module.css'
 
 This is a summary on how I think about focus indicators, and how to solve pretty much all the issues around using them.
 
@@ -42,7 +42,7 @@ You should use the same indicator for everything. It should be a global style.
 	<summary>Are they the same?</summary>
 	<div>
 		<div>
-			<p class={inlineFlex} style="gap: 2rem; margin: 1rem;">
+			<p class={inlineFlex} style="gap: 32px; margin: 16px;">
 				<button style="outline: 3px solid var(--focus-color); outline-offset: 3px;">Button: same!</button>
 				<a style="outline: 3px solid var(--focus-color); outline-offset: 3px;">Link: same!</a>
 				<input
@@ -76,7 +76,7 @@ Focus indicator should never clip. On a container either use `contain: layout;` 
 have a `contain: content;` (= `overflow: hidden;`) then use negative margin + padding trick to increase the size of the
 drawn container.
 
-<div class={inlineFlex} style="gap: 2rem;">
+<div class={inlineFlex} style="gap: 32px;">
 	<div class={styles.poorContainment}>
 		<button style="outline: 3px solid var(--focus-color); outline-offset: 3px;">
 			Clipping <Emoji as="⛔" />

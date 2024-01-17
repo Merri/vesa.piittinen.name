@@ -2,7 +2,7 @@
 title: Can we at least modernize visually-hidden?
 description: We have used a variety of visually-hidden or sr-only classes over the years. There is no standardization happening, but can we update the syntax?
 pubDate: 2023-03-11
-modDate: 2023-04-17
+modDate: 2023-10-02
 layout: $layouts/BlogPost.astro
 tags:
     - a11y
@@ -82,9 +82,14 @@ So here is the first thing that we could actually improve upon: don't use negati
 
 The purpose of this rule is to clip away all the visuals. Screen readers ignore this rule because it is quite hard to figure out how much will be visible based on the values of this property.
 
-While this is fairly short could we improve upon this? Well yes, yes we could! `clip-path: path('');` is shorter by two characters and gives the same end result!
+<s>
+	While this is fairly short could we improve upon this? Well yes, yes we could! `clip-path: path('');` is shorter by
+	two characters and gives the same end result!
+</s>
 
-Oh and since `path` repeats it will also compress better when delivered over the network. Much awesome.
+<s>Oh and since `path` repeats it will also compress better when delivered over the network. Much awesome.</s>
+
+**Update!** Firefox 116 no longer allows for the empty string path, so back to `inset(50%)` it is.
 
 ### `clip: rect(0 0 0 0);` and `overflow: hidden;`
 
@@ -101,7 +106,7 @@ So while going through each of the styles we did find a few changes to be done. 
 ```css
 .visually-hidden {
 	border: 0;
-	clip-path: path('');
+	clip-path: inset(50%);
 	contain: content;
 	height: 1px;
 	margin: 0;
@@ -113,7 +118,7 @@ So while going through each of the styles we did find a few changes to be done. 
 ```
 
 1. Removed `clip`
-2. Shorter `clip-path`
+2. <s>Shorter `clip-path`</s> (outdated)
 3. Margin to `0`
 4. Removed `overflow` to favor `contain`
 
@@ -130,7 +135,7 @@ Another annoying thing is the need to have `border: 0; margin: 0; padding: 0;`. 
 ```css
 .visually-hidden {
 	all: initial;
-	clip-path: path('');
+	clip-path: inset(50%);
 	contain: content;
 	height: 1px;
 	position: absolute;
@@ -159,7 +164,7 @@ The shortest way I know of to add more specificity is to use `:root`:
 ```css
 :root .visually-hidden {
 	all: initial;
-	clip-path: path('');
+	clip-path: inset(50%);
 	contain: content;
 	height: 1px;
 	position: absolute;
@@ -183,7 +188,7 @@ So my own opinion on this is to steal an idea from <Link href="https://github.co
 
 :is([aria-hidden='false' i][hidden]:not(:focus):not(:active), .visually-hidden) {
 	all: initial;
-	clip-path: path('');
+	clip-path: inset(50%);
 	contain: content;
 	height: 1px;
 	position: absolute;
@@ -227,3 +232,5 @@ I hope you like this autistic deep dive!
 [2023-03-13] Samsung Internet does support `clip-path` without prefix! I had been looking at the wrong support table, <Link href="https://caniuse.com/mdn-css_properties_clip-path_path">here is the correct clip-path: path one</Link>. However the support table is incomplete and claims Opera does not support, but it does support. So it might be possible to have all of it working nicely on all current browsers without the prefix!
 
 [2023-04-17] `contain: content` is required (or `overflow: hidden`) as scroll containers calculate layout based on the text within.
+
+[2023-10-02] `clip-path: path('')` no longer works in Firefox 116 upwards.
