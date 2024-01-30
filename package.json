@@ -1,7 +1,7 @@
 {
 	"name": "@merri/vesa.piittinen.name",
 	"description": "Vesa Piittinen",
-	"version": "2023.0.0",
+	"version": "2024.0.0",
 	"author": "Vesa Piittinen <vesa.piittinen@gmail.com>",
 	"bugs": {
 		"url": "https://github.com/merri/vesa.piittinen.name/issues"
@@ -32,7 +32,7 @@
 		"@types/marked": "5.0.0",
 		"@types/memoizee": "0.4.8",
 		"@types/node": "20.3.3",
-		"alku": "1.1.0-rc.25",
+		"alku": "1.1.0-rc.28",
 		"astro": "3.3.0",
 		"cookie": "0.5.0",
 		"date-fns": "2.30.0",

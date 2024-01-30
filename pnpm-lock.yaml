@@ -48,8 +48,8 @@ devDependencies:
     specifier: 20.3.3
     version: 20.3.3
   alku:
-    specifier: 1.1.0-rc.25
-    version: 1.1.0-rc.25
+    specifier: 1.1.0-rc.28
+    version: 1.1.0-rc.28
   astro:
     specifier: 3.3.0
     version: 3.3.0(@types/node@20.3.3)(typescript@5.1.6)
@@ -1463,8 +1463,8 @@ packages:
       - supports-color
     dev: true
 
-  /alku@1.1.0-rc.25:
-    resolution: {integrity: sha512-NTnCaFezxKFd22higp5a3ZlYmplv765MtDz6bDfJmMq5U5zq5ZVulZA9ha3OuXxMLZ2wmk0+AZJAHHJUoYt3Mw==}
+  /alku@1.1.0-rc.28:
+    resolution: {integrity: sha512-GoyDkjFqHn9J4LGMd0oOJlo2k9XZppvJXs2Hc+onTvCZwQcP93F9CDYN9KNGUUhnyQyjtdnxzf02zpwSAnBDaw==}
     dev: true
 
   /ansi-align@3.0.1:
