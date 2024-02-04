@@ -1,0 +1,317 @@
+---
+title: Two line balanced inline block
+description: Sometimes you want to have inline elements that have two lines of text. Can you achieve that with just CSS?
+pubDate: 2024-02-04
+layout: $layouts/BlogPost.astro
+tags:
+    - css
+    - html
+    - WebDev
+    - tutorial
+---
+
+import Codepen from '$/components/Codepen.astro'
+import Link from '$/components/Link.astro'
+
+There was a question asked
+on <Link href="https://mastodon.social/@pascallaliberte@ruby.social/111869269419667192">Mastodon</Link> by Pascal
+Laliberté:
+
+<blockquote>
+Hey #CSS folks...
+
+Anybody know how to pull off a box like this:
+
+-   two lines of text, balanced (equal words per line)
+-   min-width of say 12 chars, text on one-line if lower char count
+-   feels like an inline-block
+-   box doesn't grow in size to fit text on one line
+
+<img
+	alt="screenshot of a mockup showing three boxes side by side, occupying two lines per box, with text balanced to occupy the two lines but not grow in width."
+	src="/assets/blockquote/2024-02-04_111868208615350602.jpg"
+	width="731"
+	height="172"
+/>
+
+</blockquote>
+
+As things are this is **impossible** to achieve reliably with current CSS: we have no tools to force a box to shrink so
+that it attempts to size itself to always result into two lines of text. So let us go through the closest matches!
+
+## The restrictions
+
+"Feels like `inline-block`" was mentioned in the quote above. The issue with it is that when inline block has text long
+enough to wrap to multiple lines it will take all the available space. We can't force it to take the least space
+available when wrapping.
+
+The closest rule that we get by technical functionality is the old
+proprietary <Link href="https://developer.mozilla.org/en-US/docs/Web/CSS/-webkit-line-clamp">-webkit-line-clamp</Link>
+which has been implemented in all browsers, but it doesn't do what we want: while you can use it to tell how many lines
+of text you want to see, it achieves this by truncating the extra away and adding three ellipses if it does so.
+
+Then we have `min-content` value. The problem with it is that it wraps to absolute minimum width:
+
+<span style="border: thin solid; display: inline-block; padding: 4px; width: min-content;">I'm a Hello World box</span>
+
+You could overcome this issue by selectively placing non-breaking spaces:
+
+```html
+I'm&nbsp;a&nbsp;Hello World&nbsp;box
+```
+
+<br />
+<span style="border: thin solid; display: inline-block; padding: 4px; width: min-content;">
+	<span>I'm&nbsp;a&nbsp;Hello World&nbsp;box</span>
+</span>
+
+... but that would either mean extra manual work for the people writing content, or writing a piece of server code that
+would determine where to keep the regular space.
+
+So, are we done? We have a solution, albeit not a very CSS one.
+
+## Duplicate it!
+
+Of course, me being the "if it is possible to be done in CSS I will make it happen" sort of guy, I did manage to find a
+solution to this problem. And of course it is a hacky solution since we are talking about something CSS doesn't have.
+
+The idea is to have the text in DOM twice: one is for visual representation, but another is added in half the size and
+that would determine the minimum width of the box when using `fit-content`. The half-size text would have
+`white-space: nowrap`.
+
+Here is the minimal implementation of that idea, keeping the text visible so you can see what is happening:
+
+```html
+<span style="border: thin solid; display: inline-block; padding: 4px; width: min-content;">
+	<span style="display: block; font-size: 50%; white-space: nowrap;">I'm a Hello World box</span>
+	<span>I'm a Hello World box</span>
+</span>
+```
+
+<br />
+<span style="border: thin solid; display: inline-block; padding: 4px; width: min-content;">
+	<span style="display: block; font-size: 50%; white-space: nowrap;">I'm a Hello World box</span>
+	<span>I'm a Hello World box</span>
+</span>
+
+Very much a success! There is a bit of extra space to the right but that usually isn't an issue as long as we have
+roughly the right width for the box. However the above trick doesn't work as intended for all the cases:
+
+<span style="border: thin solid; display: inline-block; padding: 4px; width: min-content;">
+	<span style="display: block; font-size: 50%; white-space: nowrap;">Web Components are the best</span>
+	<span>Web Components are the best</span>
+</span>
+
+There are multiple ways to try fix this issue:
+
+1. Write a regular expression that replaces space with `&nbsp;` when there is a combination of short + long word at
+   beginning and end of the text.
+
+    <span style="border: thin solid; display: inline-block; padding: 4px; width: min-content;">
+    	<span style="display: block; font-size: 50%; white-space: nowrap;">Web Components are the best</span>
+    	<span>Web&nbsp;Components are the best</span>
+    </span>
+
+2. Adjust the small text to take more space.
+
+    <span style="border: thin solid; display: inline-block; padding: 4px; width: min-content;">
+    	<span style="display: block; font-size: 50%; text-indent: 4.5ex; white-space: nowrap;">
+    		<span>Web Components are the best</span>
+    	</span>
+    	<span>Web Components are the best</span>
+    </span>
+
+3. Use soft hyphens.
+
+    <span style="border: thin solid; display: inline-block; padding: 4px; width: min-content;">
+    	<span style="display: block; font-size: 50%; white-space: nowrap;">Web Components are the best</span>
+    	<span>Web Compo&shy;nents are the best</span>
+    </span>
+
+The first fix is almost good enough for almost every case since the problem does happen mostly when there is not enough
+text.
+
+The second fix helps with the issue, but has the downsize of adding even more empty space to the right side of the box.
+
+The third fix can also help with the issue by breaking the text to smaller parts, however the added hyphen does take a
+bit more space so you should account for that (by also using the second fix).
+
+Combine these fixes and you are likely to get very close to never seeing three lines of text!
+
+## Making it good for production
+
+We now have the technical wrapping very close to that we want, but we are not really good for production. The main
+issues we currently face are related to the duplicate text:
+
+1. It effects our layout.
+2. It is accessible.
+3. It can be read by a screen reader too.
+
+There are also other cases we have not yet accounted for:
+
+1. Limiting to a maximum width of 100%.
+2. Preventing horizontal scrollbars in limited space.
+
+To demonstrate the issues here is a simulation of what happens in limited space:
+
+<div data-scrolling="inline" data-color="contrast" style="padding: 16px; max-width: 320px;">
+	<p>This is some lorem ipsum without it being lorem ipsum so that you can see how this text wraps.</p>
+	<span style="border: thin solid; display: inline-block; font-size: 4rem; padding: 4px; width: min-content;">
+		<span style="display: block; font-size: 50%; text-indent: 4.5ex; white-space: nowrap;">
+			Web Components are the best
+		</span>
+		<span>Web Components are the best</span>
+	</span>
+</div>
+
+The desire to go for two lines of text has become too extreme here: we would rather want the text to wrap to more than
+two lines than to cause a horizontal scrollbar to appear.
+
+### Hiding the smaller text
+
+We can effectively hide the 50% text with `visibility: hidden`, and remove the effect to layout with `height: 0`:
+
+<span style="border: thin solid; display: inline-block; padding: 4px; width: min-content;">
+	<span style="display: block; font-size: 50%; height: 0; text-indent: 4.5ex; visibility: hidden; white-space: nowrap;">
+		<span>Web Components are the best</span>
+	</span>
+	<span>Web Components are the best</span>
+</span>
+
+This also removes the text from screen reader, but just to be sure we can also make use of `inert` attribute on HTML
+side to be perfectly sure the element will not be part of any other use than to be the measure of minimum width.
+
+### Limiting the width and preventing scrollbars
+
+The problem with `white-space: nowrap` is that the text still takes all the space it needs even if we don't see it, and
+this will be a source of (sometimes mystical feeling) horizontal scrollbars. To counter it we can use `contain: content`
+on the parent element.
+
+Finally, to allow the parent element to be smaller than `min-content` we can use `max-width: 100%`. The following has
+all the new changes applied:
+
+<div data-scrolling="inline" data-color="contrast" style="padding: 16px; max-width: 320px;">
+	<p>This is some lorem ipsum without it being lorem ipsum so that you can see how this text wraps.</p>
+	<h4 style="color: inherit">4rem</h4>
+	<span style="border: thin solid; contain: content; display: inline-block; font-size: 4rem; max-width: 100%; padding: 4px; width: min-content;">
+		<span
+			inert
+			style="display: block; font-size: 50%; height: 0; text-indent: 4.5ex; visibility: hidden; white-space: nowrap;"
+		>
+			<span>Web Components are the best</span>
+		</span>
+		<span>Web Components are the best</span>
+	</span>
+	<h4 style="color: inherit">3rem</h4>
+	<span style="border: thin solid; contain: content; display: inline-block; font-size: 3rem; max-width: 100%; padding: 4px; width: min-content;">
+		<span
+			inert
+			style="display: block; font-size: 50%; height: 0; text-indent: 4.5ex; visibility: hidden; white-space: nowrap;"
+		>
+			<span>Web Components are the best</span>
+		</span>
+		<span>Web Components are the best</span>
+	</span>
+	<h4 style="color: inherit">2rem</h4>
+	<span style="border: thin solid; contain: content; display: inline-block; font-size: 2rem; max-width: 100%; padding: 4px; width: min-content;">
+		<span
+			inert
+			style="display: block; font-size: 50%; height: 0; text-indent: 4.5ex; visibility: hidden; white-space: nowrap;"
+		>
+			<span>Web Components are the best</span>
+		</span>
+		<span>Web Components are the best</span>
+	</span>
+</div>
+
+Hurrah, no horizontal scrollbar! We could still polish the visual end result with the fresh `text-wrap: balance`.
+
+Here is a more complete sample to play around with:
+
+<Codepen id="OJqZEEM" title="Almost good way to have inline blocks that are always two lines tall (improved)" />
+
+## Use cases
+
+There is one place where this kind of behavior could be desirable: buttons!
+
+<div data-box="row" style="text-wrap: balance;">
+	<button type="button" style="max-width: 100%; flex: 0 min-content;">
+		<span>
+			<span
+				inert
+				style="display: block; font-size: 50%; height: 0; text-indent: 1.625rem; visibility: hidden; white-space: nowrap;"
+			>
+				<span>See more</span>
+			</span>
+			<span>See more</span>
+		</span>
+	</button>
+	<button type="button" style="max-width: 100%; flex: 0 min-content;">
+		<span>
+			<span
+				inert
+				style="display: block; font-size: 50%; height: 0; text-indent: 1.625rem; visibility: hidden; white-space: nowrap;"
+			>
+				<span>Confirm choices</span>
+			</span>
+			<span>Confirm choices</span>
+		</span>
+	</button>
+	<button type="button" style="max-width: 100%; flex: 0 min-content;">
+		<span>
+			<span
+				inert
+				style="display: block; font-size: 50%; height: 0; text-indent: 1.625rem; visibility: hidden; white-space: nowrap;"
+			>
+				<span>Activate my account</span>
+			</span>
+			<span>Activate my account</span>
+		</span>
+	</button>
+	<button type="button" data-button="canvasColor mediumSize negative" style="max-width: 100%; flex: 0 min-content;">
+		<span>
+			<span
+				inert
+				style="display: block; font-size: 50%; height: 0; text-indent: 1.625rem; visibility: hidden; white-space: nowrap;"
+			>
+				<span>Destroy the world as we know it</span>
+			</span>
+			<span>Destroy the world as we know it</span>
+		</span>
+	</button>
+	<button type="button" data-button="canvasColor mediumSize positive" style="max-width: 100%; flex: 0 min-content;">
+		<span>
+			<span
+				inert
+				style="display: block; font-size: 50%; height: 0; text-indent: 1.625rem; visibility: hidden; white-space: nowrap;"
+			>
+				<span>I agree to all of your shenanigans</span>
+			</span>
+			<span>I agree to all of your shenanigans</span>
+		</span>
+	</button>
+	<a
+		href="https://www.youtube.com/watch?v=iik25wqIuFo"
+		target="_blank"
+		rel="nofollow noopener"
+		data-button="canvasColor mediumSize"
+		style="max-width: 100%; text-align: center; flex: 0 min-content;"
+	>
+		<span>
+			<span
+				inert
+				style="display: block; font-size: 50%; height: 0; text-indent: 2.375rem; visibility: hidden; white-space: nowrap;"
+			>
+				<span>This link pretends to be a button</span>
+			</span>
+			<span data-text="external link">This link pretends to be a button</span>
+		</span>
+	</a>
+</div>
+
+Usually with buttons you have to resort to a mixture of specifically designed widths and agreements with localization
+folks for certain length of text so that you can get a desired visual end result.
+
+With this solution you can tell your designer that hey, we can actually now do this with some dirty HTML and CSS
+trickery. You have to be careful for the designer not to fall in love with you so make sure to ruin their day with
+something else to maintain safe boundaries.
