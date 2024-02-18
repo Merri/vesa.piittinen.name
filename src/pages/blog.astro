@@ -4,7 +4,7 @@ import { isBefore } from 'date-fns'
 
 import BlogPostPreview from '$/components/BlogPostPreview.astro'
 import Icon from '$/components/Icon.astro'
-import { inlineFlexIcon } from '$/components/inlineFlex.module.css'
+import styles from '$/components/inlineFlex.module.css'
 import Link from '$/components/Link.astro'
 import Tags from '$/components/Tags.astro'
 import { Post } from '$layouts/BlogPost.astro'
@@ -43,7 +43,7 @@ posts.sort((a, b) => +new Date(b.frontmatter.pubDate) - +new Date(a.frontmatter.
 		href="/blog/rss.xml"
 	/>
 	<div style="contain: layout;">
-		<div class={inlineFlexIcon} style="float: right; margin-top: 2.5rem;">
+		<div class={styles.inlineFlexIcon} style="float: right; margin-top: 2.5rem;">
 			<Icon href="/icons/social/rss.svg" title="RSS feed" size={3} />
 			<Link href="/blog/rss.xml" data-before="cover">RSS Feed</Link>
 		</div>

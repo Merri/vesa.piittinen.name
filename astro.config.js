@@ -1,6 +1,6 @@
 // @ts-check
 import { defineConfig } from 'astro/config'
-import deno from '@astrojs/deno'
+//import deno from '@astrojs/deno'
 import mdx from '@astrojs/mdx'
 import node from '@astrojs/node'
 import preact from '@astrojs/preact'
@@ -37,7 +37,7 @@ export default inflate(array);`
 }
 
 export default defineConfig({
-	adapter: (isDeno && deno()) || (isNode && node({ mode: 'standalone' })) || vercel(),
+	adapter: /*(isDeno && deno()) ||*/ (isNode && node({ mode: 'standalone' })) || vercel(),
 	integrations: [
 		preact(),
 		mdx(),
