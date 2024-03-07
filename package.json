@@ -33,7 +33,7 @@
 		"alku": "1.1.0-rc.30",
 		"astro": "4.4.0",
 		"cookie": "0.6.0",
-		"date-fns": "2.30.0",
+		"date-fns": "3.3.1",
 		"date-fns-tz": "2.0.0",
 		"dompurify": "3.0.8",
 		"marked": "5.1.0",
