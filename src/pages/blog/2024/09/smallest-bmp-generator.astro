@@ -1,0 +1,60 @@
+---
+
+---
+
+<script is:inline type="module">
+	class SmallestBmpGenerator extends HTMLElement {
+		#eventListeners = new AbortController()
+		/** @type {HTMLOutputElement | null} */
+		output = null
+		/** @type {HTMLImageElement | null} */
+		image = null
+
+		constructor() {
+			super()
+
+			const options = { signal: this.#eventListeners.signal }
+
+			try {
+				const input = this.querySelector('[type=color]')
+				this.output = this.querySelector('output')
+				this.image = this.querySelector('img')
+				if (input instanceof HTMLInputElement && this.output instanceof HTMLOutputElement) {
+					input.addEventListener('input', this.handleChange, options)
+					input.addEventListener('change', this.handleChange, options)
+					this.updateValue(input.value)
+				}
+			} catch (e) {}
+		}
+
+		disconnectedCallback() {
+			this.#eventListeners.abort()
+		}
+
+		/** @type {function(string)}: void */
+		updateValue = (value) => {
+			const { groups = { r: '00', g: '00', b: '00' } } =
+				/^\#(?<r>[0-9abcdef]{2})(?<g>[0-9abcdef]{2})(?<b>[0-9abcdef]{2})$/.exec(value) ?? {
+					groups: {},
+				}
+
+			const red = Number(`0x${groups.r}`)
+			const green = Number(`0x${groups.g}`)
+			const blue = Number(`0x${groups.b}`)
+
+			const dataURL = btoa(
+				atob('Qk0eAAAAAAAAABoAAAAMAAAAAQABAAEAGAB4eXoA').replace('xyz', String.fromCharCode(blue, green, red))
+			)
+
+			this.output.textContent = dataURL
+			if (this.image) this.image.src = `data:image/bmp;base64,${dataURL}`
+		}
+
+		/** @type {function(Event)}: void */
+		handleChange = (event) => {
+			this.updateValue(event.target.value)
+		}
+	}
+
+	customElements.define('smallest-bmp-generator', SmallestBmpGenerator)
+</script>

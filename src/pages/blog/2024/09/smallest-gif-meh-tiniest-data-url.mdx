@@ -1,0 +1,81 @@
+---
+title: Smallest GIF? Meh! Tiniest data URL is a BMP!
+description: There is the occasional need for the tiniest possible image, but what can we use as one?
+pubDate: 2024-09-01
+layout: $layouts/BlogPost.astro
+tags:
+    - css
+    - html
+    - WebDev
+---
+
+import Codepen from '$/components/Codepen.astro'
+import Link from '$/components/Link.astro'
+import SmallestGIF from './smallest-bmp-generator.astro'
+
+One of the problems that comes your way every now and then is the need to display an image only in some viewport sizes.
+
+A naive solution to this problem would be to apply `dislay: none;` or a similar CSS. The issue with that: the image will
+still be loaded by the browser.
+
+Or maybe you could apply the image as a background via CSS! But then you get into all the issues with how verbose the
+syntax can get and how hard it is to load only the ideal image &ndash; and browser may still load all those various
+variants of the image, not only the one it needs.
+
+This is why we have responsive images. However one of the lacking features in them is to not load an image in some
+cases. The workaround for this is to use a traditional 1&times;1 pixel image which has been called with names like
+`transparent.gif`, `blank.gif`, or `spacer.gif` when having it as a separate file.
+
+For this use case however we want to have the image as a data URL to make it inlined to HTML. This way we can avoid an
+extra request over the network and have a short repeating piece of code that gets effectively compressed.
+
+But often the first thought in this case is to just look up the smallest (GIF) file and convert that into a data URL.
+There, solved? Unfortunately things are not that easy if you want to really, really have it the smallest it can be! You
+can make data URLs in multiple ways: you may use base64 for you could use URL encoding. Base64 is often the way for
+binary files while URL encoding may work nicely for text based file formats like SVG.
+
+So a few months ago I went ahead and did research on this particular topic. I wanted to find the image with the
+following criteria:
+
+1. It is as tiny as possible
+2. It results in as tiny data URL as possible
+3. It works in all browsers
+
+Here is the pen. Image border is red if it fails.
+
+<Codepen id="eYadLoW" title="Goal: find a smallest working data URL for srcset when image is not displayed in mobile" />
+
+Make sure to check the pen on different browser engines as of the above conditions especially the third part is a
+greatly limiting factor! While you can find a GIF file as small as 14 bytes (33 bytes as data URL) that works on Chrome,
+it won't work for Safari or Firefox.
+
+Out of all the options I ended up with a surprising result: the smallest data URL is a BMP! This is the top three of the
+images that loaded on all browsers:
+
+|                                                               Image                                                                | Data URL                                                           | File size |      URL size | Format |
+| :--------------------------------------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------- | --------: | ------------: | :----- |
+|  <img height="24" width="24"  alt="smallest-data-url.bmp" src="data:image/bmp;base64,Qk0eAAAAAAAAABoAAAAMAAAAAQABAAEAGAB4eXoA"/>   | `data:image/bmp;base64,Qk0eAAAAAAAAABoAAAAMAAAAAQABAAEAGAB4eXoA`   |  30 bytes | 62 characters | BMP    |
+| <img height="24" width="24"  alt="smallest-data-url.webp" src="data:image/webp;base64,UklGRhYAAABXRUJQVlA4TAoAAAAvAAAAAEX/I/of"/>  | `data:image/webp;base64,UklGRhYAAABXRUJQVlA4TAoAAAAvAAAAAEX/I/of`  |  30 bytes | 63 characters | WebP   |
+| <img height="24" width="24"  alt="smallest-data-url.svg" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E" /> | `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'/%3E` |  41 bytes | 64 characters | SVG    |
+
+Of these the SVG is the best when you need a transparent image. As for BMP, here is a generator to customize the color.
+
+## Smallest BMP data URL generator
+
+Pick a color from the color input.
+
+<smallest-bmp-generator style="align-items: center; display: flex; gap: 16px; flex-flow: wrap;">
+	<label>
+		<>Color:</>
+		<input type="color" value="#7A7978" />
+	</label>
+	<code>
+		<>data:image/bmp;base64,</>
+		<output>Qk0eAAAAAAAAABoAAAAMAAAAAQABAAEAGAB4eXoA</output>
+	</code>
+	<img width="32" height="24" alt="" src="data:image/bmp;base64,Qk0eAAAAAAAAABoAAAAMAAAAAQABAAEAGAB4eXoA" />
+</smallest-bmp-generator>
+
+<SmallestGIF />
+
+As a conclusion: boy does it get hard to write a blog about something when you don't find the time to do it regularly.
