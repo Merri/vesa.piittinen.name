@@ -297,6 +297,13 @@ const {
 				color: var(--header-color, currentColor);
 			}
 
+			@supports (paint-order: stroke) {
+				:global(h1, h2, h3, h4, h5, h6) {
+					paint-order: stroke;
+					-webkit-text-stroke: 5px Canvas;
+				}
+			}
+
 			:global(h3::before) {
 				content: '';
 				--dashed-border-angle: 90deg;
@@ -317,6 +324,11 @@ const {
 
 			:global(details) {
 				background: var(--shadow-bg);
+			}
+
+			a:is(:hover, :focus, :active) {
+				--link-underline-offset: .25rem;
+				text-decoration-thickness: 4px;
 			}
 
 			main {

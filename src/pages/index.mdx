@@ -10,22 +10,14 @@ import Icon from '$/components/Icon.astro'
 import { inlineFlex, inlineFlexIcon } from '$/components/inlineFlex.module.css'
 import Link from '$/components/Link.astro'
 
-<p lang="fi">
-	<span class={inlineFlex}>
-		<Emoji as="🇫🇮" />
-		<span>[Esittely suomeksi alempana](#hepsistä)</span>
-	</span>
-</p>
-
 <div lang="en" style="contain: layout;">
 
-# Hello there! <Emoji as="👋" />
+# Vesa's homepage
 
-<figure style="float: right; margin: 1rem; max-width: 35%; shape-outside: circle(50%); transform: translateX(1rem);">
+<figure style="float: right; margin: 1rem; max-width: 12rem; shape-outside: circle(50%); transform: translateX(1rem);">
 	<img
 		alt="Vesa Piittinen"
 		src="/assets/naama.jpg"
-		loading="lazy"
 		width="400"
 		height="400"
 		style="border-radius: 50%; box-shadow: 0 0 0 0.5rem var(--shadow-bg); height: auto; vertical-align: middle;"
@@ -33,21 +25,26 @@ import Link from '$/components/Link.astro'
 	<figcaption>Most typical mode of my existence</figcaption>
 </figure>
 
-I'm a Finnish front of the front-end developer who creates this magic of the Internet. Or&nbsp;a&nbsp;programmer if that
-makes more sense to you. I'm also very much an autistic person which in short means that I prefer giving attention to
-the surrounding reality than on social networking. You can be sure I really know my stuff!
+I'm a guy who likes to do practical "use it safely today" CSS.
 
-Quick specs: born 1983, programming since the early 90s, on the web since 1996, websites since 1998, professional since 2013.
+Model: autistic <Emoji as="🎉" /><br />
+Charm: puns <Emoji as="🤦" /><br />
+Brains: exist <Emoji as="💥" /><br />
+Remembers: 90's <Emoji as="📼" /><br />
+Movement: legs <Emoji as="🦵" /> bicycle <Emoji as="🚲" /> trains <Emoji as="🚂" />
 
-On this site you can find my [English speaking blog](/blog) which focuses on the web stuff, and maybe occasionally
-delves into other topics. We shall see.
+<h2 data-text="heading5" id="follow" style="margin-block: 4rem 0">
+	Optional means of tracking:
+</h2>
 
-I collect and restore old Nintendo Game Boys.
-
-<p id="follow">Should you wish to follow me:</p>
-
-<nav aria-labelledby="follow" style="margin-block: 2rem; text-align: center;">
+<nav aria-labelledby="follow" style="margin-block: 2rem;">
 	<ul class={inlineFlex} role="list" style="gap: 2rem; justify-content: space-evenly;">
+		<li class={inlineFlexIcon}>
+			<Icon href="/icons/social/mastodon.svg" title="Mastodon" size={3} />
+			<Link href="https://mastodon.social/@MerriNet" rel="me" data-before="cover">
+				<span>Mastodon</span>
+			</Link>
+		</li>
 		<li class={inlineFlexIcon}>
 			<Icon href="/icons/social/codepen.svg" title="Codepen" size={3} />
 			<Link hreflang="en" href="https://codepen.io/Merri" data-before="cover">
@@ -66,74 +63,16 @@ I collect and restore old Nintendo Game Boys.
 				<span>LinkedIn</span>
 			</Link>
 		</li>
-		<li class={inlineFlexIcon}>
-			<Icon href="/icons/social/mastodon.svg" title="Mastodon" size={3} />
-			<Link href="https://mastodon.social/@MerriNet" rel="me" data-before="cover">
-				<span>Mastodon</span>
-			</Link>
-		</li>
 	</ul>
 </nav>
 
-Non-urgent email finds me at `vesa@piittinen.name`
+Yes, I have so much trust on you that you won't immediately click away from the rest of this site that I put the means
+to go elsewhere right here on the front page.
 
-In case you find my phone number: please let me know you are about to call, or you'll waste your time.
+Maybe that is too much trust. But that's a problem in you, not me.
 
-</div>
+I'm also terribly sorry to all the ADHD friends out there.
 
----
-
-<div lang="fi">
-
-# Hepsistä! <Emoji as="👋" />
-
-Työkseni olen VR:n nettisivujen parissa väkertelevä frontti-frontti, eli ohjelmoija. Jos muistat ajan kun Verkkiksen
-sivut alkoi toimia kännykällä, niin olen yksi syyllinen siihen. Muutoin näin koto-Suomen puolella minut tunnetaan Konnun
-ylläpitäjänä ja olen myös [suomentanut pelejä harrastusmielessä](/suomeksi). Tarkkasilmäisille nimeni esiintyy jokusissa
-vanhoissa MikroBitin numeroissa ja toistaiseksi olen ainoa laatuani, onneksi. Olen autisti mallia työllistynyt ja töissä
-kiinni pysynyt, eli melkein yksisarvinen.
-
-Muutoin kiinnostaa milloin mikäkin, mutta kestäviä teemoja ovat ainakin tiede, historia, kaupunkisuunnittelu, pyöräily,
-autottomuus, luonto, maailmanmeno, eli oikeastaan olen tämmöinen jonkinmoinen kaikesta kiinnostunut ja avoin oppija,
-jolta taatusti löytyy monta epämieluista mielipidettä. Tämä siitä huolimatta, että kouluputkeni päättyi toisen asteen
-kauppikseen, enkä todellakaan ole maailmalla matkannut. Miten tämmöinen ihminen ei ole yliopistoon ja korkeakoulutukseen
-sekaantunut? Siinä sinulle luokittelu- ja lokerointijärjestelmääsi pulmia kerrakseen!
-
-<div class={inlineFlex}>
-	<span>Seurata voi vaikka näissä paikoissa: </span>
-	<span class={inlineFlex}>
-		<Icon href="/icons/social/github.svg" title="GitHub" />
-		<Link hreflang="en" href="https://github.me/Merri">
-			<span>GitHub</span>
-		</Link>
-	</span>
-	<span class={inlineFlex}>
-		<Icon href="/icons/social/linkedin.svg" title="LinkedIn" />
-		<Link hreflang="fi" href="https://fi.linkedin.com/in/merri">
-			<span>LinkedIn</span>
-		</Link>
-	</span>
-	<span> ja </span>
-	<span class={inlineFlex}>
-		<Icon href="/icons/social/mastodon.svg" title="Mastodon" />
-		<Link hreflang="fi" href="https://olifant.fi/@merri" rel="me">
-			<span>Olifantti</span>
-		</Link>
-	</span>
-</div>
-
-<div class={inlineFlex} style="margin-top: 1rem;">
-	<span>Tolkien-fanina sinua varmasti kiinnostaa </span>
-	<Link hreflang="fi" href="https://kontu.wiki">
-		<span>Kontuwiki</span>
-	</Link>
-	<span> tai legendaarinen keskustelualue </span>
-	<Link hreflang="fi" href="https://kontu.me">
-		<span>Vihreä Lohikäärme</span>
-	</Link>
-</div>
-
-Sähköposti löytyy `vesa@piittinen.name` joskin verkkaisesti. Ja jos puhelinnumeroni menet kaivamaan, niin ole sen verran
-kohtelias että viestit ennen kuin soitat. Muutoin tuhlaat omaa aikaasi.
+Btw... drink water! You haven't done that recently have you? HAVE YOU?
 
 </div>
