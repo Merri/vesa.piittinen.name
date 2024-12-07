@@ -1,0 +1,297 @@
+---
+title: HTML custom elements
+description: This is a dump of my custom elements knowledge and how to make it all work with React.
+pubDate: 2024-12-07
+layout: $layouts/BlogPost.astro
+tags:
+    - css
+    - html
+    - WebDev
+    - React
+---
+
+import Codepen from '$/components/Codepen.astro'
+import Link from '$/components/Link.astro'
+
+This is a dump post of my current understanding of the HTML custom elements, and how to use them on React which recently
+celebrated it's version 19 release with much improved support the custom elements (finally).
+
+## Creating a custom element
+
+Here is a TypeScript base which has one string attribute/property defined.
+
+```ts
+// src/customElements/my-custom-element.ts
+export class MyCustomElement extends HTMLElement {
+	#custom = ''
+
+	constructor() {
+		super()
+	}
+
+	static observedAttributes = ['custom'] as const
+
+	attributeChangedCallback(
+		name: (typeof MyCustomElement.observedAttributes)[number],
+		oldValue: string | null,
+		newValue: string | null
+	) {
+		if (oldValue !== newValue) {
+			this[name] = newValue
+			// + queue update
+		}
+	}
+
+	get custom() {
+		return this.#custom
+	}
+
+	set custom(value) {
+		this.#custom = `${value}`
+		// + queue update
+	}
+
+	connectedCallback() {
+		// do stuff
+	}
+
+	disconnectedCallback() {
+		// do stuff
+	}
+}
+
+if (!customElements.get('my-custom-element')) customElements.define('my-custom-element', RangeInputs)
+```
+
+I think the custom element file should define it's elements. This makes things straightforward for importing a custom
+element file which may or may not have multiple custom elements in a single file.
+
+Defining the getters and setters makes life easier with React. Mapping `attributeChangedCallback` to use the properties
+is a bit of a hack but in the other hand it does work in a neat way to initialize all the attributes to internal state.
+This is something that I do need some more experience working with since I've had to do suprisingly few get/set
+properties so far.
+
+## Custom element CSS
+
+Custom element related styles should be global, and in most cases it should always be loaded with the HTML page. Meaning
+no lazy loading it. But your mileage may vary depending on the type of custom element you're working with. I'm mostly
+working with "native-like" or "HTML web components", which means enhancing light DOM instead of working from the
+shadows.
+
+## Dynamic loading custom elements
+
+It is often desirable to load JavaScript only if it is needed. This seems to be an area where everybody have their own
+solution. So I have my own! This is my current loader implementation:
+
+```ts
+// src/customElements/dynamicImport.ts
+let observer: MutationObserver | null = null
+
+function unobserve() {
+	observer?.disconnect()
+	observer = null
+}
+
+/**
+ * Loads HTML custom elements from a given import map dynamically as they are added to the page.
+ *
+ * Call a single time in code that is guaranteed to be included each time in the front-end payload a page.
+ *
+ * Note that you can do this outside your React app and make the custom elements load before React boots up.
+ *
+ * @returns Callback to end observing changes to DOM.
+ */
+export const dynamicImportCustomElements = ({ ...importMap }: Record<string, () => string[] | void | Promise<any>>) => {
+	if (typeof window === 'undefined' || !('customElements' in window) || observer) return unobserve
+
+	for (const key of Object.keys(importMap)) {
+		if (customElements.get(key)) delete importMap[key]
+	}
+
+	let loadQueue: number | null = null
+
+	/** Returns true if there is still something to import from the import map */
+	function loadElements() {
+		loadQueue = null
+		const elements = new Set([...document.querySelectorAll(':not(:defined)')].map((el) => el.localName))
+
+		for (let element of elements) {
+			if (element in importMap) {
+				const keys = importMap[element]()
+				const list = new Set(Array.isArray(keys) ? [element, ...keys] : element)
+				for (let key of list) {
+					delete importMap[key]
+				}
+			}
+		}
+
+		if (Object.keys(importMap).length === 0) {
+			unobserve()
+			return false
+		}
+
+		return true
+	}
+
+	if (loadElements()) {
+		observer = new MutationObserver(function (mutations) {
+			if (loadQueue != null) return
+
+			for (let { addedNodes } of mutations) {
+				for (let node of addedNodes) {
+					if (node instanceof HTMLElement && node.localName in importMap) {
+						loadQueue = requestAnimationFrame(loadElements)
+						return
+					}
+				}
+			}
+		})
+
+		observer.observe(document.documentElement, { childList: true, subtree: true })
+	}
+
+	return unobserve
+}
+```
+
+It does quite a few things!
+
+1. It doesn't execute on server side context if you somehow attempt to do that.
+2. It ignores any already defined custom elements.
+3. It immediately loads any undefined (`:not(:defined)`) custom elements should they currently be found in DOM.
+4. It listens for DOM changes to any opportunity to load new custom elements.
+5. It stop listening the DOM if all known elements on the list have been loaded.
+
+You might remember from above that I mentioned a single file may have multiple elements defined. But `importMap` only
+allows for one element name! How can it load correct file only once for a file that has multiple elements defined?
+
+```ts
+dynamicImportCustomElements({
+	'my-custom-element': () => {
+		import('./customElements/my-custom-element')
+		return ['my-custom-element', 'my-custom-element-2']
+	},
+	'my-custom-element-2': () => {
+		import('./customElements/my-custom-element')
+		return ['my-custom-element', 'my-custom-element-2']
+	},
+})
+```
+
+By returning a string array you can define which elements are related to the file. I don't know yet if this is "the
+best" nor even real-life working way to do this. Another option would be to allow for comma separated list in the keys.
+That way the list would be one key, one file, and would have less repetition.
+
+Also there is the topic of code splitting and I'm not going to think about that today.
+
+## Placement of dynamic loading
+
+I think the best goal is to load custom elements as soon as possible.
+
+Have a custom element that is very likely to be on every page? Always load it immediately!
+
+Otherwise? Add dynamic loader before the main app client-side bootstrap. Yes, even before React mounts/hydrates.
+
+My thinking is that since for me custom elements are "native-like" and make use of progressive enhancement it makes no
+sense to wait for React to get to a point that it has rendered everything and only then start loading the JS of a custom
+element. That is way too late!
+
+So a simple rule: `useEffect()` should not be used for loading a custom element.
+
+Besides: React is super slow to boot. Usually custom elements can start reacting immediately upon their code has been
+parsed in browser giving a much more responsive experience to user. React instead will have additional hydration
+check-up phase to get that virtual DOM thing going on before any state can change. That will always be slower regardless
+of the level of React optimizations.
+
+## Typing JSX
+
+It was suprisingly hard to find information on how custom elements should be typed. In the end I had to experiment on my
+own because it seems a lot of the search results on search engines like Google will point to very... uh... interesting
+results!
+
+So I have these two files:
+
+```ts
+// src/customElements/react.ts
+import type { HTMLAttributes, Ref } from 'react'
+
+export type ReactJsxCustomElement<T> = Omit<HTMLAttributes<T>, 'className' | 'htmlFor'> & {
+	class?: string
+	for?: string
+	ref?: Ref<T>
+}
+```
+
+```ts
+// src/customElements/reactJsxTypes.d.ts
+import { MyCustomElement } from './my-custom-element'
+import { ReactJsxCustomElement } from './react'
+
+interface ReactJsxMyCustomElement extends ReactJsxCustomElement<MyCustomElement> {}
+
+// for NextJS you need to do the same but for global JSX namespace due to tsconfig having a JSX setting as "preserve"
+export interface ReactJsxCustomElements {
+	'my-custom-element': ReactJsxMyCustomElement
+}
+
+// React 19?
+declare module 'react' {
+	namespace JSX {
+		interface IntrinsicElements extends ReactJsxCustomElements {}
+	}
+}
+
+// React 18?
+declare module 'react/jsx-runtime' {
+	namespace JSX {
+		interface IntrinsicElements extends ReactJsxCustomElements {}
+	}
+}
+```
+
+As you can see I'm still wondering about things a bit. In a React 18 based Storybook project typing JSX got bonkers if I
+added global JSX types so I could only use `react/jsx-runtime`. Maybe there is something wrong in that project's config,
+but I don't know if I want to spend time to figure it out.
+
+Regardless it seems in React 19 the JSX types are now in the `react` module. Though maybe it all depends on the project
+and tool you're working with... really don't like how it seems it's always a bit different. I won't complain about
+NextJS this time around. It is what it is.
+
+Anyway with these types it becomes possible to use the custom element in a React TypeScript project. And the types seem
+to be actually correct. Woohoo!
+
+## React component vs custom element
+
+I think anything that depends a lot on DOM should be implemented as an HTML custom element first. For me React these
+days is just a syntactic sugar layer, a tool of developer convenience rather than the place where the most serious web
+front-end code should be in.
+
+A lot of styling should also be solved in global CSS rather than "localize everything" mentality that React often seems
+to delve in. By making good use of native HTML elements and creating good global CSS-based utilities you can really save
+a lot of development pain. Adding in HTML custom elements you can even move some hard state management and ownership
+away from the React machine, especially for elements that can work independently.
+
+## Something more complete
+
+<Link href="https://muffinman.io/blog/native-dual-range-input/">
+	<>Stanko recently released a native dual-range input</>
+</Link>
+<> which I found interesting.</>
+
+First I got interested on making it work for more than just two range inputs, porting it over from Sass to vanilla CSS
+and from vanilla JS to a custom element:
+
+<Codepen id="MYgKrJV" title="<range-inputs> HTML custom element (dev version, see StackBlitz for more polish)" />
+
+But since I have been working on getting into the custom element world during this latter part of the year I also wanted
+to get some of the solutions I have gained in my job out to the public side, so, what you have now see as this post.
+
+Thus I ended up making a project to <Link href="https://stackblitz.com/edit/vitejs-vite-udntz7">StackBlitz</Link> which
+has all of the stuff I've been talking on this blog post but applied to a practical project.
+
+The project is a SPA only though, and I usually work with hydrated HTML. Though the code should work for both use cases.
+
+There would be so much more to test and check on that project and I don't even have an immediate need for a dual range
+input so I don't know if I ever bother to complete this much farther than this.
+
+But hey, now this information is out here for you to enjoy. Maybe it helps solve some stuff for you.
