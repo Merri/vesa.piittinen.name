@@ -1,3 +1,8 @@
 image: node:22
 command: npm i --global pnpm && pnpm i && pnpm run build
 public: dist
+domains:
+  - vesa.piittinen.name
+  - www.vesa.piittinen.name
+  - www.piittinen.name
+  - piittinen.name
