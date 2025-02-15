@@ -38,7 +38,6 @@ non-static site.
 -   [Fonts](#fonts)
 -   [Node.js](#nodejs)
 -   [Astro](#astro)
--   [Vercel](#vercel)
 
 ### Firefox
 
@@ -95,12 +94,6 @@ pretty much whatever you want. This makes it a great <abbr title="Server Side Re
 example it often is easier to first refactor a NextJS site to Astro than it is to refactor all your components to be
 non-React. Of course, if you have gone and chosen the poison that is React Server Components, you will have a lot harder
 job ahead of you.
-
-### Vercel
-
-Once you do have a site you need to deploy it somewhere. One of the easiest options is to use
-<a href="https://vercel.com/" aria-describedby="link-to-external-site" rel="noopener noreferrer" target="_blank">Vercel</a>!
-It is free for small hobbyist needs.
 
 ---
 
