@@ -1,7 +1,7 @@
 {
 	"name": "@merri/vesa.piittinen.name",
 	"description": "Vesa Piittinen",
-	"version": "2024.0.0",
+	"version": "2025.0.0",
 	"author": "Vesa Piittinen <vesa.piittinen@gmail.com>",
 	"bugs": {
 		"url": "https://github.com/merri/vesa.piittinen.name/issues"
@@ -24,7 +24,6 @@
 		"@astrojs/preact": "4.0.0",
 		"@astrojs/rss": "4.0.10",
 		"@astrojs/sitemap": "3.2.1",
-		"@astrojs/vercel": "8.0.0",
 		"@babel/core": "7.25.2",
 		"@babel/plugin-transform-react-jsx-source": "7.24.7",
 		"@types/cookie": "0.6.0",
@@ -39,7 +38,6 @@
 		"marked": "14.1.2",
 		"memoizee": "0.4.17",
 		"pako": "2.1.0",
-		"postgres": "3.4.4",
 		"preact": "10.24.0",
 		"prettier-plugin-astro": "0.14.1",
 		"random-seedable": "1.0.8",
